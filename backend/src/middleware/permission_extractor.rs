@@ -27,6 +27,26 @@ pub fn extract_permission(method: &str, uri: &str) -> Option<(String, String)> {
         return None;
     }
 
+    // Special handling for /api/clusters/resource-groups/* paths
+    // resource-groups is a separate resource in the permissions model
+    // (permissions: api:resource-groups:<action>), not under clusters
+    if segments.get(0) == Some(&"clusters") && segments.get(1) == Some(&"resource-groups") {
+        let action = match (method, segments.len()) {
+            ("GET", 3) => Some("list".to_string()),
+            ("POST", 3) => Some("create".to_string()),
+            ("GET", 4) => match segments.get(3) {
+                Some(&"usage") => Some("usage".to_string()),
+                Some(&"analysis") => Some("analysis".to_string()),
+                Some(_) => Some("get".to_string()),
+                None => None,
+            },
+            ("PUT", 4) => Some("update".to_string()),
+            ("DELETE", 4) => Some("delete".to_string()),
+            _ => None,
+        }?;
+        return Some(("resource-groups".to_string(), action));
+    }
+
     let resource = match *(segments.first()?) {
         "roles" => "roles",
         "permissions" => "permissions",

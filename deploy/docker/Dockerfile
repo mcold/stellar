@@ -2,7 +2,7 @@
 FROM rust:1.85.0 AS builder
 
 # Install Node.js for frontend build
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs
 
 WORKDIR /app

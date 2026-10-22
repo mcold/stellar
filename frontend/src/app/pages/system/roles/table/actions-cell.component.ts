@@ -17,7 +17,7 @@ export interface RoleActionPermissions {
         ghost
         size="tiny"
         status="primary"
-        [nbTooltip]="rowData?.is_system ? '系统角色无法编辑' : '编辑角色'"
+        [nbTooltip]="rowData?.is_system ? 'System roles cannot be edited' : 'Edit role'"
         nbTooltipPlacement="top"
         [disabled]="!value?.canEdit"
         (click)="onEditClick($event)"
@@ -30,7 +30,7 @@ export interface RoleActionPermissions {
         ghost
         size="tiny"
         status="danger"
-        [nbTooltip]="rowData?.is_system ? '系统角色无法删除' : '删除角色'"
+        [nbTooltip]="rowData?.is_system ? 'System roles cannot be deleted' : 'Delete role'"
         nbTooltipPlacement="top"
         [disabled]="!value?.canDelete"
         (click)="onDeleteClick($event)"

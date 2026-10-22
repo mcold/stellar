@@ -118,7 +118,7 @@ pub fn analyze_profile_with_context(
     let mut composer = ProfileComposer::new();
     let profile = composer
         .parse(profile_text)
-        .map_err(|e| format!("解析Profile失败: {:?}", e))?;
+        .map_err(|e| format!("Failed to parse the profile: {:?}", e))?;
 
     let execution_tree = profile.execution_tree.clone();
     let mut summary = profile.summary.clone();
@@ -304,7 +304,7 @@ fn aggregate_diagnostics(diagnostics: &[DiagnosticResult]) -> Vec<AggregatedDiag
                 .clone();
 
             let message = if node_count > 1 {
-                format!("{} 个节点存在此问题", node_count)
+                format!("{} nodes have this problem", node_count)
             } else {
                 first.message.clone()
             };
@@ -358,26 +358,31 @@ fn merge_suggestions(diags: &[&DiagnosticResult], node_count: usize) -> Vec<Stri
         .map(|s| s.as_str())
         .unwrap_or("");
 
-    if first_sug.contains("外表小文件合并方案") || first_sug.contains("Compaction 合并碎片")
+    if first_sug.contains("External table small file merge plan")
+        || first_sug.contains("Run Compaction to merge fragments")
     {
         let tables_str = if tables.is_empty() {
-            format!("{} 个表", node_count)
+            format!("{} tables", node_count)
         } else if tables.len() <= 3 {
             tables.join(", ")
         } else {
-            format!("{} 等 {} 个表", tables.first().unwrap_or(&"unknown".to_string()), tables.len())
+            format!(
+                "{} and {} tables",
+                tables.first().unwrap_or(&"unknown".to_string()),
+                tables.len()
+            )
         };
 
-        let generic = if first_sug.contains("外表小文件合并方案") {
+        let generic = if first_sug.contains("External table small file merge plan") {
             format!(
-                "外表小文件合并 (涉及: {}): ①ALTER TABLE <table> PARTITION(...) CONCATENATE; \
+                "External table small file merge (involving: {}): ①ALTER TABLE <table> PARTITION(...) CONCATENATE; \
                  ②INSERT OVERWRITE TABLE <table> SELECT * FROM <table>; \
                  ③Spark: df.repartition(N).saveAsTable('<table>'); \
                  ④SET connector_io_tasks_per_scan_operator=64",
                 tables_str
             )
         } else {
-            format!("执行 Compaction: ALTER TABLE <{}> COMPACT", tables_str)
+            format!("Run Compaction: ALTER TABLE <{}> COMPACT", tables_str)
         };
         return vec![generic];
     }

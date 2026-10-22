@@ -22,7 +22,7 @@ export class BackendsComponent implements OnInit, OnDestroy {
   activeCluster: Cluster | null = null;
   clusterName: string = '';
   deploymentMode: string = '';
-  pageTitle: string = 'Backend 节点';
+  pageTitle: string = 'Backend Nodes';
   deploymentModeText: string = '';
   deploymentModeBadgeClass: string = '';
   loading = true;
@@ -34,9 +34,9 @@ export class BackendsComponent implements OnInit, OnDestroy {
   settings = {
     mode: 'external',
     hideSubHeader: false, // Enable search
-    noDataMessage: '暂无计算节点数据',
+    noDataMessage: 'No compute node data',
     actions: {
-      columnTitle: '操作',
+      columnTitle: 'Actions',
       add: false,
       edit: false,
       delete: true,
@@ -52,99 +52,99 @@ export class BackendsComponent implements OnInit, OnDestroy {
     },
     columns: {
       BackendId: {
-        title: '节点 ID',
+        title: 'Node ID',
         type: 'string',
         width: '8%',
       },
       IP: {
-        title: '主机',
+        title: 'Host',
         type: 'string',
         width: '12%',
       },
       HeartbeatPort: {
-        title: '心跳端口',
+        title: 'Heartbeat Port',
         type: 'string',
         width: '8%',
       },
       BePort: {
-        title: '服务端口',
+        title: 'Service Port',
         type: 'string',
         width: '8%',
       },
       HttpPort: {
-        title: 'HTTP端口',
+        title: 'HTTP Port',
         type: 'string',
         width: '8%',
       },
       Alive: {
-        title: '状态',
+        title: 'Status',
         type: 'html',
         sanitizer: { bypassHtml: true },
         width: '8%',
         valuePrepareFunction: (value: string) => {
           const status = value === 'true' ? 'success' : 'danger';
-          const text = value === 'true' ? '在线' : '离线';
+          const text = value === 'true' ? 'Online' : 'Offline';
           return `<span class="badge badge-${status}">${text}</span>`;
         },
       },
       Version: {
-        title: '版本',
+        title: 'Version',
         type: 'string',
         width: '10%',
       },
       TabletNum: {
-        title: 'Tablet 数',
+        title: 'Tablets',
         type: 'string',
         width: '8%',
       },
       DataUsedCapacity: {
-        title: '已用存储',
+        title: 'Used Storage',
         type: 'string',
         width: '10%',
       },
       TotalCapacity: {
-        title: '总存储',
+        title: 'Total Storage',
         type: 'string',
         width: '10%',
       },
       UsedPct: {
-        title: '磁盘使用率',
+        title: 'Disk Usage',
         type: 'html',
         sanitizer: { bypassHtml: true },
         width: '10%',
         valuePrepareFunction: (value: string) => renderMetricBadge(value, this.diskThresholds),
       },
       CpuCores: {
-        title: 'CPU核数',
+        title: 'CPU Cores',
         type: 'string',
         width: '8%',
       },
       CpuUsedPct: {
-        title: 'CPU 使用率',
+        title: 'CPU Usage',
         type: 'html',
         sanitizer: { bypassHtml: true },
         width: '10%',
         valuePrepareFunction: (value: string) => renderMetricBadge(value, this.cpuThresholds),
       },
       MemLimit: {
-        title: '内存限制',
+        title: 'Memory Limit',
         type: 'string',
         width: '10%',
       },
       MemUsedPct: {
-        title: '内存使用率',
+        title: 'Memory Usage',
         type: 'html',
         sanitizer: { bypassHtml: true },
         width: '10%',
         valuePrepareFunction: (value: string) => renderMetricBadge(value, this.memoryThresholds),
       },
       NumRunningQueries: {
-        title: '运行查询数',
+        title: 'Running Queries',
         type: 'string',
         width: '8%',
       },
       LastHeartbeat: {
-        title: '最后心跳',
+        title: 'Last Heartbeat',
         type: 'string',
         width: '12%',
       },
@@ -155,7 +155,7 @@ export class BackendsComponent implements OnInit, OnDestroy {
     const backend = event.data;
     const itemName = `${backend.IP}:${backend.HeartbeatPort}`;
     const nodeType = this.deploymentMode === 'shared_data' ? 'CN (Compute Node)' : 'BE (Backend)';
-    const additionalWarning = `⚠️ 警告: 删除${nodeType}节点是危险操作，请确保：\n1. 节点数据已迁移完成\n2. 集群有足够的副本数\n3. 该节点已停止服务`;
+    const additionalWarning = `⚠️ Warning: deleting a ${nodeType} node is a dangerous operation, please make sure:\n1. The node's data has been fully migrated\n2. The cluster has enough replicas\n3. The node has stopped serving`;
     
     this.confirmDialogService.confirmDelete(itemName, additionalWarning)
       .subscribe(confirmed => {
@@ -168,8 +168,8 @@ export class BackendsComponent implements OnInit, OnDestroy {
           .subscribe({
             next: () => {
               this.toastrService.success(
-                `${nodeType} 节点 ${itemName} 已删除`,
-                '成功'
+                `${nodeType} node ${itemName} deleted`,
+                'Success'
               );
               event.confirm.resolve();
               this.loadBackends();
@@ -177,7 +177,7 @@ export class BackendsComponent implements OnInit, OnDestroy {
             error: (error) => {
               this.toastrService.danger(
                 ErrorHandler.extractErrorMessage(error),
-                '删除失败',
+                'Delete failed',
               );
               event.confirm.reject();
             },
@@ -238,11 +238,11 @@ export class BackendsComponent implements OnInit, OnDestroy {
           // Update page title and badge based on deployment mode
           if (this.deploymentMode === 'shared_data') {
             this.pageTitle = 'Compute Nodes (CN)';
-            this.deploymentModeText = '存算分离';
+            this.deploymentModeText = 'Shared-Data';
             this.deploymentModeBadgeClass = 'badge-info';
           } else {
             this.pageTitle = 'Backend Nodes (BE)';
-            this.deploymentModeText = '存算一体';
+            this.deploymentModeText = 'Shared-Nothing';
             this.deploymentModeBadgeClass = 'badge-success';
           }
         },
@@ -262,7 +262,7 @@ export class BackendsComponent implements OnInit, OnDestroy {
         error: (error) => {
           this.toastrService.danger(
             ErrorHandler.handleClusterError(error),
-            '错误',
+            'Error',
           );
           this.source.load([]);
           this.loading = false;

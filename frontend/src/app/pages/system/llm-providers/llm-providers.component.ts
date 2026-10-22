@@ -115,7 +115,7 @@ export class LLMProvidersComponent implements OnInit, OnDestroy {
     if (!this.canDelete) return;
 
     this.confirmDialog
-      .confirmDelete(provider.display_name, '删除后将无法恢复，历史分析记录将保留但无法关联到此提供商')
+      .confirmDelete(provider.display_name, 'It cannot be restored after deletion; historical analysis records are kept but can no longer be linked to this provider')
       .subscribe((confirmed) => {
         if (confirmed) this.performDelete(provider.id);
       });
@@ -127,7 +127,7 @@ export class LLMProvidersComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.llmService.activateProvider(provider.id).subscribe({
       next: () => {
-        this.toastrService.success(`已激活 ${provider.display_name}`, '成功');
+        this.toastrService.success(`Activated ${provider.display_name}`, 'Success');
         this.loadProviders();
       },
       error: (error) => {
@@ -145,8 +145,8 @@ export class LLMProvidersComponent implements OnInit, OnDestroy {
     this.llmService.updateProvider(provider.id, { enabled: newEnabled }).subscribe({
       next: () => {
         this.toastrService.success(
-          `已${newEnabled ? '启用' : '禁用'} ${provider.display_name}`,
-          '成功'
+          `${newEnabled ? 'Enabled' : 'Disabled'} ${provider.display_name}`,
+          'Success'
         );
         this.loadProviders();
       },
@@ -163,11 +163,11 @@ export class LLMProvidersComponent implements OnInit, OnDestroy {
       next: (result) => {
         if (result.success) {
           this.toastrService.success(
-            `连接成功，延迟 ${result.latency_ms}ms`,
-            '测试通过'
+            `Connected successfully, latency ${result.latency_ms}ms`,
+            'Test passed'
           );
         } else {
-          this.toastrService.warning(result.message, '测试失败');
+          this.toastrService.warning(result.message, 'Test failed');
         }
         this.testingId = null;
       },
@@ -194,7 +194,7 @@ export class LLMProvidersComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.llmService.createProvider(payload).subscribe({
       next: () => {
-        this.toastrService.success('LLM 提供商创建成功', '成功');
+        this.toastrService.success('LLM provider created successfully', 'Success');
         this.loadProviders();
       },
       error: (error) => {
@@ -223,7 +223,7 @@ export class LLMProvidersComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.llmService.updateProvider(id, payload).subscribe({
       next: () => {
-        this.toastrService.success('LLM 提供商更新成功', '成功');
+        this.toastrService.success('LLM provider updated successfully', 'Success');
         this.loadProviders();
       },
       error: (error) => {
@@ -237,7 +237,7 @@ export class LLMProvidersComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.llmService.deleteProvider(id).subscribe({
       next: () => {
-        this.toastrService.success('LLM 提供商删除成功', '成功');
+        this.toastrService.success('LLM provider deleted successfully', 'Success');
         this.loadProviders();
       },
       error: (error) => {
@@ -275,22 +275,22 @@ export class LLMProvidersComponent implements OnInit, OnDestroy {
       },
       columns: {
         display_name: {
-          title: '名称',
+          title: 'Name',
           type: 'string',
           width: '15%',
         },
         name: {
-          title: '标识',
+          title: 'Identifier',
           type: 'string',
           width: '10%',
         },
         model_name: {
-          title: '模型',
+          title: 'Model',
           type: 'string',
           width: '15%',
         },
         api_base: {
-          title: 'API 地址',
+          title: 'API base',
           type: 'string',
           width: '20%',
           valuePrepareFunction: (cell: string) => {
@@ -299,19 +299,19 @@ export class LLMProvidersComponent implements OnInit, OnDestroy {
           },
         },
         status: {
-          title: '状态',
+          title: 'Status',
           type: 'custom',
           width: '15%',
           isFilterable: false,
           renderComponent: LLMProviderStatusCellComponent,
         },
         priority: {
-          title: '优先级',
+          title: 'Priority',
           type: 'number',
           width: '8%',
         },
         actions: {
-          title: '操作',
+          title: 'Actions',
           type: 'custom',
           width: '17%',
           isFilterable: false,

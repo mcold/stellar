@@ -57,7 +57,7 @@ export class ClusterSelectorComponent implements OnInit, OnDestroy {
         }
       },
       error: (error) => {
-        this.toastr.danger('加载集群列表失败', '错误');
+        this.toastr.danger('Failed to load cluster list', 'Error');
         this.loading = false;
       },
     });
@@ -65,7 +65,7 @@ export class ClusterSelectorComponent implements OnInit, OnDestroy {
 
   selectCluster(cluster: Cluster): void {
     this.clusterContext.setActiveCluster(cluster);
-    this.toastr.success(`已切换到集群: ${cluster.name}`, '成功');
+    this.toastr.success(`Switched to cluster: ${cluster.name}`, 'Success');
   }
 
   onClusterChange(cluster: Cluster): void {

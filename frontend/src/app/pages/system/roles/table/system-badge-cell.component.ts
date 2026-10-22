@@ -5,7 +5,7 @@ import { Component, Input } from '@angular/core';
   selector: 'ngx-roles-system-badge-cell',
   template: `
     <nb-badge
-      [text]="value ? '是' : '否'"
+      [text]="value ? 'Yes' : 'No'"
       [status]="value ? 'warning' : 'basic'"
       size="small"
     ></nb-badge>

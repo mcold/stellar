@@ -1,5 +1,5 @@
 <nb-card class="role-dialog">
-  <nb-card-header>{{ mode === 'create' ? '创建角色' : '编辑角色' }}</nb-card-header>
+  <nb-card-header>{{ mode === 'create' ? 'Create Role' : 'Edit Role' }}</nb-card-header>
 
   <nb-card-body>
     <form [formGroup]="form" class="role-form" novalidate>
@@ -8,18 +8,18 @@
         <div class="basic-info-section">
           <label class="section-label">
             <nb-icon icon="settings-2-outline"></nb-icon>
-            基本信息
+            Basic information
           </label>
 
           <!-- Organization Selection (Super Admin Only) -->
           <div class="form-group" *ngIf="isSuperAdmin">
-            <label class="label" for="input-organization">所属组织</label>
+            <label class="label" for="input-organization">Organization</label>
             <nb-form-field>
               <nb-icon nbPrefix icon="home-outline"></nb-icon>
               <nb-select
                 formControlName="organizationId"
                 id="input-organization"
-                placeholder="请选择组织"
+                placeholder="Select an organization"
                 fullWidth
               >
                 <nb-option *ngFor="let org of organizations" [value]="org.id">
@@ -32,7 +32,7 @@
 
           <!-- Organization Display (Org Admin) -->
           <div class="form-group" *ngIf="!isSuperAdmin && currentOrganization">
-            <label class="label">所属组织</label>
+            <label class="label">Organization</label>
             <nb-form-field>
               <nb-icon nbPrefix icon="home-outline"></nb-icon>
               <input
@@ -43,11 +43,11 @@
                 disabled
               />
             </nb-form-field>
-            <p class="caption status-hint">组织管理员只能在本组织内创建角色</p>
+            <p class="caption status-hint">Organization admins can only create roles within their own organization</p>
           </div>
 
           <div class="form-group">
-            <label class="label" for="input-code">角色代码</label>
+            <label class="label" for="input-code">Role code</label>
             <nb-form-field>
               <nb-icon nbPrefix icon="hash-outline"></nb-icon>
               <input
@@ -55,7 +55,7 @@
                 fullWidth
                 id="input-code"
                 formControlName="code"
-                placeholder="请输入角色代码"
+                placeholder="Enter a role code"
                 [readonly]="mode === 'edit'"
                 maxlength="50"
               />
@@ -63,7 +63,7 @@
           </div>
 
           <div class="form-group">
-            <label class="label" for="input-name">角色名称</label>
+            <label class="label" for="input-name">Role name</label>
             <nb-form-field>
               <nb-icon nbPrefix icon="shield-outline"></nb-icon>
               <input
@@ -71,21 +71,21 @@
                 fullWidth
                 id="input-name"
                 formControlName="name"
-                placeholder="请输入角色名称"
+                placeholder="Enter a role name"
                 maxlength="50"
               />
             </nb-form-field>
           </div>
 
           <div class="form-group form-group--grow">
-            <label class="label" for="input-description">角色描述</label>
+            <label class="label" for="input-description">Role description</label>
             <nb-form-field>
               <textarea
                 nbInput
                 fullWidth
                 id="input-description"
                 formControlName="description"
-                placeholder="请输入角色描述（可选）"
+                placeholder="Enter a role description (optional)"
                 rows="3"
                 maxlength="200"
               ></textarea>
@@ -97,7 +97,7 @@
         <div class="permission-section">
           <label class="section-label">
             <nb-icon icon="lock-outline"></nb-icon>
-            菜单权限
+            Menu permissions
           </label>
           <div class="permission-tree-container">
             <!-- Simple tree structure (inspired by query-execution) -->
@@ -111,7 +111,7 @@
               <ng-template #emptyTree>
                 <div class="empty-tree">
                   <nb-icon icon="inbox-outline"></nb-icon>
-                  <span>暂无可用权限</span>
+                  <span>No permissions available</span>
                 </div>
               </ng-template>
             </div>
@@ -166,7 +166,7 @@
   </nb-card-body>
 
   <nb-card-footer>
-    <button class="cancel" nbButton status="danger" (click)="cancel()">取消</button>
-    <button nbButton status="success" (click)="submit()" [disabled]="form.invalid">保存</button>
+    <button class="cancel" nbButton status="danger" (click)="cancel()">Cancel</button>
+    <button nbButton status="success" (click)="submit()" [disabled]="form.invalid">Save</button>
   </nb-card-footer>
 </nb-card>

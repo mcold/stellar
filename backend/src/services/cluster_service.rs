@@ -19,19 +19,19 @@ fn simplify_health_check_error(error: &str) -> String {
 
     // Check error patterns using if-else
     if error_lower.contains("28000") || error_lower.contains("access denied") {
-        return "认证失败: 请检查用户名和密码是否正确".to_string();
+        return "Authentication failed: please check whether the username and password are correct".to_string();
     }
 
     if error_lower.contains("connection refused") || error_lower.contains("refused") || error_lower.contains("cannot connect") {
-        return "无法连接: 请检查集群地址和端口是否正确".to_string();
+        return "Cannot connect: please check whether the cluster address and port are correct".to_string();
     }
 
     if error_lower.contains("timeout") {
-        return "连接超时: 请检查网络连接和集群状态".to_string();
+        return "Connection timeout: please check the network connection and the cluster status".to_string();
     }
 
     if error_lower.contains("unknown host") || error_lower.contains("resolve") {
-        return "解析失败: 无法解析集群地址，请检查是否输入正确".to_string();
+        return "Resolution failed: the cluster address cannot be resolved, please check whether it was entered correctly".to_string();
     }
 
     // Default: return a generic message with error code if available
@@ -39,10 +39,10 @@ fn simplify_health_check_error(error: &str) -> String {
         .and_then(|code_start| {
             error[code_start..].find(':').map(|code_end| {
                 let error_code = &error[code_start + 6..code_start + code_end];
-                format!("连接失败 ({}): 请检查集群配置", error_code)
+                format!("Connection failed ({}): please check the cluster configuration", error_code)
             })
         })
-        .unwrap_or_else(|| "连接失败: 请检查集群配置".to_string())
+        .unwrap_or_else(|| "Connection failed: please check the cluster configuration".to_string())
 }
 
 impl ClusterService {

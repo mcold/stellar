@@ -2,42 +2,42 @@ import { NbMenuItem } from '@nebular/theme';
 
 export const MENU_ITEMS: NbMenuItem[] = [
   {
-    title: '集群列表',
+    title: 'Cluster List',
     icon: 'list-outline',
     link: '/pages/starrocks/dashboard',
     home: true,
     data: { permission: 'menu:dashboard' },
   } as NbMenuItem & { data?: { permission: string } },
   {
-    title: '集群概览',
+    title: 'Cluster Overview',
     icon: 'activity-outline',
     link: '/pages/starrocks/overview',
     data: { permission: 'menu:overview' },
   } as NbMenuItem & { data?: { permission: string } },
   {
-    title: '节点管理',
+    title: 'Node Management',
     icon: 'hard-drive-outline',
     data: { permission: 'menu:nodes' },
     children: [
       {
-        title: 'Frontend 节点',
+        title: 'Frontend Nodes',
         link: '/pages/starrocks/frontends',
         data: { permission: 'menu:nodes:frontends' },
       } as NbMenuItem & { data?: { permission: string } },
       {
-        title: 'Backend 节点',
+        title: 'Backend Nodes',
         link: '/pages/starrocks/backends',
         data: { permission: 'menu:nodes:backends' },
       } as NbMenuItem & { data?: { permission: string } },
     ],
   } as NbMenuItem & { data?: { permission: string } },
   {
-    title: '查询管理',
+    title: 'Query Management',
     icon: 'search-outline',
     data: { permission: 'menu:queries' },
     children: [
       {
-        title: '实时查询',
+        title: 'Running Queries',
         link: '/pages/starrocks/queries/execution',
         data: { permission: 'menu:queries:execution' },
       } as NbMenuItem & { data?: { permission: string } },
@@ -47,80 +47,80 @@ export const MENU_ITEMS: NbMenuItem[] = [
         data: { permission: 'menu:queries:profiles' },
       } as NbMenuItem & { data?: { permission: string } },
       {
-        title: '审计日志',
+        title: 'Audit Log',
         link: '/pages/starrocks/queries/audit-logs',
         data: { permission: 'menu:queries:audit-logs' },
       } as NbMenuItem & { data?: { permission: string } },
       {
-        title: 'SQL黑名单',
+        title: 'SQL Blacklist',
         link: '/pages/starrocks/queries/blacklist',
         data: { permission: 'menu:queries:blacklist' },
       } as NbMenuItem & { data?: { permission: string } },
     ],
   } as NbMenuItem & { data?: { permission: string } },
   {
-    title: '物化视图',
+    title: 'Materialized Views',
     icon: 'cube-outline',
     link: '/pages/starrocks/materialized-views',
     data: { permission: 'menu:materialized-views' },
   } as NbMenuItem & { data?: { permission: string } },
   {
-    title: '功能卡片',
+    title: 'Feature Cards',
     icon: 'grid-outline',
     link: '/pages/starrocks/system',
     data: { permission: 'menu:system-functions' },
   } as NbMenuItem & { data?: { permission: string } },
   {
-    title: '会话管理',
+    title: 'Session Management',
     icon: 'person-outline',
     link: '/pages/starrocks/sessions',
     data: { permission: 'menu:sessions' },
   } as NbMenuItem & { data?: { permission: string } },
   {
-    title: '变量管理',
+    title: 'Variable Management',
     icon: 'options-2-outline',
     link: '/pages/starrocks/variables',
     data: { permission: 'menu:variables' },
   } as NbMenuItem & { data?: { permission: string } },
   {
-    title: '集群运维',
+    title: 'Cluster Operations',
     icon: 'shield-outline',
     data: { permission: 'menu:cluster-ops' },
     children: [
       {
-        title: '权限管理',
+        title: 'Permission Management',
         link: '/pages/cluster-ops/permission-management',
         data: { permission: 'menu:cluster-ops:auth' },
       } as NbMenuItem & { data?: { permission: string } },
       {
-        title: '资源组管理',
+        title: 'Resource Group Management',
         link: '/pages/cluster-ops/resource-groups',
         data: { permission: 'menu:cluster-ops:resource-groups' },
       } as NbMenuItem & { data?: { permission: string } },
     ],
   } as NbMenuItem & { data?: { permission: string } },
   {
-    title: '系统管理',
+    title: 'System Management',
     icon: 'people-outline',
     data: { permission: 'menu:system' }, // Parent menu permission
     children: [
       {
-        title: '用户管理',
+        title: 'User Management',
         link: '/pages/system/users',
         data: { permission: 'menu:system:users' },
       } as NbMenuItem & { data?: { permission: string } },
       {
-        title: '角色管理',
+        title: 'Role Management',
         link: '/pages/system/roles',
         data: { permission: 'menu:system:roles' },
       } as NbMenuItem & { data?: { permission: string } },
       {
-        title: '组织管理',
+        title: 'Organization Management',
         link: '/pages/system/organizations',
         data: { permission: 'menu:system:organizations' },
       } as NbMenuItem & { data?: { permission: string } },
       {
-        title: 'LLM管理',
+        title: 'LLM Management',
         link: '/pages/system/llm-providers',
         data: { permission: 'menu:system:llm' },
       } as NbMenuItem & { data?: { permission: string } },

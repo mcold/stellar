@@ -50,7 +50,7 @@ export class PagesComponent implements OnInit {
         map(({ item }) => item)
       )
       .subscribe(item => {
-        if (item.title === '退出登录') {
+        if (item.title === 'Log out') {
           this.authService.logout();
         }
       });
@@ -194,57 +194,57 @@ export class PagesComponent implements OnInit {
           // 映射功能名称到中文标题（确保与 system-management.component.ts 中的定义一致）
           // 基于 StarRocks 官方支持的 PROC 路径
           const functionTitleMap: { [key: string]: string } = {
-            'backends': 'Backend节点信息',
-            'compute_nodes': '计算节点信息(CN)',
-            'frontends': 'Frontend节点信息',
-            'brokers': 'Broker节点信息',
-            'statistic': '统计信息',
-            'monitor': '监控信息',
-            'cluster_balance': '集群均衡',
-            'historical_nodes': '历史节点',
-            'dbs': '数据库信息',
-            'catalog': 'Catalog信息',
-            'transactions': '事务信息',
-            'routine_loads': 'Routine Load任务',
-            'stream_loads': 'Stream Load任务',
-            'load_error_hub': 'Load错误信息',
-            'tasks': '任务列表',
-            'replications': '复制任务',
-            'current_queries': '当前查询',
-            'global_current_queries': '全局当前查询',
-            'current_backend_instances': '当前后端实例',
-            'resources': '资源信息',
-            'warehouses': '仓库信息',
-            'compactions': '压缩任务',
+            'backends': 'Backend Node Information (BE)',
+            'compute_nodes': 'Compute Node Information (CN)',
+            'frontends': 'Frontend Node Information',
+            'brokers': 'Broker Node Information',
+            'statistic': 'Statistics',
+            'monitor': 'Monitoring Information',
+            'cluster_balance': 'Cluster Balance',
+            'historical_nodes': 'Historical Nodes',
+            'dbs': 'Database Information',
+            'catalog': 'Catalog Information',
+            'transactions': 'Transaction Information',
+            'routine_loads': 'Routine Load Jobs',
+            'stream_loads': 'Stream Load Jobs',
+            'load_error_hub': 'Load Error Information',
+            'tasks': 'Task List',
+            'replications': 'Replication Jobs',
+            'current_queries': 'Current Queries',
+            'global_current_queries': 'Global Current Queries',
+            'current_backend_instances': 'Current Backend Instances',
+            'resources': 'Resource Information',
+            'warehouses': 'Warehouse Information',
+            'compactions': 'Compaction Jobs',
             'colocation_group': 'Colocation Group',
-            'jobs': '作业信息',
-            'meta_recovery': '元数据恢复'
+            'jobs': 'Job Information',
+            'meta_recovery': 'Metadata Recovery'
           };
-          return functionTitleMap[functionName] || `功能卡片: ${functionName}`;
+          return functionTitleMap[functionName] || `Feature Cards: ${functionName}`;
         }
       }
       
       // 当路径为 /pages/starrocks/clusters/:id 时，避免使用数字作为标题
       if (prevSegment === 'clusters' && /^\d+$/.test(lastSegment)) {
-        return '集群详情';
+        return 'Cluster Detail';
       }
 
       // 映射URL段到中文标题
       const titleMap: { [key: string]: string } = {
-        'dashboard': '集群列表',
-        'overview': '集群概览',
-        'frontends': 'Frontend 节点',
-        'backends': 'Backend 节点',
-        'execution': '实时查询',
+        'dashboard': 'Cluster List',
+        'overview': 'Cluster Overview',
+        'frontends': 'Frontend Nodes',
+        'backends': 'Backend Nodes',
+        'execution': 'Running Queries',
         'profiles': 'Profiles',
-        'audit-logs': '审计日志',
-        'materialized-views': '物化视图',
-        'system': '功能卡片',  // 对应 menu:system-functions
-        'sessions': '会话管理',
-        'variables': '变量管理',
-        'clusters': '集群管理',
-        'new': '新建集群',
-        'edit': '编辑集群'
+        'audit-logs': 'Audit Log',
+        'materialized-views': 'Materialized Views',
+        'system': 'Feature Cards',  // 对应 menu:system-functions
+        'sessions': 'Session Management',
+        'variables': 'Variable Management',
+        'clusters': 'Cluster Management',
+        'new': 'New Cluster',
+        'edit': 'Edit Cluster'
       };
       
       return titleMap[lastSegment] || lastSegment;
@@ -309,7 +309,7 @@ export class PagesComponent implements OnInit {
   }
 
   onMenuClick(event: any) {
-    if (event.item.title === '退出登录') {
+    if (event.item.title === 'Log out') {
       event.event.preventDefault();
       this.authService.logout();
     }

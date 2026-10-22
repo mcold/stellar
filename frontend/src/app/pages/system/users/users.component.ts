@@ -155,7 +155,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
     if (!this.roleCatalog.length) {
       this.loadRoleCatalog();
-      this.toastrService.info('正在加载角色数据，请稍后重试', '提示');
+      this.toastrService.info('Loading role data, please try again shortly', 'Hint');
       return;
     }
 
@@ -185,7 +185,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
     if (!this.roleCatalog.length) {
       this.loadRoleCatalog();
-      this.toastrService.info('正在加载角色数据，请稍后重试', '提示');
+      this.toastrService.info('Loading role data, please try again shortly', 'Hint');
       return;
     }
 
@@ -219,7 +219,7 @@ export class UsersComponent implements OnInit, OnDestroy {
         if (confirmed) {
           this.userService.deleteUser(user.id).subscribe({
             next: () => {
-              this.toastrService.success('用户已删除', '成功');
+              this.toastrService.success('User deleted', 'Success');
               this.loadUsers();
             },
             error: (error) => ErrorHandler.handleHttpError(error, this.toastrService),
@@ -236,7 +236,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     const payload = result.payload as CreateUserPayload;
     this.userService.createUser(payload).subscribe({
       next: () => {
-        this.toastrService.success('用户已创建', '成功');
+        this.toastrService.success('User created', 'Success');
         this.loadUsers();
       },
       error: (error) => ErrorHandler.handleHttpError(error, this.toastrService),
@@ -251,7 +251,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     const payload = result.payload as UpdateUserPayload;
     this.userService.updateUser(userId, payload).subscribe({
       next: () => {
-        this.toastrService.success('用户信息已更新', '成功');
+        this.toastrService.success('User information updated', 'Success');
         this.loadUsers();
       },
       error: (error) => ErrorHandler.handleHttpError(error, this.toastrService),
@@ -293,7 +293,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     return {
       mode: 'external',
       hideSubHeader: false,
-      noDataMessage: this.hasListPermission ? '暂无用户数据' : '您暂无查看用户的权限',
+      noDataMessage: this.hasListPermission ? 'No user data' : 'You do not have permission to view users',
       actions: {
         add: false,
         edit: false,
@@ -311,34 +311,34 @@ export class UsersComponent implements OnInit, OnDestroy {
           width: '6%',
         },
         username: {
-          title: '用户名',
+          title: 'Username',
           type: 'string',
           width: '12%',
         },
         email: {
-          title: '邮箱',
+          title: 'Email',
           type: 'string',
           width: '18%',
         },
         organization_name: {
-          title: '所属组织',
+          title: 'Organization',
           type: 'string',
           width: '13%',
           valuePrepareFunction: (name: string) => name || '-',
         },
         is_org_admin: {
-          title: '管理员',
+          title: 'Admin',
           type: 'html',
           sanitizer: { bypassHtml: true },
           width: '8%',
           valuePrepareFunction: (isAdmin: boolean) => {
             return isAdmin
-              ? '<span class="badge badge-success">是</span>'
-              : '<span class="badge badge-basic">否</span>';
+              ? '<span class="badge badge-success">Yes</span>'
+              : '<span class="badge badge-basic">No</span>';
           },
         },
         roles: {
-          title: '角色',
+          title: 'Roles',
           type: 'custom',
           width: '18%',
           renderComponent: UsersRoleBadgeCellComponent,
@@ -346,13 +346,13 @@ export class UsersComponent implements OnInit, OnDestroy {
           isSortable: false,
         },
         created_at: {
-          title: '创建时间',
+          title: 'Created at',
           type: 'string',
           width: '12%',
-          valuePrepareFunction: (date: string) => new Date(date).toLocaleString('zh-CN'),
+          valuePrepareFunction: (date: string) => new Date(date).toLocaleString('en-US'),
         },
         actions: {
-          title: '操作',
+          title: 'Actions',
           type: 'custom',
           width: '10%',
           renderComponent: UsersActionsCellComponent,

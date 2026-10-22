@@ -45,12 +45,12 @@ export class JwtInterceptor implements HttpInterceptor {
           if (this.authService.isAuthenticated()) {
             if (isAuthError) {
               // Token is invalid/expired - clear auth and redirect to login
-              this.toastrService.danger('登录已过期，请重新登录', '认证失败');
+              this.toastrService.danger('Login has expired, please sign in again', 'Authentication failed');
               const safeUrl = this.authService.normalizeReturnUrl(this.router.url);
               this.authService.logout({ returnUrl: safeUrl });
             } else {
               // Permission denied - show error message but don't logout
-              this.toastrService.danger(errorMessage, '无权限');
+              this.toastrService.danger(errorMessage, 'No permission');
             }
           } else {
             // User not authenticated - silently ignore (user has logged out)

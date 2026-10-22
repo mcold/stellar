@@ -861,7 +861,7 @@ mod llm_integration_tests {
         println!("📄 Profile loaded: {} bytes\n", profile_content.len());
 
         println!("{}", sep);
-        println!("🦴 Step 1: Rule Engine Analysis (骨架)");
+        println!("🦴 Step 1: Rule Engine Analysis (Skeleton)");
         println!("{}\n", sep);
 
         let context = AnalysisContext { cluster_variables: None, cluster_id: None };
@@ -962,7 +962,7 @@ mod llm_integration_tests {
                 println!("{}", serde_json::to_string_pretty(&llm_response).unwrap());
 
                 println!("\n{}", sep);
-                println!("🔄 Step 4: Merged Result (骨架 + 血肉)");
+                println!("🔄 Step 4: Merged Result (Skeleton + Flesh)");
                 println!("{}\n", sep);
 
                 let merged =
@@ -973,11 +973,11 @@ mod llm_integration_tests {
                 println!("📊 Final Summary");
                 println!("{}\n", sep);
                 println!(
-                    "🦴 Rule Engine (骨架): {} diagnostics",
+                    "🦴 Rule Engine (Skeleton): {} diagnostics",
                     response.aggregated_diagnostics.len()
                 );
                 println!(
-                    "🩸 LLM (血肉): {} root causes, {} recommendations",
+                    "🩸 LLM (Flesh): {} root causes, {} recommendations",
                     llm_response.root_causes.len(),
                     llm_response.recommendations.len()
                 );
@@ -1301,7 +1301,7 @@ mod llm_integration_tests {
                     .unwrap_or("unknown")
                     .to_string(),
                 plan_node_id: None,
-                message: format!("{} ({}个节点)", d.message, d.node_count),
+                message: format!("{} ({} nodes)", d.message, d.node_count),
                 evidence: {
                     let mut e = HashMap::new();
                     e.insert("reason".to_string(), d.reason.clone());
@@ -1670,14 +1670,14 @@ mod prompt_generation_tests {
 
         let prompt = build_system_prompt(&request);
 
-        assert!(prompt.contains("StarRocks 内表"), "Should mention internal tables");
+        assert!(prompt.contains("StarRocks Internal Tables"), "Should mention internal tables");
         assert!(prompt.contains("ANALYZE TABLE"), "Should suggest ANALYZE for internal tables");
-        assert!(prompt.contains("分桶键"), "Should mention bucket key optimization");
+        assert!(prompt.contains("bucketing key"), "Should mention bucket key optimization");
 
-        assert!(prompt.contains("批判性思维"), "Should include critical thinking section");
-        assert!(prompt.contains("自我批评"), "Should mention self-criticism");
+        assert!(prompt.contains("Critical Thinking"), "Should include critical thinking section");
+        assert!(prompt.contains("self-critical thinking"), "Should mention self-criticism");
 
-        assert!(prompt.contains("禁止使用的参数"), "Should list forbidden parameters");
+        assert!(prompt.contains("Forbidden parameters"), "Should list forbidden parameters");
         assert!(prompt.contains("enable_short_key_index"), "Should blacklist fake params");
 
         println!("✅ Internal table prompt test passed!");
@@ -1739,11 +1739,11 @@ mod prompt_generation_tests {
 
         let prompt = build_system_prompt(&request);
 
-        assert!(prompt.contains("Iceberg 外表"), "Should mention Iceberg tables");
+        assert!(prompt.contains("Iceberg External Tables"), "Should mention Iceberg tables");
         assert!(prompt.contains("rewrite_data_files"), "Should suggest Iceberg file compaction");
         assert!(prompt.contains("DataCache"), "Should suggest DataCache for external tables");
         assert!(
-            prompt.contains("不能用 ALTER TABLE 改分桶"),
+            prompt.contains("ALTER TABLE cannot change the bucketing key"),
             "Should warn about external table limitations"
         );
 
@@ -1785,7 +1785,7 @@ mod prompt_generation_tests {
 
         assert!(prompt.contains("enable_scan_datacache"), "Should show current datacache setting");
         assert!(prompt.contains("enable_spill"), "Should show current spill setting");
-        assert!(prompt.contains("不要重复建议"), "Should warn about duplicate suggestions");
+        assert!(prompt.contains("strictly forbidden to suggest again"), "Should warn about duplicate suggestions");
 
         println!("✅ Session variables prompt test passed!");
     }
@@ -1841,8 +1841,8 @@ mod prompt_generation_tests {
 
         assert!(prompt.contains("SCAN_HIGH_FILTER_RATIO"), "Should include rule IDs");
         assert!(prompt.contains("JOIN_SKEW"), "Should include all diagnostics");
-        assert!(prompt.contains("规则引擎已识别的问题"), "Should have diagnostics section");
-        assert!(prompt.contains("隐式问题"), "Should guide to find hidden issues");
+        assert!(prompt.contains("Issues Identified by the Rule Engine"), "Should have diagnostics section");
+        assert!(prompt.contains("implicit issues"), "Should guide to find hidden issues");
 
         println!("✅ Diagnostics prompt test passed!");
     }

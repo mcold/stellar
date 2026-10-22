@@ -30,12 +30,12 @@ export class SessionsComponent implements OnInit, OnDestroy {
   refreshInterval: any;
   selectedRefreshInterval: number | 'off' = 'off'; // Default: off (Grafana style)
   refreshIntervalOptions = [
-    { value: 'off', label: '关闭' },
-    { value: 3, label: '3秒' },
-    { value: 5, label: '5秒' },
-    { value: 10, label: '10秒' },
-    { value: 30, label: '30秒' },
-    { value: 60, label: '1分钟' },
+    { value: 'off', label: 'Off' },
+    { value: 3, label: '3s' },
+    { value: 5, label: '5s' },
+    { value: 10, label: '10s' },
+    { value: 30, label: '30s' },
+    { value: 60, label: '1m' },
   ];
   private destroy$ = new Subject<void>();
   // Session duration thresholds: 1min(60s)=warn, 5min(300s)=danger
@@ -49,7 +49,7 @@ export class SessionsComponent implements OnInit, OnDestroy {
 
   settings = {
     hideSubHeader: false, // Enable search
-    noDataMessage: '当前没有活动会话',
+    noDataMessage: 'No active sessions',
     actions: {
       add: false,
       edit: false,
@@ -177,7 +177,7 @@ export class SessionsComponent implements OnInit, OnDestroy {
         console.error('[Sessions] Error loading sessions:', error);
         this.toastrService.danger(
           ErrorHandler.handleClusterError(error),
-          '错误'
+          'Error'
         );
         this.sessions = [];
         this.source.load([]);
@@ -230,10 +230,10 @@ export class SessionsComponent implements OnInit, OnDestroy {
     const session = event.data as Session;
 
     this.confirmDialogService.confirm(
-      '确认终止会话',
-      `确定要终止会话 ${session.id} 吗？`,
-      '终止',
-      '取消',
+      'Confirm termination',
+      `Are you sure you want to terminate session ${session.id}?`,
+      'Terminate',
+      'Cancel',
       'danger'
     ).subscribe(confirmed => {
       if (!confirmed) {
@@ -244,14 +244,14 @@ export class SessionsComponent implements OnInit, OnDestroy {
       this.loading = true;
       this.nodeService.killSession(session.id).subscribe({
         next: () => {
-          this.toastrService.success(`会话 ${session.id} 已成功终止`, '成功');
+          this.toastrService.success(`Session ${session.id} terminated`, 'Success');
           event.confirm.resolve();
           this.loadSessions();
         },
         error: (error) => {
           this.toastrService.danger(
-            error.error?.message || '终止会话失败',
-            '错误'
+            error.error?.message || 'Failed to terminate session',
+            'Error'
           );
           event.confirm.reject();
           this.loading = false;
@@ -374,15 +374,15 @@ export class SessionsComponent implements OnInit, OnDestroy {
         });
 
         if (sleepingSessions.length === 0) {
-          this.toastrService.info('当前没有睡眠连接', '提示');
+          this.toastrService.info('No sleeping connections', 'Hint');
           return;
         }
 
         this.confirmDialogService.confirm(
-          '确认清除睡眠连接',
-          `确定要清除 ${sleepingSessions.length} 个睡眠连接吗？`,
-          '清除',
-          '取消',
+          'Clear sleeping connections',
+          `Are you sure you want to clear ${sleepingSessions.length} sleeping connection(s)?`,
+          'Clear',
+          'Cancel',
           'warning'
         ).subscribe(confirmed => {
           if (!confirmed) {
@@ -402,9 +402,9 @@ export class SessionsComponent implements OnInit, OnDestroy {
                 if (completed === sleepingSessions.length) {
                   this.loading = false;
                   if (failCount === 0) {
-                    this.toastrService.success(`成功清除 ${successCount} 个睡眠连接`, '成功');
+                    this.toastrService.success(`Cleared ${successCount} sleeping connection(s)`, 'Success');
                   } else {
-                    this.toastrService.warning(`成功清除 ${successCount} 个，失败 ${failCount} 个`, '部分成功');
+                    this.toastrService.warning(`Cleared ${successCount}, failed ${failCount}`, 'Partial success');
                   }
                   this.loadSessions();
                 }
@@ -415,9 +415,9 @@ export class SessionsComponent implements OnInit, OnDestroy {
                 if (completed === sleepingSessions.length) {
                   this.loading = false;
                   if (successCount > 0) {
-                    this.toastrService.warning(`成功清除 ${successCount} 个，失败 ${failCount} 个`, '部分成功');
+                    this.toastrService.warning(`Cleared ${successCount}, failed ${failCount}`, 'Partial success');
                   } else {
-                    this.toastrService.danger('清除睡眠连接失败', '错误');
+                    this.toastrService.danger('Failed to clear sleeping connections', 'Error');
                   }
                   this.loadSessions();
                 }
@@ -429,7 +429,7 @@ export class SessionsComponent implements OnInit, OnDestroy {
       error: (error) => {
         this.toastrService.danger(
           ErrorHandler.handleClusterError(error),
-          '获取会话列表失败'
+          'Failed to load the session list'
         );
       },
     });
@@ -438,15 +438,15 @@ export class SessionsComponent implements OnInit, OnDestroy {
   // Batch kill all displayed sessions
   batchKillAllSessions(): void {
     if (this.sessions.length === 0) {
-      this.toastrService.warning('当前没有可查杀的会话', '提示');
+      this.toastrService.warning('No sessions to terminate', 'Hint');
       return;
     }
 
     this.confirmDialogService.confirm(
-      '确认批量查杀',
-      `确定要查杀当前显示的 ${this.sessions.length} 个会话吗？`,
-      '查杀',
-      '取消',
+      'Confirm batch termination',
+      `Are you sure you want to terminate the ${this.sessions.length} session(s) currently displayed?`,
+      'Terminate',
+      'Cancel',
       'danger'
     ).subscribe(confirmed => {
       if (!confirmed) {
@@ -466,9 +466,9 @@ export class SessionsComponent implements OnInit, OnDestroy {
             if (completed === this.sessions.length) {
               this.loading = false;
               if (failCount === 0) {
-                this.toastrService.success(`成功查杀 ${successCount} 个会话`, '成功');
+                this.toastrService.success(`Terminated ${successCount} session(s)`, 'Success');
               } else {
-                this.toastrService.warning(`成功查杀 ${successCount} 个，失败 ${failCount} 个`, '部分成功');
+                this.toastrService.warning(`Terminated ${successCount}, failed ${failCount}`, 'Partial success');
               }
               this.loadSessions();
             }
@@ -479,9 +479,9 @@ export class SessionsComponent implements OnInit, OnDestroy {
             if (completed === this.sessions.length) {
               this.loading = false;
               if (successCount > 0) {
-                this.toastrService.warning(`成功查杀 ${successCount} 个，失败 ${failCount} 个`, '部分成功');
+                this.toastrService.warning(`Terminated ${successCount}, failed ${failCount}`, 'Partial success');
               } else {
-                this.toastrService.danger('批量查杀失败', '错误');
+                this.toastrService.danger('Batch termination failed', 'Error');
               }
               this.loadSessions();
             }

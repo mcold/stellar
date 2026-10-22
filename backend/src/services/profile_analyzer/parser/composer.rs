@@ -747,8 +747,8 @@ impl ProfileComposer {
             let missing_pct =
                 (missing_fragments as f64 / total_fragments as f64 * 100.0).round() as i32;
             summary.profile_completeness_warning = Some(format!(
-                "Profile 数据不完整: {} 个 Fragment 中有 {} 个 ({}%) 的执行数据缺失，建议稍后重新查询",
-                total_fragments, missing_fragments, missing_pct
+                "The profile data is incomplete: {} of the {} fragments ({}%) are missing their execution data, try the query again later",
+                missing_fragments, total_fragments, missing_pct
             ));
         }
     }

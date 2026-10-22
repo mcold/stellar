@@ -11,7 +11,7 @@ import { SystemFunction } from '../../../../@core/data/system-function';
       <nb-card-header>
         <div class="d-flex align-items-center">
           <nb-icon icon="edit-outline" class="mr-2"></nb-icon>
-          <h5 class="mb-0">编辑自定义功能</h5>
+          <h5 class="mb-0">Edit custom function</h5>
         </div>
       </nb-card-header>
       <nb-card-body>
@@ -19,73 +19,73 @@ import { SystemFunction } from '../../../../@core/data/system-function';
           <div class="row">
             <div class="col-md-6">
               <div class="form-group">
-                <label for="category_name" class="label">分类名称 *</label>
+                <label for="category_name" class="label">Category name *</label>
                 <input
                   type="text"
                   id="category_name"
                   formControlName="category_name"
                   nbInput
                   fullWidth
-                  placeholder="请输入分类名称"
+                  placeholder="Enter the category name"
                   status="basic"
                   readonly
                 />
                 <small class="text-hint">
-                  编辑时分类名称不可修改
+                  The category name cannot be changed when editing
                 </small>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group">
-                <label for="function_name" class="label">功能名称 *</label>
+                <label for="function_name" class="label">Function name *</label>
                 <input
                   type="text"
                   id="function_name"
                   formControlName="function_name"
                   nbInput
                   fullWidth
-                  placeholder="请输入功能名称"
+                  placeholder="Enter the function name"
                   status="basic"
                 />
                 <div *ngIf="editFunctionForm.get('function_name')?.invalid && editFunctionForm.get('function_name')?.touched" class="text-danger small mt-1">
-                  功能名称是必填项
+                  Function name is required
                 </div>
               </div>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="description" class="label">功能说明 *</label>
+            <label for="description" class="label">Description *</label>
             <textarea
               id="description"
               formControlName="description"
               nbInput
               fullWidth
               rows="3"
-              placeholder="请输入功能说明"
+              placeholder="Enter the description"
               status="basic"
             ></textarea>
             <div *ngIf="editFunctionForm.get('description')?.invalid && editFunctionForm.get('description')?.touched" class="text-danger small mt-1">
-              功能说明是必填项
+              Description is required
             </div>
           </div>
 
           <div class="form-group">
-            <label for="sql_query" class="label">SQL查询 *</label>
+            <label for="sql_query" class="label">SQL query *</label>
             <textarea
               id="sql_query"
               formControlName="sql_query"
               nbInput
               fullWidth
               rows="6"
-              placeholder="请输入SQL查询语句（只支持SELECT和SHOW语句）"
+              placeholder="Enter the SQL query (only SELECT and SHOW statements are supported)"
               status="basic"
             ></textarea>
             <div *ngIf="editFunctionForm.get('sql_query')?.invalid && editFunctionForm.get('sql_query')?.touched" class="text-danger small mt-1">
-              SQL查询是必填项
+              SQL query is required
             </div>
             <small class="text-hint">
-              只支持SELECT和SHOW类型的SQL查询语句
+              Only SELECT and SHOW SQL statements are supported
             </small>
           </div>
         </form>
@@ -99,7 +99,7 @@ import { SystemFunction } from '../../../../@core/data/system-function';
             (click)="onCancel()"
           >
             <nb-icon icon="close-outline"></nb-icon>
-            取消
+            Cancel
           </button>
           <button
             type="button"
@@ -109,7 +109,7 @@ import { SystemFunction } from '../../../../@core/data/system-function';
             (click)="onSubmit()"
           >
             <nb-icon icon="checkmark-outline"></nb-icon>
-            保存
+            Save
           </button>
         </div>
       </nb-card-footer>

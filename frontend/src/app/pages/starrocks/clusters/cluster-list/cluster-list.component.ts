@@ -19,9 +19,9 @@ export class ClusterListComponent implements OnInit {
   settings = {
     mode: 'external',
     hideSubHeader: false,  // Enable search
-    noDataMessage: '暂无集群数据，点击上方按钮添加集群',
+    noDataMessage: 'No cluster data. Click the button above to add a cluster',
     actions: {
-      columnTitle: '操作',
+      columnTitle: 'Actions',
       add: false,
       edit: true,
       delete: true,
@@ -45,37 +45,37 @@ export class ClusterListComponent implements OnInit {
         width: '5%',
       },
       name: {
-        title: '集群名称',
+        title: 'Cluster Name',
         type: 'string',
       },
       fe_host: {
-        title: 'FE 地址',
+        title: 'FE Address',
         type: 'string',
       },
       fe_http_port: {
-        title: 'HTTP 端口',
+        title: 'HTTP Port',
         type: 'number',
         width: '10%',
       },
       fe_query_port: {
-        title: '查询端口',
+        title: 'Query Port',
         type: 'number',
         width: '10%',
       },
       username: {
-        title: '用户名',
+        title: 'Username',
         type: 'string',
         width: '10%',
       },
       description: {
-        title: '描述',
+        title: 'Description',
         type: 'string',
       },
       created_at: {
-        title: '创建时间',
+        title: 'Created At',
         type: 'string',
         valuePrepareFunction: (date: string) => {
-          return new Date(date).toLocaleString('zh-CN');
+          return new Date(date).toLocaleString('en-US');
         },
       },
     },
@@ -103,7 +103,7 @@ export class ClusterListComponent implements OnInit {
       error: (error) => {
         this.toastrService.danger(
           ErrorHandler.extractErrorMessage(error),
-          '错误',
+          'Error',
         );
         this.loading = false;
       },
@@ -129,13 +129,13 @@ export class ClusterListComponent implements OnInit {
 
         this.clusterService.deleteCluster(cluster.id).subscribe({
           next: () => {
-            this.toastrService.success('集群删除成功', '成功');
+            this.toastrService.success('Cluster deleted', 'Success');
             this.loadClusters();
           },
           error: (error) => {
             this.toastrService.danger(
               ErrorHandler.extractErrorMessage(error),
-              '错误',
+              'Error',
             );
           },
         });
@@ -151,19 +151,19 @@ export class ClusterListComponent implements OnInit {
       next: (health) => {
         if (health.status === 'healthy') {
           const details = health.checks.map(c => `${c.name}: ${c.message}`).join('\n');
-          this.toastrService.success(details, '健康检查通过');
+          this.toastrService.success(details, 'Health check passed');
         } else if (health.status === 'warning') {
           const details = health.checks.map(c => `${c.name}: ${c.message}`).join('\n');
-          this.toastrService.warning(details, '健康检查警告');
+          this.toastrService.warning(details, 'Health check warning');
         } else {
           const details = health.checks.map(c => `${c.name}: ${c.message}`).join('\n');
-          this.toastrService.danger(details, '健康检查失败');
+          this.toastrService.danger(details, 'Health check failed');
         }
       },
       error: (error) => {
         this.toastrService.danger(
           ErrorHandler.extractErrorMessage(error),
-          '错误',
+          'Error',
         );
       },
     });

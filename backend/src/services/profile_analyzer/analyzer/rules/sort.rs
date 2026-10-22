@@ -13,7 +13,7 @@ impl DiagnosticRule for T001SortRowsTooLarge {
         "T001"
     }
     fn name(&self) -> &str {
-        "排序行数过多"
+        "Too many rows sorted"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -33,14 +33,14 @@ impl DiagnosticRule for T001SortRowsTooLarge {
                     context.node.plan_node_id.unwrap_or(-1)),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "排序行数过多 ({:.0} 行)，可能导致性能问题",
+                    "Too many rows sorted ({:.0} rows), which may cause performance problems",
                     input_rows
                 ),
-                reason: "排序数据量过大，消耗大量 CPU 和内存资源。考虑添加过滤条件减少排序数据量或使用 TopN 优化。".to_string(),
+                reason: "The sorted data volume is too large and consumes a lot of CPU and memory. Consider adding filter conditions to reduce the sorted volume or use a TopN optimization.".to_string(),
                 suggestions: vec![
-                    "添加 LIMIT 限制结果集大小".to_string(),
-                    "检查是否可以使用 Top-N 优化".to_string(),
-                    "考虑使用物化视图预排序".to_string(),
+                    "Add LIMIT to bound the result set size".to_string(),
+                    "Check whether Top-N optimization applies".to_string(),
+                    "Consider a pre-sorted materialized view".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -60,7 +60,7 @@ impl DiagnosticRule for T002SortSpill {
         "T002"
     }
     fn name(&self) -> &str {
-        "排序发生落盘"
+        "Sort spilled to disk"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -84,15 +84,15 @@ impl DiagnosticRule for T002SortSpill {
                 ),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "Sort 发生磁盘溢写，溢写数据量 {}",
+                    "The sort spilled to disk, {} written",
                     format_bytes(spill_bytes as u64)
                 ),
-                reason: "排序数据量超出内存限制，触发磁盘溢写。Spill 会显著降低排序性能。"
+                reason: "The sorted data volume exceeds the memory limit and triggers a disk spill. A spill slows the sort down considerably."
                     .to_string(),
                 suggestions: vec![
-                    "增加内存限制以避免 Spill".to_string(),
-                    "添加 LIMIT 减少排序数据量".to_string(),
-                    "检查是否可以优化查询减少排序数据".to_string(),
+                    "Raise the memory limit to avoid the spill".to_string(),
+                    "Add LIMIT to reduce the sorted data volume".to_string(),
+                    "Check whether the query can be optimized to sort less data".to_string(),
                 ],
                 parameter_suggestions: {
                     let mut suggestions = Vec::new();
@@ -121,7 +121,7 @@ impl DiagnosticRule for T003SortMemoryHigh {
         "T003"
     }
     fn name(&self) -> &str {
-        "排序内存过高"
+        "Sort memory usage too high"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -146,12 +146,12 @@ impl DiagnosticRule for T003SortMemoryHigh {
                     context.node.plan_node_id.unwrap_or(-1)
                 ),
                 plan_node_id: context.node.plan_node_id,
-                message: format!("排序内存使用 {}", format_bytes(memory as u64)),
-                reason: "排序占用内存过高，可能导致内存压力或影响其他算子。".to_string(),
+                message: format!("Sort memory usage {}", format_bytes(memory as u64)),
+                reason: "The sort takes too much memory, which may cause memory pressure or hurt the other operators.".to_string(),
                 suggestions: vec![
-                    "添加 LIMIT 减少排序数据量".to_string(),
-                    "启用 Spill 功能避免 OOM".to_string(),
-                    "考虑分批处理".to_string(),
+                    "Add LIMIT to reduce the sorted data volume".to_string(),
+                    "Enable the spill feature to avoid OOM".to_string(),
+                    "Consider processing in batches".to_string(),
                 ],
                 parameter_suggestions: {
                     let mut suggestions = Vec::new();
@@ -177,7 +177,7 @@ impl DiagnosticRule for W001WindowMemoryHigh {
         "W001"
     }
     fn name(&self) -> &str {
-        "窗口函数内存过高"
+        "Window function memory usage too high"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -200,12 +200,12 @@ impl DiagnosticRule for W001WindowMemoryHigh {
                     context.node.plan_node_id.unwrap_or(-1)
                 ),
                 plan_node_id: context.node.plan_node_id,
-                message: format!("窗口函数内存使用 {}", format_bytes(memory)),
-                reason: "窗口函数占用内存过高，可能是窗口分区过大或窗口函数状态过大。".to_string(),
+                message: format!("Window function memory usage {}", format_bytes(memory)),
+                reason: "The window function takes too much memory, probably because the window partition is too large or the window function state is too large.".to_string(),
                 suggestions: vec![
-                    "检查 PARTITION BY 基数是否过高".to_string(),
-                    "考虑减少窗口大小".to_string(),
-                    "检查是否可以使用聚合函数替代".to_string(),
+                    "Check whether the PARTITION BY cardinality is too high".to_string(),
+                    "Consider a smaller window".to_string(),
+                    "Check whether an aggregate function can be used instead".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -224,7 +224,7 @@ impl DiagnosticRule for T004SortMergingTimeLong {
         "T004"
     }
     fn name(&self) -> &str {
-        "Sort 合并时间过长"
+        "Sort merge phase takes too long"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -249,11 +249,11 @@ impl DiagnosticRule for T004SortMergingTimeLong {
                     context.node.plan_node_id.unwrap_or(-1)
                 ),
                 plan_node_id: context.node.plan_node_id,
-                message: format!("Sort 合并阶段占比过高 ({:.1}%)", ratio * 100.0),
-                reason: "多路归并排序时间过长，可能是归并路数过多或单路数据量大。".to_string(),
+                message: format!("The sort merge phase takes {:.1}% of the time", ratio * 100.0),
+                reason: "The multi-way merge sort takes too long, probably because there are too many merge streams or each of them holds too much data.".to_string(),
                 suggestions: vec![
-                    "检查并行度设置是否合理".to_string(),
-                    "考虑减少分区数量".to_string(),
+                    "Check whether the parallelism setting is reasonable".to_string(),
+                    "Consider reducing the number of partitions".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -272,7 +272,7 @@ impl DiagnosticRule for T005MergeWaitingLong {
         "T005"
     }
     fn name(&self) -> &str {
-        "Merge 等待上游过长"
+        "Merge waits too long for the upstream"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -297,11 +297,11 @@ impl DiagnosticRule for T005MergeWaitingLong {
                     context.node.plan_node_id.unwrap_or(-1)
                 ),
                 plan_node_id: context.node.plan_node_id,
-                message: format!("Merge 等待上游时间占比 {:.1}%", ratio * 100.0),
-                reason: "Merge 算子等待上游数据时间过长，上游算子可能存在性能瓶颈。".to_string(),
+                message: format!("The merge waits {:.1}% of the time for the upstream", ratio * 100.0),
+                reason: "The Merge operator waits too long for the upstream data, so the upstream operator may have a performance bottleneck.".to_string(),
                 suggestions: vec![
-                    "首先优化生产者 operator".to_string(),
-                    "扩大管道缓冲区".to_string(),
+                    "Optimize the producer operator first".to_string(),
+                    "Enlarge the pipeline buffer".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,

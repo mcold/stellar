@@ -30,7 +30,7 @@ impl DiagnosticRule for S001DataSkew {
         "S001"
     }
     fn name(&self) -> &str {
-        "Scan 数据倾斜"
+        "Scan data skew"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -63,17 +63,20 @@ impl DiagnosticRule for S001DataSkew {
             let (reason, suggestions) = if is_internal {
                 (
                     format!(
-                        "内表「{}」数据在各节点分布不均（max {:.0} 行，min {:.0} 行）。通常是分桶键选择不当导致数据倾斜。",
+                        "Internal table 「{}」 has an uneven data distribution across nodes (max {:.0} rows, min {:.0} rows). Usually caused by a poorly chosen bucket key.",
                         table, max_rows, min_rows
                     ),
                     vec![
-                        format!("检查表「{}」的分桶键是否选择了高基数列", table),
                         format!(
-                            "查看数据分布: SELECT COUNT(*) FROM {} GROUP BY <bucket_key> ORDER BY 1 DESC",
+                            "Check whether the bucket key of table 「{}」 is a high-cardinality column",
                             table
                         ),
                         format!(
-                            "必要时重建分桶: ALTER TABLE {} DISTRIBUTED BY HASH(<high_cardinality_column>) BUCKETS N",
+                            "Inspect the data distribution: SELECT COUNT(*) FROM {} GROUP BY <bucket_key> ORDER BY 1 DESC",
+                            table
+                        ),
+                        format!(
+                            "Rebuild the buckets if needed: ALTER TABLE {} DISTRIBUTED BY HASH(<high_cardinality_column>) BUCKETS N",
                             table
                         ),
                     ],
@@ -81,13 +84,17 @@ impl DiagnosticRule for S001DataSkew {
             } else {
                 (
                     format!(
-                        "外表「{}」数据在各节点分布不均（max {:.0} 行，min {:.0} 行）。可能是 Hive 分区大小不均或文件分布不均。",
+                        "External table 「{}」 has an uneven data distribution across nodes (max {:.0} rows, min {:.0} rows). This may be caused by uneven Hive partition sizes or uneven file placement.",
                         table, max_rows, min_rows
                     ),
                     vec![
-                        format!("检查外表「{}」的分区数据量是否均衡", table),
-                        "检查是否存在热点分区或超大文件".to_string(),
-                        "考虑在 Hive 侧重新分区或合并小文件".to_string(),
+                        format!(
+                            "Check whether the partitions of external table 「{}」 are balanced in size",
+                            table
+                        ),
+                        "Check for hot partitions or oversized files".to_string(),
+                        "Consider repartitioning or merging small files on the Hive side"
+                            .to_string(),
                     ],
                 )
             };
@@ -103,7 +110,7 @@ impl DiagnosticRule for S001DataSkew {
                 ),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "Scan 存在数据倾斜，max/avg 比率为 {:.2} (阈值: {:.1})",
+                    "Scan has data skew, max/avg ratio is {:.2} (threshold: {:.1})",
                     ratio, skew_threshold
                 ),
                 reason,
@@ -127,7 +134,7 @@ impl DiagnosticRule for S003PoorFilter {
         "S003"
     }
     fn name(&self) -> &str {
-        "过滤效果差"
+        "Poor filter effectiveness"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -151,34 +158,34 @@ impl DiagnosticRule for S003PoorFilter {
             let (reason, suggestions) = if is_internal {
                 (
                     format!(
-                        "内表「{}」扫描了 {:.0} 行但仅过滤掉 {:.1}%。可通过 ZoneMap、BloomFilter 索引或谓词下推提前过滤。",
+                        "Internal table 「{}」 scanned {:.0} rows but filtered out only {:.1}%. ZoneMap, Bloom filter indexes or predicate pushdown can filter earlier.",
                         table,
                         raw_rows_read,
                         (1.0 - ratio) * 100.0
                     ),
                     vec![
-                        format!("为表「{}」的过滤列添加 ZoneMap 或 BloomFilter 索引", table),
-                        "检查 WHERE 条件是否支持下推（避免函数包裹、类型转换）".to_string(),
-                        format!("检查表「{}」的分区是否能裁剪", table),
-                        "通过 EXPLAIN 查看谓词下推情况".to_string(),
+                        format!("Add a ZoneMap or Bloom filter index for the filtered columns of table 「{}」", table),
+                        "Check whether the WHERE conditions support pushdown (avoid wrapping functions or type casts)".to_string(),
+                        format!("Check whether the partitions of table 「{}」 can be pruned", table),
+                        "Use EXPLAIN to inspect the predicate pushdown".to_string(),
                     ],
                 )
             } else {
                 (
                     format!(
-                        "外表「{}」扫描了 {:.0} 行但仅过滤掉 {:.1}%。外表过滤依赖 Hive 分区裁剪和文件格式的统计信息。",
+                        "External table 「{}」 scanned {:.0} rows but filtered out only {:.1}%. Filtering external tables relies on Hive partition pruning and on the statistics of the file format.",
                         table,
                         raw_rows_read,
                         (1.0 - ratio) * 100.0
                     ),
                     vec![
                         format!(
-                            "检查外表「{}」的 Hive 分区是否能裁剪（WHERE 条件包含分区列）",
+                            "Check whether the Hive partitions of external table 「{}」 can be pruned (the WHERE clause should include the partition column)",
                             table
                         ),
-                        "ORC/Parquet 文件利用 min/max 统计信息过滤，确保文件有 statistics"
+                        "ORC/Parquet files use min/max statistics for filtering, make sure the files carry statistics"
                             .to_string(),
-                        "检查 WHERE 条件是否支持下推到外部存储".to_string(),
+                        "Check whether the WHERE conditions support pushdown to the external storage".to_string(),
                     ],
                 )
             };
@@ -194,7 +201,7 @@ impl DiagnosticRule for S003PoorFilter {
                 ),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "过滤效果差，仅过滤了 {:.1}% 的数据 (读取 {:.0} 行 / 原始 {:.0} 行)",
+                    "Poor filter effectiveness, only {:.1}% of the data was filtered (read {:.0} rows / raw {:.0} rows)",
                     (1.0 - ratio) * 100.0,
                     rows_read,
                     raw_rows_read
@@ -219,7 +226,7 @@ impl DiagnosticRule for S007ColdStorage {
         "S007"
     }
     fn name(&self) -> &str {
-        "冷存储访问"
+        "Cold storage access"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -253,14 +260,14 @@ impl DiagnosticRule for S007ColdStorage {
                     context.node.plan_node_id.unwrap_or(-1)),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "IO 时间占比 {:.1}%，读取数据量 {}，可能存在存储瓶颈",
+                    "IO time share {:.1}%, {} read, there may be a storage bottleneck",
                     ratio * 100.0, format_bytes(bytes_read as u64)
                 ),
-                reason: "数据存储在冷存储（如对象存储）上，IO 延迟较高。冷存储的 IOPS 和吞吐量通常低于本地 SSD。".to_string(),
+                reason: "The data is stored on cold storage (e.g. object storage), where IO latency is high. Cold storage usually offers lower IOPS and throughput than a local SSD.".to_string(),
                 suggestions: vec![
-                    "检查存储性能，考虑使用 SSD".to_string(),
-                    "增大 PageCache 缓存".to_string(),
-                    "检查网络带宽（如果是远程存储）".to_string(),
+                    "Check the storage performance, consider using SSD".to_string(),
+                    "Increase the PageCache size".to_string(),
+                    "Check the network bandwidth (for remote storage)".to_string(),
                 ],
                 parameter_suggestions: {
                     let mut suggestions = Vec::new();
@@ -292,7 +299,7 @@ impl DiagnosticRule for S009LowCacheHit {
         "S009"
     }
     fn name(&self) -> &str {
-        "缓存命中率低"
+        "Low cache hit rate"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -327,18 +334,18 @@ impl DiagnosticRule for S009LowCacheHit {
                         context.node.plan_node_id.unwrap_or(-1)),
                     plan_node_id: context.node.plan_node_id,
                     message: format!(
-                        "DataCache 命中率 {:.1}%，{:.1}% 数据从远程存储读取 (本地: {}, 远程: {})",
+                        "DataCache hit rate {:.1}%, {:.1}% of the data was read from remote storage (local: {}, remote: {})",
                         hit_rate * 100.0,
                         miss_rate,
                         format_bytes(bytes_local as u64),
                         format_bytes(bytes_remote as u64)
                     ),
-                    reason: "存算分离架构下，DataCache 是提升查询性能的关键。当大量数据需要从远程存储（如 S3/OSS）读取时，网络延迟会显著影响查询性能。".to_string(),
+                    reason: "In a disaggregated storage architecture, DataCache is the key to query performance. When a large amount of data must be read from remote storage (e.g. S3/OSS), network latency noticeably hurts query performance.".to_string(),
                     suggestions: vec![
-                        "增大 DataCache 容量 (datacache_disk_size)".to_string(),
-                        "检查 DataCache 磁盘空间是否充足".to_string(),
-                        "对热点数据执行缓存预热 (CACHE SELECT)".to_string(),
-                        "检查是否有其他查询竞争缓存资源".to_string(),
+                        "Increase the DataCache capacity (datacache_disk_size)".to_string(),
+                        "Check whether the DataCache has enough disk space".to_string(),
+                        "Warm up the cache for hot data (CACHE SELECT)".to_string(),
+                        "Check whether other queries compete for the cache".to_string(),
                     ],
 
                     parameter_suggestions: [
@@ -375,16 +382,16 @@ impl DiagnosticRule for S009LowCacheHit {
                         context.node.plan_node_id.unwrap_or(-1)),
                     plan_node_id: context.node.plan_node_id,
                     message: format!(
-                        "DataCache IO 命中率 {:.1}%，{:.1}% IO 访问远程存储 (本地: {:.0}, 远程: {:.0})",
+                        "DataCache IO hit rate {:.1}%, {:.1}% of the IO accesses remote storage (local: {:.0}, remote: {:.0})",
                         hit_rate * 100.0,
                         (1.0 - hit_rate) * 100.0,
                         io_local,
                         io_remote
                     ),
-                    reason: "存算分离架构下，DataCache 是提升查询性能的关键。当大量 IO 请求需要访问远程存储时，网络延迟会显著影响查询性能。".to_string(),
+                    reason: "In a disaggregated storage architecture, DataCache is the key to query performance. When a large number of IO requests have to reach remote storage, network latency noticeably hurts query performance.".to_string(),
                     suggestions: vec![
-                        "增大 DataCache 容量 (datacache_disk_size)".to_string(),
-                        "对热点数据执行缓存预热 (CACHE SELECT)".to_string(),
+                        "Increase the DataCache capacity (datacache_disk_size)".to_string(),
+                        "Warm up the cache for hot data (CACHE SELECT)".to_string(),
                     ],
 
                     parameter_suggestions: context.suggest_parameter(
@@ -415,13 +422,13 @@ impl DiagnosticRule for S009LowCacheHit {
                             context.node.plan_node_id.unwrap_or(-1)),
                         plan_node_id: context.node.plan_node_id,
                         message: format!(
-                            "PageCache 命中率仅 {:.1}% ({:.0}/{:.0} pages)",
+                            "PageCache hit rate is only {:.1}% ({:.0}/{:.0} pages)",
                             hit_rate * 100.0, cached, total
                         ),
-                        reason: "PageCache 命中率低，大量数据需要从磁盘读取。可能是缓存容量不足或数据访问模式不适合缓存。".to_string(),
+                        reason: "The PageCache hit rate is low, so a lot of data has to be read from disk. The cache may be too small, or the access pattern may not suit caching.".to_string(),
                         suggestions: vec![
-                            "增大 PageCache 容量 (storage_page_cache_limit)".to_string(),
-                            "检查是否有其他查询竞争缓存".to_string(),
+                            "Increase the PageCache capacity (storage_page_cache_limit)".to_string(),
+                            "Check whether other queries compete for the cache".to_string(),
                         ],
                     parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -443,7 +450,7 @@ impl DiagnosticRule for S010RFNotEffective {
         "S010"
     }
     fn name(&self) -> &str {
-        "Scan Runtime Filter 未生效"
+        "Scan Runtime Filter not effective"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -465,20 +472,27 @@ impl DiagnosticRule for S010RFNotEffective {
                     context.node.plan_node_id.unwrap_or(-1)
                 ),
                 plan_node_id: context.node.plan_node_id,
-                message: format!("Runtime Filter 未过滤任何行，扫描了 {:.0} 行", raw_rows),
+                message: format!(
+                    "The Runtime Filter filtered no rows, {:.0} rows were scanned",
+                    raw_rows
+                ),
                 reason: {
                     let table = context.get_full_table_name();
                     format!(
-                        "表「{}」扫描了 {:.0} 行但 Runtime Filter 未过滤任何数据。可能是 RF 构建失败、超时或选择性差。",
+                        "Table 「{}」 scanned {:.0} rows but the Runtime Filter filtered nothing. The RF build may have failed, timed out, or have poor selectivity.",
                         table, raw_rows
                     )
                 },
                 suggestions: {
                     let table = context.get_full_table_name();
                     vec![
-                        format!("检查 Join 侧是否生成了针对「{}」的 Runtime Filter", table),
-                        "确认 enable_global_runtime_filter = true".to_string(),
-                        "检查 RF 是否因 Build 端数据量过大而被跳过".to_string(),
+                        format!(
+                            "Check whether the Join side produced a Runtime Filter for 「{}」",
+                            table
+                        ),
+                        "Make sure enable_global_runtime_filter = true".to_string(),
+                        "Check whether the RF was skipped because the build side is too large"
+                            .to_string(),
                     ]
                 },
                 parameter_suggestions: {
@@ -506,7 +520,7 @@ impl DiagnosticRule for S011SoftDeletes {
         "S011"
     }
     fn name(&self) -> &str {
-        "累积软删除过多"
+        "Too many accumulated soft deletes"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -556,18 +570,21 @@ impl DiagnosticRule for S011SoftDeletes {
                 ),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "表 {} 软删除行占比 {:.1}%，建议执行 Compaction",
+                    "Soft-deleted rows are {:.1}% of table {}, a Compaction is recommended",
                     full_table_name,
                     ratio * 100.0
                 ),
                 reason: format!(
-                    "表 {} 中存在大量软删除记录 ({:.0} 行)，扫描时需要过滤这些已删除的行，影响查询性能。建议执行 Compaction 清理删除标记。",
+                    "Table {} contains a large number of soft-deleted records ({:.0} rows), which have to be filtered out during the scan and hurt query performance. Run a Compaction to clear the delete markers.",
                     full_table_name, del_vec_rows
                 ),
                 suggestions: vec![
-                    format!("执行 Compaction: {}", compaction_cmd),
-                    "检查 Compaction 状态: SHOW PROC '/compactions';".to_string(),
-                    format!("查看表 Tablet 状态: SHOW TABLET FROM {};", full_table_name),
+                    format!("Run Compaction: {}", compaction_cmd),
+                    "Check the Compaction status: SHOW PROC '/compactions';".to_string(),
+                    format!(
+                        "Inspect the tablet status of the table: SHOW TABLET FROM {};",
+                        full_table_name
+                    ),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -589,7 +606,7 @@ impl DiagnosticRule for S002IOSkew {
         "S002"
     }
     fn name(&self) -> &str {
-        "Scan IO 倾斜"
+        "Scan IO skew"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -621,9 +638,9 @@ impl DiagnosticRule for S002IOSkew {
                 severity: RuleSeverity::Warning,
                 node_path: format!("{} (plan_node_id={})", context.node.operator_name, context.node.plan_node_id.unwrap_or(-1)),
                 plan_node_id: context.node.plan_node_id,
-                message: format!("Scan IO 耗时存在倾斜，max/avg 比率为 {:.2} (阈值: {:.1})", ratio, skew_threshold),
-                reason: "Scan 算子多个实例在读取数据时，部分实例花费的时间显著大于其它实例。可能是节点 IO 使用率不均或数据在节点上分布不均。".to_string(),
-                suggestions: vec!["检查节点 IO 使用率是否不均".to_string(), "检查存储设备是否存在性能问题".to_string()],
+                message: format!("Scan IO time is skewed, max/avg ratio is {:.2} (threshold: {:.1})", ratio, skew_threshold),
+                reason: "Some instances of the Scan operator take far more time to read the data than the others. This is usually caused by uneven node IO utilization or uneven data placement across nodes.".to_string(),
+                suggestions: vec!["Check whether the node IO utilization is uneven".to_string(), "Check whether the storage devices have performance problems".to_string()],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
             })
@@ -642,7 +659,7 @@ impl DiagnosticRule for S004PredicateNotPushed {
         "S004"
     }
     fn name(&self) -> &str {
-        "谓词未下推"
+        "Predicate not pushed down"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -658,15 +675,17 @@ impl DiagnosticRule for S004PredicateNotPushed {
             let is_internal = context.is_internal_table();
             let suggestions = if is_internal {
                 vec![
-                    "将谓词重写为简单比较（避免函数包裹）".to_string(),
-                    "为过滤列添加 ZoneMap/Bloom 索引".to_string(),
-                    "检查列类型是否匹配（避免隐式转换）".to_string(),
+                    "Rewrite the predicates as simple comparisons (avoid wrapping functions)"
+                        .to_string(),
+                    "Add a ZoneMap/Bloom index for the filtered columns".to_string(),
+                    "Check whether the column types match (avoid implicit casts)".to_string(),
                 ]
             } else {
                 vec![
-                    "将谓词重写为简单比较（避免函数包裹）".to_string(),
-                    "确保过滤列在 Hive 分区列中".to_string(),
-                    "检查 ORC/Parquet 文件是否有统计信息".to_string(),
+                    "Rewrite the predicates as simple comparisons (avoid wrapping functions)"
+                        .to_string(),
+                    "Make sure the filtered column is a Hive partition column".to_string(),
+                    "Check whether the ORC/Parquet files carry statistics".to_string(),
                 ]
             };
 
@@ -676,8 +695,8 @@ impl DiagnosticRule for S004PredicateNotPushed {
                 severity: RuleSeverity::Warning,
                 node_path: format!("{} (plan_node_id={})", context.node.operator_name, context.node.plan_node_id.unwrap_or(-1)),
                 plan_node_id: context.node.plan_node_id,
-                message: format!("谓词未能下推到存储层，{:.0} 行 ({:.1}%) 在表达式层过滤", pred_filter, pred_filter / raw_rows * 100.0),
-                reason: "查询条件未能下推到存储层执行，导致需要在计算层过滤大量数据。可能是查询条件包含函数、类型不匹配或不支持下推的表达式。".to_string(),
+                message: format!("The predicate was not pushed down to the storage layer, {:.0} rows ({:.1}%) are filtered at the expression layer", pred_filter, pred_filter / raw_rows * 100.0),
+                reason: "The query conditions were not pushed down to the storage layer, so a lot of data has to be filtered in the compute layer. This is usually because the conditions wrap functions, have mismatched types, or use expressions that cannot be pushed down.".to_string(),
                 suggestions,
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -696,7 +715,7 @@ impl DiagnosticRule for S005IOThreadPoolSaturation {
         "S005"
     }
     fn name(&self) -> &str {
-        "IO 线程池饱和"
+        "IO thread pool saturated"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -713,9 +732,9 @@ impl DiagnosticRule for S005IOThreadPoolSaturation {
                 severity: RuleSeverity::Warning,
                 node_path: format!("{} (plan_node_id={})", context.node.operator_name, context.node.plan_node_id.unwrap_or(-1)),
                 plan_node_id: context.node.plan_node_id,
-                message: format!("IO 线程池可能已饱和，等待时间 {:.1}s", wait_time / 1_000_000_000.0),
-                reason: "IO 线程池使用率过高，导致 IO 任务等待时间过长。可能是并发查询过多或存储性能不足。".to_string(),
-                suggestions: vec!["增加 BE 上的 max_io_threads 配置".to_string()],
+                message: format!("The IO thread pool may be saturated, wait time {:.1}s", wait_time / 1_000_000_000.0),
+                reason: "The IO thread pool is over-utilized, so IO tasks wait too long. This is usually caused by too many concurrent queries or by insufficient storage performance.".to_string(),
+                suggestions: vec!["Increase the max_io_threads configuration on the BE".to_string()],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
             })
@@ -733,7 +752,7 @@ impl DiagnosticRule for S006RowsetFragmentation {
         "S006"
     }
     fn name(&self) -> &str {
-        "Rowset 碎片化"
+        "Rowset fragmentation"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -756,20 +775,20 @@ impl DiagnosticRule for S006RowsetFragmentation {
                 ),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "Rowset 数量过多 ({:.0})，初始化耗时 {:.1}ms",
+                    "Too many Rowsets ({:.0}), segment initialization took {:.1}ms",
                     rowsets,
                     init_time / 1_000_000.0
                 ),
                 reason: format!(
-                    "表「{}」的 Rowset 数量过多（{:.0} 个），导致 Segment 初始化耗时 {:.1}ms。通常是频繁小批量导入或 Compaction 不及时导致。",
+                    "Table 「{}」 has too many Rowsets ({:.0}), which makes the segment initialization take {:.1}ms. This is usually caused by frequent small-batch loads or by Compaction not keeping up.",
                     table,
                     rowsets,
                     init_time / 1_000_000.0
                 ),
                 suggestions: vec![
-                    format!("触发手动 Compaction: ALTER TABLE {} COMPACT", table),
-                    format!("查看 Compaction 状态: SHOW TABLET FROM {}", table),
-                    "批量合并小型导入任务，减少导入频率".to_string(),
+                    format!("Trigger a manual Compaction: ALTER TABLE {} COMPACT", table),
+                    format!("Check the Compaction status: SHOW TABLET FROM {}", table),
+                    "Batch the small load jobs together to reduce the load frequency".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -789,7 +808,7 @@ impl DiagnosticRule for S008ZoneMapNotEffective {
         "S008"
     }
     fn name(&self) -> &str {
-        "ZoneMap 索引未生效"
+        "ZoneMap index not effective"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -811,15 +830,15 @@ impl DiagnosticRule for S008ZoneMapNotEffective {
                     context.node.plan_node_id.unwrap_or(-1)
                 ),
                 plan_node_id: context.node.plan_node_id,
-                message: "ZoneMap 索引未能过滤数据".to_string(),
+                message: "The ZoneMap index filtered no data".to_string(),
                 reason: format!(
-                    "表「{}」扫描了 {:.0} 行但 ZoneMap 未过滤任何数据。ZoneMap 基于排序键的 min/max 值过滤，需要 WHERE 条件包含排序键前缀列。",
+                    "Table 「{}」 scanned {:.0} rows but the ZoneMap filtered no data. The ZoneMap filters on the min/max values of the sort key, so the WHERE clause must include a prefix column of the sort key.",
                     table, raw_rows
                 ),
                 suggestions: vec![
-                    format!("查看表「{}」的排序键: SHOW CREATE TABLE {}", table, table),
-                    "确保 WHERE 条件包含排序键的前缀列（如 WHERE dt = '2024-01-01'）".to_string(),
-                    "避免在排序键上使用函数（如 WHERE DATE(dt) = ...）".to_string(),
+                    format!("Inspect the sort key of table 「{}」: SHOW CREATE TABLE {}", table, table),
+                    "Make sure the WHERE clause includes a prefix column of the sort key (e.g. WHERE dt = '2024-01-01')".to_string(),
+                    "Avoid functions on the sort key (e.g. WHERE DATE(dt) = ...)".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -845,7 +864,7 @@ impl DiagnosticRule for S012BitmapIndexNotEffective {
         "S012"
     }
     fn name(&self) -> &str {
-        "Bitmap 索引未生效"
+        "Bitmap index not effective"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -868,14 +887,14 @@ impl DiagnosticRule for S012BitmapIndexNotEffective {
                         context.node.plan_node_id.unwrap_or(-1)),
                     plan_node_id: context.node.plan_node_id,
                     message: format!(
-                        "Bitmap 索引未过滤数据，表达式过滤了 {:.0} 行",
+                        "The Bitmap index filtered no data, the expression filtered {:.0} rows",
                         expr_filter
                     ),
-                    reason: "Bitmap 索引适用于基数较低且大量重复的字段（如性别、状态）。如果查询条件包含这类字段但未命中索引，可能是未创建索引或查询条件不支持。".to_string(),
+                    reason: "Bitmap indexes fit low-cardinality, highly repetitive columns (e.g. gender, status). If the query conditions contain such a column but do not hit the index, the index may be missing or the conditions may be unsupported.".to_string(),
                 suggestions: vec![
-                        "对低基数列（如状态、类型）创建 Bitmap 索引".to_string(),
-                        "确保查询条件使用等值匹配 (=, IN)".to_string(),
-                        "检查 Profile 中 BitmapIndexFilterRows 指标".to_string(),
+                        "Create a Bitmap index for low-cardinality columns (e.g. status, type)".to_string(),
+                        "Make sure the query conditions use equality matching (=, IN)".to_string(),
+                        "Check the BitmapIndexFilterRows metric in the profile".to_string(),
                     ],
                     parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -901,7 +920,7 @@ impl DiagnosticRule for S013BloomFilterNotEffective {
         "S013"
     }
     fn name(&self) -> &str {
-        "Bloom Filter 索引未生效"
+        "Bloom filter index not effective"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -924,15 +943,15 @@ impl DiagnosticRule for S013BloomFilterNotEffective {
                         context.node.plan_node_id.unwrap_or(-1)),
                     plan_node_id: context.node.plan_node_id,
                     message: format!(
-                        "Bloom Filter 索引未过滤数据，表达式过滤了 {:.0} 行",
+                        "The Bloom filter index filtered no data, the expression filtered {:.0} rows",
                         expr_filter
                     ),
-                    reason: "Bloom Filter 索引适用于高基数列（如 ID 列）的等值查询。仅支持 = 和 IN 条件，且 TINYINT/FLOAT/DOUBLE/DECIMAL 类型不支持。".to_string(),
+                    reason: "Bloom filter indexes fit equality lookups on high-cardinality columns (e.g. ID columns). They only support = and IN conditions, and the TINYINT/FLOAT/DOUBLE/DECIMAL types are not supported.".to_string(),
                 suggestions: vec![
-                        "对高基数列（如 ID 列）创建 Bloom Filter 索引".to_string(),
-                        "确保查询条件使用等值匹配 (=, IN)".to_string(),
-                        "注意: TINYINT/FLOAT/DOUBLE/DECIMAL 类型不支持 Bloom Filter".to_string(),
-                        "检查 Profile 中 BloomFilterFilterRows 指标".to_string(),
+                        "Create a Bloom filter index for high-cardinality columns (e.g. ID columns)".to_string(),
+                        "Make sure the query conditions use equality matching (=, IN)".to_string(),
+                        "Note: the TINYINT/FLOAT/DOUBLE/DECIMAL types do not support Bloom filters".to_string(),
+                        "Check the BloomFilterFilterRows metric in the profile".to_string(),
                     ],
                     parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -955,7 +974,7 @@ impl DiagnosticRule for S014ColocateJoinOpportunity {
         "S014"
     }
     fn name(&self) -> &str {
-        "可优化为 Colocate Join"
+        "Could be optimized into a Colocate Join"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -981,15 +1000,15 @@ impl DiagnosticRule for S014ColocateJoinOpportunity {
                     context.node.plan_node_id.unwrap_or(-1)),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "Shuffle Join 网络传输 {}，考虑使用 Colocate Join 优化",
+                    "Shuffle Join transferred {} over the network, consider a Colocate Join",
                     format_bytes(bytes_sent as u64)
                 ),
-                reason: "Colocate Join 可以避免数据网络传输，显著提升 Join 性能。当两个表的分桶键相同且分桶数相同时，可以使用 Colocate Join。".to_string(),
+                reason: "A Colocate Join avoids transferring data over the network and greatly improves Join performance. When two tables share the same bucket key and the same bucket count, a Colocate Join can be used.".to_string(),
                 suggestions: vec![
-                    "将频繁 Join 的表设置为同一 Colocation Group".to_string(),
-                    "确保两表的分桶键和分桶数相同".to_string(),
-                    "使用 SHOW COLOCATION GROUP 查看现有分组".to_string(),
-                    "Colocate Join 可避免数据网络传输，显著提升性能".to_string(),
+                    "Put the frequently joined tables into the same Colocation Group".to_string(),
+                    "Make sure both tables use the same bucket key and bucket count".to_string(),
+                    "Use SHOW COLOCATION GROUP to list the existing groups".to_string(),
+                    "A Colocate Join avoids transferring data over the network and greatly improves performance".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -1010,7 +1029,7 @@ impl DiagnosticRule for S016SmallFiles {
         "S016"
     }
     fn name(&self) -> &str {
-        "外表小文件过多"
+        "Too many small files in external table"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -1075,15 +1094,15 @@ impl DiagnosticRule for S016SmallFiles {
                 ),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "扫描了 {:.0} 个文件，平均大小仅 {}（建议 > {}）",
+                    "Scanned {:.0} files, average size only {} (recommended > {})",
                     file_count,
                     format_bytes(avg_file_size as u64),
                     format_bytes(small_file_threshold as u64)
                 ),
                 reason: format!(
-                    "{} 外表 {} 存在大量小文件，导致元数据开销大、IO 效率低。",
-                    scan_type.display_name(),
-                    table_name
+                    "External table {} of type {} has a large number of small files, which causes a high metadata overhead and low IO efficiency.",
+                    table_name,
+                    scan_type.display_name()
                 ),
                 suggestions,
                 parameter_suggestions: vec![],
@@ -1105,7 +1124,7 @@ impl DiagnosticRule for S017FileFragmentation {
         "S017"
     }
     fn name(&self) -> &str {
-        "文件格式碎片化"
+        "File format fragmentation"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -1129,14 +1148,14 @@ impl S017FileFragmentation {
     fn get_suggestions(is_external: bool, _format: &str, table: &str) -> Vec<String> {
         if is_external {
             vec![format!(
-                "外表小文件合并方案: ①Hive简单合并: ALTER TABLE {} PARTITION(...) CONCATENATE; \
-                 ②推荐重写: INSERT OVERWRITE TABLE {} PARTITION(...) SELECT * FROM {}; \
-                 ③大数据量用Spark: df.repartition(N).saveAsTable('{}'); \
-                 ④StarRocks临时优化: SET connector_io_tasks_per_scan_operator=64",
+                "External table small file merge plan: ①Hive simple merge: ALTER TABLE {} PARTITION(...) CONCATENATE; \
+                 ②Recommended rewrite: INSERT OVERWRITE TABLE {} PARTITION(...) SELECT * FROM {}; \
+                 ③Large volumes with Spark: df.repartition(N).saveAsTable('{}'); \
+                 ④StarRocks temporary tuning: SET connector_io_tasks_per_scan_operator=64",
                 table, table, table, table
             )]
         } else {
-            vec![format!("执行 Compaction 合并碎片: ALTER TABLE {} COMPACT", table)]
+            vec![format!("Run Compaction to merge fragments: ALTER TABLE {} COMPACT", table)]
         }
     }
 
@@ -1171,7 +1190,7 @@ impl S017FileFragmentation {
         } else {
             RuleSeverity::Warning
         };
-        let table_type = if is_external { "外表" } else { "内表" };
+        let table_type = if is_external { "External table" } else { "Internal table" };
 
         Some(Diagnostic {
             rule_id: self.id().to_string(),
@@ -1184,13 +1203,13 @@ impl S017FileFragmentation {
             ),
             plan_node_id: context.node.plan_node_id,
             message: format!(
-                "ORC 文件存在 {:.0} 个 Stripe（平均 {}），TinyStripe 占比 {:.1}%",
+                "The ORC files hold {:.0} stripes (average {}), tiny stripes account for {:.1}%",
                 stripe_count,
                 format_bytes(avg_stripe_size as u64),
                 tiny_ratio
             ),
             reason: format!(
-                "{}「{}」的 ORC 文件 Stripe 碎片化严重（共 {:.0} 个），导致大量 IO 请求和文件打开开销。",
+                "The ORC files of {}「{}」 are heavily fragmented by stripes ({} in total), which causes a lot of IO requests and file open overhead.",
                 table_type, table, stripe_count
             ),
             suggestions: Self::get_suggestions(is_external, "ORC", table),
@@ -1214,7 +1233,7 @@ impl S017FileFragmentation {
         let is_external = context.is_external_table();
         let severity =
             if total_rowgroups > 100000.0 { RuleSeverity::Error } else { RuleSeverity::Warning };
-        let table_type = if is_external { "外表" } else { "内表" };
+        let table_type = if is_external { "External table" } else { "Internal table" };
 
         Some(Diagnostic {
             rule_id: self.id().to_string(),
@@ -1226,9 +1245,12 @@ impl S017FileFragmentation {
                 context.node.plan_node_id.unwrap_or(-1)
             ),
             plan_node_id: context.node.plan_node_id,
-            message: format!("Parquet 文件存在 {:.0} 个 RowGroup，文件碎片化严重", total_rowgroups),
+            message: format!(
+                "The Parquet files hold {:.0} row groups, the files are heavily fragmented",
+                total_rowgroups
+            ),
             reason: format!(
-                "{}「{}」的 Parquet 文件 RowGroup 过多（共 {:.0} 个），导致元数据开销和 IO 效率低。",
+                "The Parquet files of {}「{}」 have too many row groups ({} in total), which causes a high metadata overhead and low IO efficiency.",
                 table_type, table, total_rowgroups
             ),
             suggestions: Self::get_suggestions(is_external, "Parquet", table),
@@ -1247,7 +1269,7 @@ impl DiagnosticRule for S018IOWaitTime {
         "S018"
     }
     fn name(&self) -> &str {
-        "IO 等待时间过长"
+        "IO wait time too long"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -1286,16 +1308,16 @@ impl DiagnosticRule for S018IOWaitTime {
             ),
             plan_node_id: context.node.plan_node_id,
             message: format!(
-                "IO 等待时间 {}（占 IO 总时间 {:.1}%），存在 IO 排队瓶颈",
+                "IO wait time {} ({:.1}% of the total IO time), there is an IO queueing bottleneck",
                 format_duration_ms(io_wait),
                 wait_ratio
             ),
-            reason: "大量并发 IO 请求在队列中等待，可能是文件碎片化或 IO 资源不足导致".to_string(),
+            reason: "A large number of concurrent IO requests are waiting in the queue, usually caused by file fragmentation or by insufficient IO resources".to_string(),
             suggestions: vec![
-                "合并小文件减少 IO 请求数".to_string(),
-                "增加 io_tasks_per_scan_operator 参数".to_string(),
-                "检查存储系统 IO 性能".to_string(),
-                "考虑启用 Data Cache 缓存热点数据".to_string(),
+                "Merge small files to reduce the number of IO requests".to_string(),
+                "Increase the io_tasks_per_scan_operator parameter".to_string(),
+                "Check the IO performance of the storage system".to_string(),
+                "Consider enabling the Data Cache for hot data".to_string(),
             ],
             parameter_suggestions: vec![],
             threshold_metadata: None,

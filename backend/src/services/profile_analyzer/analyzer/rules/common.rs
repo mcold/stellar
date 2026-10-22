@@ -17,7 +17,7 @@ impl DiagnosticRule for G001MostConsuming {
         "G001"
     }
     fn name(&self) -> &str {
-        "算子时间占比过高"
+        "Operator time share too high"
     }
 
     fn applicable_to(&self, _node: &ExecutionTreeNode) -> bool {
@@ -38,11 +38,11 @@ impl DiagnosticRule for G001MostConsuming {
                     context.node.plan_node_id.unwrap_or(-1)),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "🔴 算子 {} 占用 {:.1}% 的执行时间（最耗时节点）",
+                    "🔴 Operator {} consumes {:.1}% of the execution time (most time-consuming node)",
                     context.node.operator_name, percentage
                 ),
                 suggestions: get_operator_suggestions(&context.node.operator_name),
-                reason: "算子执行时间占整体查询时间比例过高，是查询的主要瓶颈。优化该算子可获得最大收益。".to_string(),
+                reason: "This operator takes too large a share of the overall query time and is the main bottleneck. Optimizing it yields the largest gain.".to_string(),
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
             })
@@ -62,7 +62,7 @@ impl DiagnosticRule for G001bSecondConsuming {
         "G001b"
     }
     fn name(&self) -> &str {
-        "算子时间占比较高"
+        "Operator time share is high"
     }
 
     fn applicable_to(&self, _node: &ExecutionTreeNode) -> bool {
@@ -86,11 +86,11 @@ impl DiagnosticRule for G001bSecondConsuming {
                     context.node.plan_node_id.unwrap_or(-1)),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "🟠 算子 {} 占用 {:.1}% 的执行时间（次耗时节点）",
+                    "🟠 Operator {} consumes {:.1}% of the execution time (second most time-consuming node)",
                     context.node.operator_name, percentage
                 ),
                 suggestions: get_operator_suggestions(&context.node.operator_name),
-                reason: "算子执行时间占整体查询时间比例过高，是查询的主要瓶颈。优化该算子可获得最大收益。".to_string(),
+                reason: "This operator takes too large a share of the overall query time and is the main bottleneck. Optimizing it yields the largest gain.".to_string(),
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
             })
@@ -110,7 +110,7 @@ impl DiagnosticRule for G002HighMemory {
         "G002"
     }
     fn name(&self) -> &str {
-        "算子内存使用过高"
+        "Operator memory usage too high"
     }
 
     fn applicable_to(&self, _node: &ExecutionTreeNode) -> bool {
@@ -132,14 +132,14 @@ impl DiagnosticRule for G002HighMemory {
                     context.node.plan_node_id.unwrap_or(-1)),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "算子 {} 内存使用过高: {} (阈值: {})",
+                    "Operator {} memory usage too high: {} (threshold: {})",
                     context.node.operator_name, format_bytes(memory), format_bytes(memory_threshold)
                 ),
-                reason: "算子内存使用过高，可能导致查询失败或触发 Spill。检查是否存在数据膨胀或中间结果过大。".to_string(),
+                reason: "Operator memory usage is too high, which may fail the query or trigger a spill. Check for data inflation or oversized intermediate results.".to_string(),
                 suggestions: vec![
-                    "检查是否存在数据膨胀".to_string(),
-                    "考虑分批处理".to_string(),
-                    "检查 HashTable 或中间结果是否过大".to_string(),
+                    "Check for data inflation".to_string(),
+                    "Consider processing in batches".to_string(),
+                    "Check whether the HashTable or intermediate results are too large".to_string(),
                 ],
                 parameter_suggestions: {
                     let mut suggestions = Vec::new();
@@ -167,7 +167,7 @@ impl DiagnosticRule for G003ExecutionSkew {
         "G003"
     }
     fn name(&self) -> &str {
-        "算子执行时间倾斜"
+        "Operator execution time skew"
     }
 
     fn applicable_to(&self, _node: &ExecutionTreeNode) -> bool {
@@ -204,16 +204,16 @@ impl DiagnosticRule for G003ExecutionSkew {
                 ),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "算子 {} 存在执行时间倾斜，max/avg 比率为 {:.2} (阈值: {:.1})",
+                    "Operator {} has skewed execution time, max/avg ratio is {:.2} (threshold: {:.1})",
                     context.node.operator_name, ratio, skew_threshold
                 ),
                 reason:
-                    "算子在多个实例间执行时间差异大，部分实例成为瓶颈。通常是数据分布不均匀导致。"
+                    "Execution time varies widely across the instances of the operator, and some instances become the bottleneck. Usually caused by uneven data distribution."
                         .to_string(),
                 suggestions: vec![
-                    "检查数据分布是否均匀".to_string(),
-                    "检查数据分区或分桶是否合理".to_string(),
-                    "考虑增加并行度".to_string(),
+                    "Check whether the data distribution is even".to_string(),
+                    "Check whether the data partitions or buckets are reasonable".to_string(),
+                    "Consider increasing parallelism".to_string(),
                 ],
                 parameter_suggestions: {
                     let mut suggestions = Vec::new();
@@ -236,37 +236,41 @@ fn get_operator_suggestions(operator_name: &str) -> Vec<String> {
 
     if name.contains("SCAN") {
         vec![
-            "检查是否可以添加过滤条件减少扫描数据量".to_string(),
-            "检查分区裁剪是否生效".to_string(),
-            "执行 ANALYZE TABLE 更新统计信息".to_string(),
+            "Check whether filter conditions can be added to reduce the scanned data volume"
+                .to_string(),
+            "Check whether partition pruning is effective".to_string(),
+            "Run ANALYZE TABLE to refresh statistics".to_string(),
         ]
     } else if name.contains("JOIN") {
         vec![
-            "检查 JOIN 顺序是否最优".to_string(),
-            "考虑使用 Runtime Filter".to_string(),
-            "检查是否存在数据倾斜".to_string(),
-            "执行 ANALYZE TABLE 更新统计信息".to_string(),
+            "Check whether the JOIN order is optimal".to_string(),
+            "Consider using a Runtime Filter".to_string(),
+            "Check for data skew".to_string(),
+            "Run ANALYZE TABLE to refresh statistics".to_string(),
         ]
     } else if name.contains("AGGREGATE") || name.contains("AGG") {
         vec![
-            "检查聚合模式是否合适".to_string(),
-            "考虑使用预聚合或物化视图".to_string(),
-            "检查 GROUP BY 键的选择".to_string(),
+            "Check whether the aggregation mode is appropriate".to_string(),
+            "Consider pre-aggregation or a materialized view".to_string(),
+            "Check the choice of GROUP BY keys".to_string(),
         ]
     } else if name.contains("EXCHANGE") {
         vec![
-            "检查数据分布是否均匀".to_string(),
-            "考虑调整并行度".to_string(),
-            "检查网络带宽是否充足".to_string(),
+            "Check whether the data distribution is even".to_string(),
+            "Consider adjusting parallelism".to_string(),
+            "Check whether network bandwidth is sufficient".to_string(),
         ]
     } else if name.contains("SORT") {
         vec![
-            "添加 LIMIT 限制结果集大小".to_string(),
-            "检查是否可以使用 Top-N 优化".to_string(),
-            "考虑使用物化视图预排序".to_string(),
+            "Add LIMIT to bound the result set size".to_string(),
+            "Check whether Top-N optimization applies".to_string(),
+            "Consider a pre-sorted materialized view".to_string(),
         ]
     } else {
-        vec!["检查该算子是否处理数据量过大".to_string(), "考虑优化查询计划".to_string()]
+        vec![
+            "Check whether this operator processes too much data".to_string(),
+            "Consider optimizing the query plan".to_string(),
+        ]
     }
 }
 

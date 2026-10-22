@@ -46,7 +46,7 @@ export class ClusterDetailComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        this.toastrService.danger(error.error?.message || '加载集群失败', '错误');
+        this.toastrService.danger(error.error?.message || 'Failed to load cluster', 'Error');
         this.loading = false;
       },
     });
@@ -105,11 +105,11 @@ export class ClusterDetailComponent implements OnInit {
 
         this.clusterService.deleteCluster(this.clusterId).subscribe({
           next: () => {
-            this.toastrService.success('集群删除成功', '成功');
+            this.toastrService.success('Cluster deleted', 'Success');
             this.router.navigate(['/pages/starrocks/clusters']);
           },
           error: (error) => {
-            this.toastrService.danger(error.error?.message || '删除失败', '错误');
+            this.toastrService.danger(error.error?.message || 'Delete failed', 'Error');
           },
         });
       });
@@ -126,7 +126,7 @@ export class ClusterDetailComponent implements OnInit {
         this.configLoading = false;
       },
       error: (error) => {
-        this.toastrService.danger(error.error?.message || '获取配置失败', '错误');
+        this.toastrService.danger(error.error?.message || 'Failed to load configuration', 'Error');
         this.configLoading = false;
       },
     });

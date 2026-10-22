@@ -77,13 +77,13 @@ export class RolesComponent implements OnInit, OnDestroy {
 
     if (this.isSuperAdmin && !this.organizations.length) {
       this.loadOrganizations();
-      this.toastrService.info('正在加载组织列表，请稍后重试', '提示');
+      this.toastrService.info('Loading the organization list, please try again shortly', 'Hint');
       return;
     }
 
     if (!this.isSuperAdmin && !this.currentOrganization) {
       this.loadCurrentOrganization();
-      this.toastrService.info('正在获取所属组织，请稍后重试', '提示');
+      this.toastrService.info('Fetching the current organization, please try again shortly', 'Hint');
       return;
     }
 
@@ -163,7 +163,7 @@ export class RolesComponent implements OnInit, OnDestroy {
 
       this.roleService.deleteRole(role.id).subscribe({
         next: () => {
-          this.toastrService.success('角色已删除', '成功');
+          this.toastrService.success('Role deleted', 'Success');
           this.rolePermissionCache.delete(role.id);
           this.loadRoles();
         },
@@ -191,7 +191,7 @@ export class RolesComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (role) => {
-          this.toastrService.success('角色创建成功', '成功');
+          this.toastrService.success('Role created successfully', 'Success');
           if (role) {
             this.rolePermissionCache.set(role.id, [...result.permissionIds]);
           }
@@ -213,7 +213,7 @@ export class RolesComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: () => {
-          this.toastrService.success('角色更新成功', '成功');
+          this.toastrService.success('Role updated successfully', 'Success');
           this.rolePermissionCache.set(role.id, [...result.permissionIds]);
           this.loadRoles();
         },
@@ -309,7 +309,7 @@ export class RolesComponent implements OnInit, OnDestroy {
     return {
       mode: 'external',
       hideSubHeader: false,
-      noDataMessage: this.hasListPermission ? '暂无角色数据' : '您暂无查看角色的权限',
+      noDataMessage: this.hasListPermission ? 'No role data' : 'You do not have permission to view roles',
       actions: {
         add: false,
         edit: false,
@@ -327,36 +327,36 @@ export class RolesComponent implements OnInit, OnDestroy {
           width: '8%',
         },
         code: {
-          title: '角色代码',
+          title: 'Role code',
           type: 'string',
         },
         name: {
-          title: '角色名称',
+          title: 'Role name',
           type: 'string',
         },
         description: {
-          title: '描述',
+          title: 'Description',
           type: 'string',
         },
         is_system: {
-          title: '系统角色',
+          title: 'System role',
           type: 'html',
           sanitizer: { bypassHtml: true },
           isFilterable: false,
           isSortable: false,
           valuePrepareFunction: (cell: boolean) => {
             return cell
-              ? '<span class="badge badge-info">是</span>'
-              : '<span class="badge badge-basic">否</span>';
+              ? '<span class="badge badge-info">Yes</span>'
+              : '<span class="badge badge-basic">No</span>';
           },
         },
         created_at: {
-          title: '创建时间',
+          title: 'Created at',
           type: 'string',
-          valuePrepareFunction: (date: string) => new Date(date).toLocaleString('zh-CN'),
+          valuePrepareFunction: (date: string) => new Date(date).toLocaleString('en-US'),
         },
         actions: {
-          title: '操作',
+          title: 'Actions',
           type: 'custom',
           renderComponent: RolesActionsCellComponent,
           isFilterable: false,

@@ -27,7 +27,7 @@ export class VariablesComponent implements OnInit, OnDestroy {
 
   settings = {
     hideSubHeader: false, // Enable search
-    noDataMessage: '未找到匹配的变量',
+    noDataMessage: 'No matching variables found',
     actions: {
       add: false,
       edit: true,
@@ -112,8 +112,8 @@ export class VariablesComponent implements OnInit, OnDestroy {
       error: (error) => {
         console.error('[Variables] Error loading variables:', error);
         this.toastrService.danger(
-          error.error?.message || '加载变量失败',
-          '错误'
+          error.error?.message || 'Failed to load variables',
+          'Error'
         );
         this.variables = [];
         this.source.load([]);
@@ -127,7 +127,7 @@ export class VariablesComponent implements OnInit, OnDestroy {
   }
 
   editVariable(variable: Variable): void {
-    const newValue = prompt(`修改变量 "${variable.name}":`, variable.value);
+    const newValue = prompt(`Modify variable "${variable.name}":`, variable.value);
     if (newValue !== null && newValue !== variable.value) {
       this.loading = true;
       this.nodeService.updateVariable(variable.name, {
@@ -135,13 +135,13 @@ export class VariablesComponent implements OnInit, OnDestroy {
         scope: this.variableType.toUpperCase(),
       }).subscribe({
         next: () => {
-          this.toastrService.success(`变量 "${variable.name}" 更新成功`, '成功');
+          this.toastrService.success(`Variable "${variable.name}" updated`, 'Success');
           this.loadVariables();
         },
         error: (error) => {
           this.toastrService.danger(
-            error.error?.message || '更新变量失败',
-            '错误'
+            error.error?.message || 'Failed to update variable',
+            'Error'
           );
           this.loading = false;
         },

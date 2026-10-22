@@ -160,16 +160,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   toggleActiveCluster(clusterCard: ClusterCard) {
     if (!this.canActivateCluster) {
-      this.toastrService.warning('您没有激活集群的权限', '提示');
+      this.toastrService.warning('You do not have permission to activate a cluster', 'Hint');
       return;
     }
 
     if (clusterCard.isActive) {
-      this.toastrService.warning('此集群已是活跃状态', '提示');
+      this.toastrService.warning('This cluster is already active', 'Hint');
       return;
     }
     this.clusterContext.setActiveCluster(clusterCard.cluster);
-    this.toastrService.success(`已激活集群: ${clusterCard.cluster.name}`, '成功');
+    this.toastrService.success(`Cluster activated: ${clusterCard.cluster.name}`, 'Success');
     this.cdr.markForCheck();
       
       // Reload clusters to update is_active status
@@ -229,16 +229,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // Get health badge text for nb-badge component
   getHealthBadgeText(clusterCard: ClusterCard): string {
     if (!clusterCard.health) {
-      return '未知';
+      return 'Unknown';
     }
     const status = clusterCard.health.status;
     if (status === 'healthy') {
-      return '运行中';
+      return 'Running';
     }
     if (status === 'warning') {
-      return '警告';
+      return 'Warning';
     }
-    return '异常';
+    return 'Abnormal';
   }
 
   // Get health badge text with last check time
@@ -255,12 +255,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       const diffMins = Math.floor(diffMs / 60000);
       
       if (diffMins < 1) {
-        return `${statusText} · 刚刚`;
+        return `${statusText} · just now`;
       } else if (diffMins < 60) {
-        return `${statusText} · ${diffMins}分钟前`;
+        return `${statusText} · ${diffMins} min ago`;
       } else {
         const diffHours = Math.floor(diffMins / 60);
-        return `${statusText} · ${diffHours}小时前`;
+        return `${statusText} · ${diffHours} h ago`;
       }
     } catch (e) {
       return statusText;
@@ -341,15 +341,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   // Get compute node label based on deployment mode
   getComputeNodeLabel(clusterCard: ClusterCard): string {
-    return this.isSharedData(clusterCard) ? 'CN 节点' : 'BE 节点';
+    return this.isSharedData(clusterCard) ? 'CN Nodes' : 'BE Nodes';
   }
 
   get statusCards(): StatusCard[] {
     return [
-      { title: '集群', value: `${this.clusters.length}`, type: 'primary', icon: 'layers-outline' },
-      { title: '健康', value: `${this.countByStatus('healthy')}`, type: 'success', icon: 'checkmark-circle-2-outline' },
-      { title: '告警', value: `${this.countByStatus('warning') + this.countByStatus('critical')}`, type: 'warning', icon: 'alert-triangle-outline' },
-      { title: '节点', value: `${this.totalNodeCount()}`, type: 'info', icon: 'hard-drive-outline' },
+      { title: 'Clusters', value: `${this.clusters.length}`, type: 'primary', icon: 'layers-outline' },
+      { title: 'Healthy', value: `${this.countByStatus('healthy')}`, type: 'success', icon: 'checkmark-circle-2-outline' },
+      { title: 'Alerts', value: `${this.countByStatus('warning') + this.countByStatus('critical')}`, type: 'warning', icon: 'alert-triangle-outline' },
+      { title: 'Nodes', value: `${this.totalNodeCount()}`, type: 'info', icon: 'hard-drive-outline' },
     ];
   }
 
@@ -365,7 +365,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   navigateToCluster(clusterId?: number): void {
     if (!this.canViewClusterDetails) {
-      this.toastrService.warning('您没有查看集群详情的权限', '提示');
+      this.toastrService.warning('You do not have permission to view cluster details', 'Hint');
       return;
     }
     const commands = clusterId ? ['/pages/starrocks/clusters', clusterId] : ['/pages/starrocks/clusters'];
@@ -374,7 +374,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   navigateToBackends(clusterId?: number): void {
     if (!this.canViewBackends) {
-      this.toastrService.warning('您没有查看计算节点的权限', '提示');
+      this.toastrService.warning('You do not have permission to view compute nodes', 'Hint');
       return;
     }
     
@@ -398,7 +398,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   navigateToFrontends(clusterId?: number): void {
     if (!this.canViewFrontends) {
-      this.toastrService.warning('您没有查看 Frontend 节点的权限', '提示');
+      this.toastrService.warning('You do not have permission to view frontend nodes', 'Hint');
       return;
     }
     
@@ -422,7 +422,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   navigateToQueries(clusterId?: number): void {
     if (!this.canViewQueries) {
-      this.toastrService.warning('您没有查看查询信息的权限', '提示');
+      this.toastrService.warning('You do not have permission to view query information', 'Hint');
       return;
     }
     // 查询执行页不接收 ID，组件内部会使用 ActiveCluster 或自己解析
@@ -431,7 +431,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   addCluster(): void {
     if (!this.canCreateCluster) {
-      this.toastrService.warning('您没有创建集群的权限', '提示');
+      this.toastrService.warning('You do not have permission to create clusters', 'Hint');
       return;
     }
     this.router.navigate(['/pages/starrocks/clusters/new']);
@@ -439,7 +439,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   editCluster(cluster: Cluster): void {
     if (!this.canUpdateCluster) {
-      this.toastrService.warning('您没有编辑集群的权限', '提示');
+      this.toastrService.warning('You do not have permission to edit clusters', 'Hint');
       return;
     }
     this.router.navigate(['/pages/starrocks/clusters', cluster.id, 'edit']);
@@ -447,7 +447,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   deleteCluster(cluster: Cluster): void {
     if (!this.canDeleteCluster) {
-      this.toastrService.warning('您没有删除集群的权限', '提示');
+      this.toastrService.warning('You do not have permission to delete clusters', 'Hint');
       return;
     }
     this.confirmDialogService.confirmDelete(cluster.name)
@@ -458,7 +458,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
         this.clusterService.deleteCluster(cluster.id).subscribe({
           next: () => {
-            this.toastrService.success(`集群 "${cluster.name}" 已删除`, '成功');
+            this.toastrService.success(`Cluster "${cluster.name}" deleted`, 'Success');
             this.loadClusters();
             this.cdr.markForCheck();
           },
@@ -489,7 +489,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     console.error('Error:', error);
     this.toastrService.danger(
       ErrorHandler.extractErrorMessage(error),
-      '错误',
+      'Error',
     );
   }
 

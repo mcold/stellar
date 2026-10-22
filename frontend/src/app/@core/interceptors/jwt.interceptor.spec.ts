@@ -74,7 +74,7 @@ describe('JwtInterceptor', () => {
       error: () => {},
     });
 
-    expect(toastrMock.danger).toHaveBeenCalledWith('登录已过期，请重新登录', '认证失败');
+    expect(toastrMock.danger).toHaveBeenCalledWith('Login has expired, please sign in again', 'Authentication failed');
     expect(authServiceMock.normalizeReturnUrl).toHaveBeenCalledWith(routerMock.url);
     expect(authServiceMock.logout).toHaveBeenCalledWith({ returnUrl: '/pages/starrocks/dashboard' });
   });

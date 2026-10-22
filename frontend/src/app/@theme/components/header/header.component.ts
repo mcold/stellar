@@ -23,27 +23,27 @@ export class HeaderComponent implements OnInit, OnDestroy {
   themes = [
     {
       value: 'default',
-      name: '浅色',
+      name: 'Light',
     },
     {
       value: 'dark',
-      name: '深色',
+      name: 'Dark',
     },
     {
       value: 'cosmic',
-      name: '星空',
+      name: 'Cosmic',
     },
     {
       value: 'corporate',
-      name: '企业',
+      name: 'Corporate',
     },
   ];
 
   currentTheme = 'cosmic';
 
   userMenu = [
-    { title: '用户设置', icon: 'settings-outline', data: { id: 'settings' } },
-    { title: '退出登录', icon: 'log-out-outline', data: { id: 'logout' } },
+    { title: 'User settings', icon: 'settings-outline', data: { id: 'settings' } },
+    { title: 'Log out', icon: 'log-out-outline', data: { id: 'logout' } },
   ];
 
   constructor(
@@ -138,7 +138,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   logout() {
-    this.toastr.success('退出登录成功', '提示');
+    this.toastr.success('Logged out successfully', 'Hint');
     setTimeout(() => {
       this.authService.logout();
     }, 500);

@@ -17,7 +17,7 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
           [outline]="true"
           class="ms-2"
           (click)="onToggle()"
-          [title]="isActive ? '停用' : '激活'">
+          [title]="isActive ? 'Disable' : 'Enable'">
           <nb-icon icon="power-outline"></nb-icon>
         </button>
       </ng-container>

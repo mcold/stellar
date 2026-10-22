@@ -13,58 +13,58 @@ use crate::services::llm::service::{LLMAnalysisRequestTrait, LLMAnalysisResponse
 // ============================================================================
 
 /// Base system prompt - the static foundation
-const PROMPT_BASE: &str = r#"你是一位拥有20年以上的StarRocks OLAP 数据库的高级性能专家。
-你需要分析 Query Profile 数据，识别真正的根因并给出**可直接执行**的优化建议。
+const PROMPT_BASE: &str = r#"You are a senior StarRocks OLAP database performance expert with more than 20 years of experience.
+You need to analyze Query Profile data, identify the true root cause, and give **directly executable** optimization suggestions.
 
-## 🧠 批判性思维要求 (Critical Thinking)
+## 🧠 Critical Thinking Requirements
 
-在给出任何诊断或建议前，你必须进行**自我批评式思考**：
+Before giving any diagnosis or suggestion, you must perform **self-critical thinking**:
 
-1. **质疑假设**: 我的诊断是否基于充分的证据？是否有其他可能的解释？
-2. **验证参数**: 我推荐的参数是否真实存在于 StarRocks 官方文档中？如果不确定，宁可不推荐。
-3. **检查适用性**: 这个建议是否适用于当前的表类型（内表/外表）？
-4. **避免臆断**: 我是否在没有数据支撑的情况下做出了推测？
-5. **反思偏见**: 我是否过度依赖某些常见模式而忽略了具体情况？
+1. **Question assumptions**: Is my diagnosis based on sufficient evidence? Are there other possible explanations?
+2. **Verify parameters**: Do the parameters I recommend really exist in the official StarRocks documentation? If unsure, better not to recommend it.
+3. **Check applicability**: Does this suggestion apply to the current table type (internal/external)?
+4. **Avoid speculation**: Have I made any guess without supporting data?
+5. **Reflect on bias**: Am I over-relying on common patterns while ignoring the specific situation?
 
-**重要原则**: 宁可少给建议，也不要给出错误或不存在的参数建议！
+**Important principle**: Better to give fewer suggestions than to give wrong ones or to recommend non-existent parameters!
 
-## 分析方法论 (Chain-of-Thought)
+## Analysis Methodology (Chain-of-Thought)
 
-### Step 1: 理解查询意图
-- 这是什么类型的查询？(OLAP聚合/点查/ETL导入/Join密集型)
-- 涉及哪些表？各表的数据量级？
-- 自问: 我是否完整理解了查询的业务场景？
+### Step 1: Understand the query intent
+- What type of query is this? (OLAP aggregation / point lookup / ETL load / Join-heavy)
+- Which tables are involved? What is the data volume of each table?
+- Ask yourself: Do I fully understand the business scenario of this query?
 
-### Step 2: 识别性能瓶颈
-- 哪个算子耗时最长？(time_pct > 30%)
-- 是 IO 瓶颈还是 CPU 瓶颈？
-- 是否有数据倾斜？(max/avg 比值)
-- 自问: 我的判断是否有 Profile 指标支撑？
+### Step 2: Identify the performance bottleneck
+- Which operator takes the longest time? (time_pct > 30%)
+- Is it an IO bottleneck or a CPU bottleneck?
+- Is there data skew? (max/avg ratio)
+- Ask yourself: Is my judgement supported by Profile metrics?
 
-### Step 3: 根因溯源
-- 瓶颈算子的上游是什么？
-- 根因是数据问题还是配置问题？
-- 是否有规则引擎未发现的隐式根因？
-- 自问: 我是否混淆了症状和根因？
+### Step 3: Trace the root cause
+- What is upstream of the bottleneck operator?
+- Is the root cause a data problem or a configuration problem?
+- Are there implicit root causes the rule engine did not detect?
+- Ask yourself: Am I confusing the symptom with the root cause?
 
-### Step 4: 制定优化方案
-- 针对根因而非症状给出建议
-- 优先给出投入产出比最高的优化
-- 必须是可直接执行的命令
-- 自问: 这个建议在用户环境中是否可行？
+### Step 4: Design the optimization plan
+- Give suggestions for the root cause, not for the symptom
+- Prioritize the optimizations with the highest return on investment
+- Must be directly executable commands
+- Ask yourself: Is this suggestion feasible in the user's environment?
 
-### Step 5: 自我验证 (必做)
-- **参数存在性**: 我推荐的每个参数是否在下方的"官方支持参数列表"中？
-- **表类型匹配**: 对外表建议 ALTER TABLE 分桶是错误的！
-- **配置冲突**: 是否与当前 session_variables 中的值重复？
-- **命令完整性**: SQL/SET 命令是否可以直接复制执行？
+### Step 5: Self-verification (mandatory)
+- **Parameter existence**: Is every parameter I recommend listed in the "officially supported parameter list" below?
+- **Table type match**: Recommending ALTER TABLE bucketing for an external table is wrong!
+- **Configuration conflict**: Does it duplicate a value already present in session_variables?
+- **Command completeness**: Can the SQL/SET command be copied and executed directly?
 
-## ⚠️ 严格遵守的规则
-1. **检查 session_variables 再给建议**: 参数已启用就不要重复建议
-2. **区分表类型**: 内表和外表的优化方向完全不同
-3. **参数必须存在**: 只使用下方列出的 StarRocks 官方参数，禁止创造参数！
-4. **建议必须可执行**: 给出完整的 SQL/SET/ALTER 命令
-5. **宁缺毋滥**: 不确定的建议宁可不给，也不要误导用户"#;
+## ⚠️ Rules that must be strictly followed
+1. **Check session_variables before suggesting**: do not suggest a parameter that is already enabled
+2. **Distinguish table types**: internal and external tables require completely different optimization directions
+3. **Parameters must exist**: only use the official StarRocks parameters listed below, never invent parameters!
+4. **Suggestions must be executable**: give complete SQL/SET/ALTER commands
+5. **Quality over quantity**: for an uncertain suggestion, better to give none than to mislead the user"#;
 
 /// Dynamic prompt section for table types detected
 fn build_table_type_prompt(scan_details: &[ScanDetailForLLM]) -> String {
@@ -87,11 +87,11 @@ fn build_table_type_prompt(scan_details: &[ScanDetailForLLM]) -> String {
         }
     }
 
-    let mut prompt = String::from("\n\n## 📊 本次查询涉及的表\n");
+    let mut prompt = String::from("\n\n## 📊 Tables Involved in This Query\n");
 
     if !internal_tables.is_empty() {
         prompt.push_str(&format!(
-            "\n### StarRocks 内表 ({} 张)\n表名: {}\n\n**内表优化方向:**\n- ANALYZE TABLE 更新统计信息\n- 检查分桶键是否合理\n- 考虑物化视图加速\n- 可使用 ALTER TABLE 调整属性\n",
+            "\n### StarRocks Internal Tables ({} tables)\nTable names: {}\n\n**Internal table optimization directions:**\n- ANALYZE TABLE to update statistics\n- Check whether the bucketing key is reasonable\n- Consider a materialized view to speed things up\n- ALTER TABLE can be used to adjust properties\n",
             internal_tables.len(),
             internal_tables.join(", ")
         ));
@@ -100,32 +100,32 @@ fn build_table_type_prompt(scan_details: &[ScanDetailForLLM]) -> String {
     for (connector, tables) in &external_tables {
         let connector_prompt = match connector.as_str() {
             "hive" => format!(
-                "\n### Hive 外表 ({} 张)\n表名: {}\n\n**Hive 表优化方向:**\n- 启用 DataCache: `SET enable_scan_datacache=true;`\n- 分区裁剪: 确保 WHERE 条件包含分区列\n- 小文件合并: 在 Hive/Spark 端执行 `ALTER TABLE xxx CONCATENATE;`\n- ⚠️ 不能用 ALTER TABLE 改分桶，需在 Hive 端操作\n",
+                "\n### Hive External Tables ({} tables)\nTable names: {}\n\n**Hive table optimization directions:**\n- Enable DataCache: `SET enable_scan_datacache=true;`\n- Partition pruning: make sure the WHERE condition contains the partition column\n- Small file merging: run `ALTER TABLE xxx CONCATENATE;` on the Hive/Spark side\n- ⚠️ ALTER TABLE cannot change the bucketing key, do it on the Hive side\n",
                 tables.len(),
                 tables.join(", ")
             ),
             "iceberg" => format!(
-                "\n### Iceberg 外表 ({} 张)\n表名: {}\n\n**Iceberg 表优化方向:**\n- 启用 DataCache: `SET enable_scan_datacache=true;`\n- 文件合并: 使用 Spark `rewrite_data_files` procedure\n- 利用 Iceberg 的 hidden partitioning\n- 检查 delete files 是否过多 (V2 格式)\n- ⚠️ 不能用 ALTER TABLE 改分桶，需在 Iceberg 端操作\n",
+                "\n### Iceberg External Tables ({} tables)\nTable names: {}\n\n**Iceberg table optimization directions:**\n- Enable DataCache: `SET enable_scan_datacache=true;`\n- File merging: use the Spark `rewrite_data_files` procedure\n- Leverage the hidden partitioning of Iceberg\n- Check whether there are too many delete files (V2 format)\n- ⚠️ ALTER TABLE cannot change the bucketing key, do it on the Iceberg side\n",
                 tables.len(),
                 tables.join(", ")
             ),
             "hudi" => format!(
-                "\n### Hudi 外表 ({} 张)\n表名: {}\n\n**Hudi 表优化方向:**\n- 启用 DataCache\n- 检查 compaction 是否及时\n- MOR 表考虑调整读取模式\n",
+                "\n### Hudi External Tables ({} tables)\nTable names: {}\n\n**Hudi table optimization directions:**\n- Enable DataCache\n- Check whether compaction keeps up\n- Consider adjusting the read mode for MOR tables\n",
                 tables.len(),
                 tables.join(", ")
             ),
             "jdbc" => format!(
-                "\n### JDBC 外表 ({} 张)\n表名: {}\n\n**JDBC 表优化方向:**\n- 谓词下推: 确保 WHERE 条件能下推到源库\n- 减少 SELECT 列: 只查询必要的列\n- 考虑数据同步到内表加速\n",
+                "\n### JDBC External Tables ({} tables)\nTable names: {}\n\n**JDBC table optimization directions:**\n- Predicate pushdown: make sure the WHERE condition can be pushed down to the source database\n- Reduce the SELECT columns: query only the columns that are needed\n- Consider syncing the data into an internal table to speed things up\n",
                 tables.len(),
                 tables.join(", ")
             ),
             "es" => format!(
-                "\n### Elasticsearch 外表 ({} 张)\n表名: {}\n\n**ES 表优化方向:**\n- 确保查询条件能下推到 ES\n- 利用 ES 的索引能力\n- 减少返回字段数\n",
+                "\n### Elasticsearch External Tables ({} tables)\nTable names: {}\n\n**ES table optimization directions:**\n- Make sure the query condition can be pushed down to ES\n- Leverage the indexing capability of ES\n- Reduce the number of returned fields\n",
                 tables.len(),
                 tables.join(", ")
             ),
             _ => format!(
-                "\n### {} 外表 ({} 张)\n表名: {}\n\n**通用外表优化方向:**\n- 启用 DataCache\n- 分区裁剪\n- 谓词下推\n",
+                "\n### {} External Tables ({} tables)\nTable names: {}\n\n**Generic external table optimization directions:**\n- Enable DataCache\n- Partition pruning\n- Predicate pushdown\n",
                 connector,
                 tables.len(),
                 tables.join(", ")
@@ -141,15 +141,15 @@ fn build_table_type_prompt(scan_details: &[ScanDetailForLLM]) -> String {
 fn build_issue_focused_prompt(diagnostics: &[DiagnosticForLLM]) -> String {
     if diagnostics.is_empty() {
         return String::from(
-            "\n\n## 规则引擎未发现明显问题\n请深入分析原始 Profile 数据，寻找隐式性能问题。\n",
+            "\n\n## The Rule Engine Found No Obvious Issue\nPlease analyze the raw Profile data in depth to find implicit performance problems.\n",
         );
     }
 
-    let mut prompt = String::from("\n\n## 规则引擎已识别的问题 (仅作为参考)\n");
+    let mut prompt = String::from("\n\n## Issues Identified by the Rule Engine (for reference only)\n");
     for d in diagnostics.iter().take(5) {
         prompt.push_str(&format!("- **{}** [{}]: {}\n", d.rule_id, d.severity, d.message));
     }
-    prompt.push_str("\n**你的任务**: 不要简单重复这些问题，而是:\n1. 分析这些症状背后的根因\n2. 找出规则引擎未发现的隐式问题\n3. 建立因果链条\n");
+    prompt.push_str("\n**Your task**: do not simply repeat these issues, but:\n1. Analyze the root causes behind these symptoms\n2. Find implicit issues the rule engine did not detect\n3. Build the causal chain\n");
 
     prompt
 }
@@ -163,7 +163,7 @@ fn build_session_vars_prompt(session_vars: &HashMap<String, String>) -> String {
         return String::new();
     }
 
-    let mut prompt = String::from("\n\n## ⚠️ 当前集群配置 (严格禁止重复建议!)\n");
+    let mut prompt = String::from("\n\n## ⚠️ Current Cluster Configuration (strictly forbidden to suggest again!)\n");
 
     let mut enabled_features = Vec::new();
     let mut disabled_features = Vec::new();
@@ -190,7 +190,7 @@ fn build_session_vars_prompt(session_vars: &HashMap<String, String>) -> String {
 
     if !enabled_features.is_empty() {
         prompt.push_str(&format!(
-            "\n### 🟢 已启用的功能 (禁止再建议开启!)\n{}\n",
+            "\n### 🟢 Enabled Features (forbidden to suggest enabling again!)\n{}\n",
             enabled_features
                 .iter()
                 .map(|v| format!("`{}`", v))
@@ -201,7 +201,7 @@ fn build_session_vars_prompt(session_vars: &HashMap<String, String>) -> String {
 
     if !disabled_features.is_empty() {
         prompt.push_str(&format!(
-            "\n### 🔴 已禁用的功能 (可建议开启)\n{}\n",
+            "\n### 🔴 Disabled Features (may be suggested for enabling)\n{}\n",
             disabled_features
                 .iter()
                 .map(|v| format!("`{}`", v))
@@ -211,7 +211,7 @@ fn build_session_vars_prompt(session_vars: &HashMap<String, String>) -> String {
     }
 
     if !other_settings.is_empty() {
-        prompt.push_str("\n### 其他配置\n");
+        prompt.push_str("\n### Other Settings\n");
         for (var, value) in &other_settings {
             prompt.push_str(&format!("- `{}` = `{}`\n", var, value));
         }
@@ -219,10 +219,10 @@ fn build_session_vars_prompt(session_vars: &HashMap<String, String>) -> String {
 
     prompt.push_str(
         r#"
-### 🚫 严格规则
-1. **禁止建议** `SET enable_xxx = true` 如果该参数在"已启用的功能"列表中
-2. 只能建议开启"已禁用的功能"列表中的参数
-3. 违反以上规则将被视为严重错误!
+### 🚫 Strict Rules
+1. **Never suggest** `SET enable_xxx = true` if the parameter is in the "Enabled Features" list
+2. Only suggest enabling parameters that are in the "Disabled Features" list
+3. Violating the rules above is considered a serious error!
 "#,
     );
 
@@ -232,108 +232,108 @@ fn build_session_vars_prompt(session_vars: &HashMap<String, String>) -> String {
 /// Static prompt section for valid parameters (verified from StarRocks official docs)
 const PROMPT_VALID_PARAMS: &str = r#"
 
-## ✅ StarRocks 官方支持的参数 (已验证)
+## ✅ Officially Supported StarRocks Parameters (verified)
 
-以下参数均来自 StarRocks 官方文档，可安全使用。如果你想推荐的参数不在此列表中，请不要推荐！
+All the following parameters come from the official StarRocks documentation and are safe to use. If the parameter you want to recommend is not in this list, do not recommend it!
 
-### Session 变量 (SET xxx = yyy)
+### Session Variables (SET xxx = yyy)
 
-**查询资源控制:**
-- `query_mem_limit` - 单个查询内存限制 (bytes)
-- `query_timeout` - 查询超时时间 (秒，默认300)
-- `exec_mem_limit` - 单个 BE 节点内存限制
+**Query resource control:**
+- `query_mem_limit` - memory limit of a single query (bytes)
+- `query_timeout` - query timeout (seconds, default 300)
+- `exec_mem_limit` - memory limit of a single BE node
 
-**并行度控制:**
-- `pipeline_dop` - Pipeline 并行度 (0=自动)
-- `parallel_fragment_exec_instance_num` - Fragment 实例数 (默认1)
-- `max_parallel_scan_instance_num` - Scan 并行实例数
+**Parallelism control:**
+- `pipeline_dop` - Pipeline parallelism (0=auto)
+- `parallel_fragment_exec_instance_num` - number of Fragment instances (default 1)
+- `max_parallel_scan_instance_num` - number of Scan instances
 
-**Spill (落盘):**
-- `enable_spill` - 启用落盘 (true/false)
-- `spill_mem_table_size` - 落盘触发阈值
-- `spill_mem_table_num` - 落盘表数量
+**Spill (to disk):**
+- `enable_spill` - enable spilling (true/false)
+- `spill_mem_table_size` - threshold that triggers spilling
+- `spill_mem_table_num` - number of spill tables
 
-**DataCache (仅外表! Hive/Iceberg/Hudi 等):**
-- `enable_scan_datacache` - 启用 DataCache 读取 (外表专用)
-- `enable_populate_datacache` - 启用 DataCache 写入 (外表专用)
-- ⚠️ 内表无需配置 DataCache，内表使用 PageCache（自动）
+**DataCache (external tables only! Hive/Iceberg/Hudi etc.):**
+- `enable_scan_datacache` - enable DataCache reads (external tables only)
+- `enable_populate_datacache` - enable DataCache writes (external tables only)
+- ⚠️ Internal tables need no DataCache configuration, they use PageCache (automatic)
 
-**Query Cache (仅内表! 不支持外表!):**
-- `enable_query_cache` - 启用 Query Cache (仅内表聚合查询)
-- `query_cache_entry_max_bytes` - 单个缓存条目最大字节
-- `query_cache_entry_max_rows` - 单个缓存条目最大行数
-- ⚠️ Query Cache 限制条件:
-  - 仅支持原生 OLAP 表和存算分离表，**不支持外表**!
-  - 仅支持聚合查询（非 GROUP BY 或低基数 GROUP BY）
-  - 不支持 rand/random/uuid/sleep 等不确定性函数
-  - Tablet 数量 >= pipeline_dop 时才生效
-  - 高基数 GROUP BY 会自动绕过缓存
+**Query Cache (internal tables only! external tables are not supported!):**
+- `enable_query_cache` - enable Query Cache (internal table aggregation queries only)
+- `query_cache_entry_max_bytes` - maximum bytes of a single cache entry
+- `query_cache_entry_max_rows` - maximum rows of a single cache entry
+- ⚠️ Query Cache restrictions:
+  - Only native OLAP tables and compute-storage separated tables are supported, **external tables are not supported**!
+  - Only aggregation queries are supported (no GROUP BY or low-cardinality GROUP BY)
+  - Non-deterministic functions such as rand/random/uuid/sleep are not supported
+  - It only takes effect when the number of Tablets >= pipeline_dop
+  - High-cardinality GROUP BY automatically bypasses the cache
 
 **Runtime Filter:**
-- `enable_global_runtime_filter` - 全局 Runtime Filter
-- `runtime_filter_wait_time_ms` - 等待时间
-- `runtime_join_filter_push_down_limit` - 下推行数限制
+- `enable_global_runtime_filter` - global Runtime Filter
+- `runtime_filter_wait_time_ms` - wait time
+- `runtime_join_filter_push_down_limit` - limit of pushed down rows
 
-**Join 优化:**
-- `broadcast_row_limit` - Broadcast 行数限制 (默认25M)
-- `hash_join_push_down_right_table` - 右表下推
+**Join optimization:**
+- `broadcast_row_limit` - Broadcast row limit (default 25M)
+- `hash_join_push_down_right_table` - push down the right table
 
-**聚合优化:**
-- `new_planner_agg_stage` - 聚合阶段 (0=自动,1/2/3/4)
-- `streaming_preaggregation_mode` - 预聚合模式
+**Aggregation optimization:**
+- `new_planner_agg_stage` - aggregation stage (0=auto,1/2/3/4)
+- `streaming_preaggregation_mode` - pre-aggregation mode
 
-### ALTER TABLE 属性 (仅适用于 StarRocks 内表!)
+### ALTER TABLE properties (StarRocks internal tables only!)
 
-- `replication_num` - 副本数
-- `bloom_filter_columns` - Bloom Filter 列
-- `colocate_with` - Colocate Group 名称
-- `dynamic_partition.enable` - 动态分区开关
-- `storage_medium` - 存储介质 (SSD/HDD)
+- `replication_num` - number of replicas
+- `bloom_filter_columns` - Bloom Filter columns
+- `colocate_with` - Colocate Group name
+- `dynamic_partition.enable` - dynamic partition switch
+- `storage_medium` - storage medium (SSD/HDD)
 
-### 运维命令
+### Operations commands
 
-- `ANALYZE TABLE db.table;` - 更新统计信息 (仅内表)
-- `REFRESH MATERIALIZED VIEW mv_name;` - 刷新物化视图
-- `ADMIN SET REPLICA STATUS ...` - 管理副本
+- `ANALYZE TABLE db.table;` - update statistics (internal tables only)
+- `REFRESH MATERIALIZED VIEW mv_name;` - refresh the materialized view
+- `ADMIN SET REPLICA STATUS ...` - manage replicas
 
-### SQL Hint 格式
+### SQL Hint format
 
 ```sql
 SELECT /*+ SET_VAR(query_timeout=600, enable_spill=true) */ ...
 ```
 
-## ❌ 禁止使用的参数 (不存在或已废弃)
+## ❌ Forbidden parameters (non-existent or deprecated)
 
-以下参数**不存在**于 StarRocks 中，禁止推荐：
-- ❌ `enable_short_key_index` - 不存在！Short Key 是自动的
-- ❌ `enable_zone_map_index` - 不存在！Zone Map 是自动的
-- ❌ `enable_bitmap_index` - 不存在！用 CREATE INDEX 建索引
-- ❌ `enable_async_profile` - 不存在
-- ❌ `enable_query_debug_trace` - 不存在
-- ❌ `optimize_table` - 不存在！内表用 ADMIN COMPACT
-- ❌ 任何你"猜测"可能存在的参数
+The following parameters **do not exist** in StarRocks and must not be recommended:
+- ❌ `enable_short_key_index` - does not exist! Short Key is automatic
+- ❌ `enable_zone_map_index` - does not exist! Zone Map is automatic
+- ❌ `enable_bitmap_index` - does not exist! Use CREATE INDEX to build an index
+- ❌ `enable_async_profile` - does not exist
+- ❌ `enable_query_debug_trace` - does not exist
+- ❌ `optimize_table` - does not exist! Use ADMIN COMPACT for internal tables
+- ❌ any parameter you "guess" might exist
 
-## ⚠️ 外表限制 (Hive/Iceberg/JDBC 等)
+## ⚠️ External table restrictions (Hive/Iceberg/JDBC etc.)
 
-外表**不支持**以下操作，禁止建议：
-- ❌ `ALTER TABLE external_table SET ("xxx" = "yyy")` - 外表属性在源端修改
-- ❌ `ANALYZE TABLE external_catalog.db.table` - 外表统计信息在源端
-- ❌ 任何修改外表分桶/分区的建议
-- ❌ `enable_query_cache = true` - Query Cache 不支持外表! 外表用 DataCache!
+External tables **do not support** the following operations, do not suggest them:
+- ❌ `ALTER TABLE external_table SET ("xxx" = "yyy")` - external table properties are changed on the source side
+- ❌ `ANALYZE TABLE external_catalog.db.table` - external table statistics live on the source side
+- ❌ any suggestion that changes the bucketing/partitioning of an external table
+- ❌ `enable_query_cache = true` - Query Cache does not support external tables! Use DataCache for external tables!
 
-## 🔄 缓存策略总结
+## 🔄 Cache strategy summary
 
-| 缓存类型 | 适用表类型 | 参数 | 说明 |
+| Cache type | Applicable table type | Parameter | Description |
 |---------|-----------|------|------|
-| Query Cache | 内表 | `enable_query_cache` | 缓存聚合计算结果 |
-| DataCache | 外表 | `enable_scan_datacache` | 缓存远程数据到本地 |
-| PageCache | 内表 | 自动 | 缓存磁盘数据页，无需配置 |
+| Query Cache | Internal tables | `enable_query_cache` | caches aggregation results |
+| DataCache | External tables | `enable_scan_datacache` | caches remote data locally |
+| PageCache | Internal tables | automatic | caches disk data pages, no configuration needed |
 "#;
 
 /// Output format specification
 const PROMPT_OUTPUT_FORMAT: &str = r#"
 
-## 📤 严格 JSON 输出格式"#;
+## 📤 Strict JSON Output Format"#;
 
 /// Build the complete dynamic system prompt
 pub fn build_system_prompt(request: &RootCauseAnalysisRequest) -> String {

@@ -1094,17 +1094,17 @@ impl OverviewService {
 
         let mut alerts = Vec::new();
         let status = if be_nodes_online < be_nodes_total {
-            alerts.push(format!("{} 计算节点离线", be_nodes_total - be_nodes_online));
+            alerts.push(format!("{} compute nodes offline", be_nodes_total - be_nodes_online));
             HealthStatus::Critical
         } else if compaction_score > 100.0 {
-            alerts.push(format!("Compaction Score过高: {:.1}", compaction_score));
+            alerts.push(format!("Compaction Score too high: {:.1}", compaction_score));
             HealthStatus::Critical
         } else if compaction_score > 50.0 || snapshot.disk_usage_pct > 80.0 {
             if compaction_score > 50.0 {
-                alerts.push(format!("Compaction Score偏高: {:.1}", compaction_score));
+                alerts.push(format!("Compaction Score high: {:.1}", compaction_score));
             }
             if snapshot.disk_usage_pct > 80.0 {
-                alerts.push(format!("磁盘使用率偏高: {:.1}%", snapshot.disk_usage_pct));
+                alerts.push(format!("Disk usage high: {:.1}%", snapshot.disk_usage_pct));
             }
             HealthStatus::Warning
         } else {
@@ -1827,10 +1827,10 @@ impl OverviewService {
         if health.be_nodes_online < health.be_nodes_total {
             alerts.push(Alert {
                 level: AlertLevel::Critical,
-                category: "节点状态".to_string(),
-                message: format!("{} 计算节点离线", health.be_nodes_total - health.be_nodes_online),
+                category: "Node Status".to_string(),
+                message: format!("{} compute nodes offline", health.be_nodes_total - health.be_nodes_online),
                 timestamp: Utc::now(),
-                action: Some("检查计算节点状态并重启".to_string()),
+                action: Some("Check the compute node status and restart it".to_string()),
             });
         }
 
@@ -1838,9 +1838,9 @@ impl OverviewService {
             alerts.push(Alert {
                 level: AlertLevel::Critical,
                 category: "Compaction".to_string(),
-                message: format!("Compaction Score过高: {:.1}", health.compaction_score),
+                message: format!("Compaction Score too high: {:.1}", health.compaction_score),
                 timestamp: Utc::now(),
-                action: Some("检查磁盘IO性能，考虑增加计算节点".to_string()),
+                action: Some("Check the disk IO performance, consider adding compute nodes".to_string()),
             });
         }
 
@@ -1852,20 +1852,20 @@ impl OverviewService {
             };
             alerts.push(Alert {
                 level,
-                category: "容量".to_string(),
-                message: format!("磁盘使用率过高: {:.1}%", resources.disk_usage_pct),
+                category: "Capacity".to_string(),
+                message: format!("Disk usage too high: {:.1}%", resources.disk_usage_pct),
                 timestamp: Utc::now(),
-                action: Some("清理过期数据或扩容磁盘".to_string()),
+                action: Some("Clean up expired data or expand the disk".to_string()),
             });
         }
 
         if resources.cpu_usage_pct > 80.0 {
             alerts.push(Alert {
                 level: AlertLevel::Warning,
-                category: "资源".to_string(),
-                message: format!("CPU使用率偏高: {:.1}%", resources.cpu_usage_pct),
+                category: "Resource".to_string(),
+                message: format!("CPU usage high: {:.1}%", resources.cpu_usage_pct),
                 timestamp: Utc::now(),
-                action: Some("检查慢查询，优化查询性能".to_string()),
+                action: Some("Check the slow queries and optimize the query performance".to_string()),
             });
         }
 

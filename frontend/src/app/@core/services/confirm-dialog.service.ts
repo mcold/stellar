@@ -12,8 +12,8 @@ export class ConfirmDialogService {
   confirm(
     title: string,
     message: string,
-    confirmText: string = '确定',
-    cancelText: string = '取消',
+    confirmText: string = 'Confirm',
+    cancelText: string = 'Cancel',
     confirmStatus: string = 'primary'
   ): Observable<boolean> {
     return this.dialogService.open(ConfirmDialogComponent, {
@@ -33,14 +33,14 @@ export class ConfirmDialogService {
 
   confirmDelete(itemName: string, additionalWarning?: string): Observable<boolean> {
     const message = additionalWarning 
-      ? `确定要删除 "${itemName}" 吗？\n\n${additionalWarning}`
-      : `确定要删除 "${itemName}" 吗？`;
+      ? `Are you sure you want to delete "${itemName}"?\n\n${additionalWarning}`
+      : `Are you sure you want to delete "${itemName}"?`;
 
     return this.confirm(
-      '确认删除',
+      'Confirm Delete',
       message,
-      '删除',
-      '取消',
+      'Delete',
+      'Cancel',
       'danger'
     );
   }

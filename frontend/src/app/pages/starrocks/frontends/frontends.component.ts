@@ -25,7 +25,7 @@ export class FrontendsComponent implements OnInit, OnDestroy {
   settings = {
     mode: 'external',
     hideSubHeader: false, // Enable search
-    noDataMessage: '暂无Frontend节点数据',
+    noDataMessage: 'No frontend node data',
     actions: false,
     pager: {
       display: true,
@@ -33,22 +33,22 @@ export class FrontendsComponent implements OnInit, OnDestroy {
     },
     columns: {
       IP: { 
-        title: '主机地址', 
+        title: 'Host Address', 
         type: 'string',
         width: '15%',
       },
       HttpPort: { 
-        title: 'HTTP端口', 
+        title: 'HTTP Port', 
         type: 'string',
         width: '8%',
       },
       QueryPort: { 
-        title: '查询端口', 
+        title: 'Query Port', 
         type: 'string',
         width: '8%',
       },
       Role: { 
-        title: '角色', 
+        title: 'Role', 
         type: 'html', 
         sanitizer: { bypassHtml: true },
         width: '9%',
@@ -64,33 +64,33 @@ export class FrontendsComponent implements OnInit, OnDestroy {
         },
       },
       Alive: {
-        title: '状态',
+        title: 'Status',
         type: 'html',
         sanitizer: { bypassHtml: true },
         width: '7%',
         valuePrepareFunction: (value: string) => {
           const status = value === 'true' ? 'success' : 'danger';
-          const text = value === 'true' ? '在线' : '离线';
+          const text = value === 'true' ? 'Online' : 'Offline';
           return `<span class="badge badge-${status}">${text}</span>`;
         },
       },
       ReplayedJournalId: { 
-        title: '日志进度ID', 
+        title: 'Replay Journal ID', 
         type: 'string',
         width: '10%',
       },
       LastHeartbeat: { 
-        title: '最后心跳', 
+        title: 'Last Heartbeat', 
         type: 'string',
         width: '11%',
       },
       StartTime: { 
-        title: '启动时间', 
+        title: 'Start Time', 
         type: 'string',
         width: '11%',
       },
       Version: { 
-        title: '版本', 
+        title: 'Version', 
         type: 'string',
         width: '9%',
       },
@@ -151,7 +151,7 @@ export class FrontendsComponent implements OnInit, OnDestroy {
         this.loading = false;
       },
       error: (error) => {
-        this.toastrService.danger(ErrorHandler.handleClusterError(error), '加载失败');
+        this.toastrService.danger(ErrorHandler.handleClusterError(error), 'Load failed');
         this.loading = false;
       },
     });

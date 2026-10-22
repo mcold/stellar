@@ -95,7 +95,7 @@ impl<'a> QueryRuleContext<'a> {
                 if current >= 600 {
                     return None;
                 }
-                ("600".to_string(), "延长超时时间以支持复杂查询".to_string())
+                ("600".to_string(), "Raising the timeout supports the complex queries".to_string())
             },
 
             "query_mem_limit" => {
@@ -110,14 +110,17 @@ impl<'a> QueryRuleContext<'a> {
                     return None;
                 }
                 let gb = recommended / (1024 * 1024 * 1024);
-                (recommended.to_string(), format!("根据数据量推荐 {}GB 内存限制", gb))
+                (
+                    recommended.to_string(),
+                    format!("A {}GB memory limit is recommended for this data volume", gb),
+                )
             },
 
             "enable_spill" => {
                 if current_bool.unwrap_or(false) {
                     return None;
                 }
-                ("true".to_string(), "启用后可避免大查询 OOM".to_string())
+                ("true".to_string(), "Enabling it avoids an OOM on large queries".to_string())
             },
 
             "pipeline_profile_level" => {
@@ -125,7 +128,10 @@ impl<'a> QueryRuleContext<'a> {
                 if current <= 1 {
                     return None;
                 }
-                ("1".to_string(), "降低 Profile 级别减少收集开销".to_string())
+                (
+                    "1".to_string(),
+                    "Lowering the Profile level reduces the collection cost".to_string(),
+                )
             },
 
             "pipeline_dop" => {
@@ -133,14 +139,14 @@ impl<'a> QueryRuleContext<'a> {
                 if current == 0 {
                     return None;
                 }
-                ("0".to_string(), "推荐使用自动模式".to_string())
+                ("0".to_string(), "The automatic mode is recommended".to_string())
             },
 
             "enable_scan_datacache" => {
                 if current_bool.unwrap_or(true) {
                     return None;
                 }
-                ("true".to_string(), "启用 DataCache 提升存算分离性能".to_string())
+                ("true".to_string(), "The DataCache improves the performance in a disaggregated storage architecture".to_string())
             },
 
             _ => return None,
@@ -197,7 +203,7 @@ impl QueryRule for Q001LongRunning {
         "Q001"
     }
     fn name(&self) -> &str {
-        "查询执行时间过长"
+        "Query execution time too long"
     }
 
     fn evaluate(&self, ctx: &QueryRuleContext) -> Option<QueryDiagnostic> {
@@ -213,22 +219,22 @@ impl QueryRule for Q001LongRunning {
         let has_baseline = ctx.thresholds.baseline.is_some();
 
         let threshold_display = if time_threshold_ms >= 60_000.0 {
-            format!("{:.0}分钟", time_threshold_ms / 60_000.0)
+            format!("{:.0}min", time_threshold_ms / 60_000.0)
         } else {
-            format!("{:.0}秒", time_threshold_ms / 1000.0)
+            format!("{:.0}s", time_threshold_ms / 1000.0)
         };
 
-        let threshold_source = if has_baseline { "自适应基线" } else { "默认" };
+        let threshold_source = if has_baseline { "adaptive baseline" } else { "default" };
 
         let query_type = QueryType::from_sql(&ctx.profile.summary.sql_statement);
         let query_type_name = match query_type {
-            QueryType::Select => "OLAP 查询",
-            QueryType::Insert => "INSERT 导入",
-            QueryType::Export => "EXPORT 导出",
-            QueryType::Analyze => "ANALYZE 分析",
-            QueryType::Ctas => "CTAS 建表",
-            QueryType::Load => "LOAD 导入",
-            QueryType::Unknown => "查询",
+            QueryType::Select => "OLAP query",
+            QueryType::Insert => "INSERT load",
+            QueryType::Export => "EXPORT",
+            QueryType::Analyze => "ANALYZE",
+            QueryType::Ctas => "CTAS",
+            QueryType::Load => "LOAD",
+            QueryType::Unknown => "query",
         };
 
         if total_time_ms > time_threshold_ms {
@@ -237,7 +243,7 @@ impl QueryRule for Q001LongRunning {
                 rule_name: self.name().to_string(),
                 severity: RuleSeverity::Warning,
                 message: format!(
-                    "{}执行时间 {}，超过{}阈值 ({}, {})",
+                    "The {} took {}, over the {} threshold ({}, {})",
                     query_type_name,
                     format_duration_ms(total_time_ms),
                     query_type_name,
@@ -245,18 +251,18 @@ impl QueryRule for Q001LongRunning {
                     threshold_source
                 ),
                 reason: if has_baseline {
-                    "阈值基于历史基线 P95 + 2σ 计算。当前查询显著慢于同类查询的历史表现。"
+                    "The threshold is computed from the historical baseline P95 + 2σ. The current query is significantly slower than the historical performance of the same kind of query."
                         .to_string()
                 } else {
                     format!(
-                        "根据查询类型 ({}) 使用默认阈值。OLAP 查询期望快速响应 (10s)，而 ETL 任务允许更长时间 (5-30min)。",
+                        "The default threshold is used for this query type ({}). An OLAP query is expected to answer quickly (10s), while an ETL job is allowed to run longer (5-30min).",
                         query_type_name
                     )
                 },
                 suggestions: vec![
-                    "检查是否存在性能瓶颈算子".to_string(),
-                    "考虑优化查询计划".to_string(),
-                    "检查是否存在数据倾斜".to_string(),
+                    "Check whether a performance bottleneck operator exists".to_string(),
+                    "Consider optimizing the query plan".to_string(),
+                    "Check whether data skew exists".to_string(),
                 ],
                 parameter_suggestions: {
                     let mut suggestions = Vec::new();
@@ -291,7 +297,7 @@ impl QueryRule for Q002HighMemory {
         "Q002"
     }
     fn name(&self) -> &str {
-        "查询内存使用过高"
+        "Query memory usage too high"
     }
 
     fn evaluate(&self, ctx: &QueryRuleContext) -> Option<QueryDiagnostic> {
@@ -303,12 +309,16 @@ impl QueryRule for Q002HighMemory {
                 rule_id: self.id().to_string(),
                 rule_name: self.name().to_string(),
                 severity: RuleSeverity::Warning,
-                message: format!("查询峰值内存 {}，超过 10GB 阈值", format_bytes(peak_memory)),
-                reason: "请参考 StarRocks 官方文档了解更多信息。".to_string(),
+                message: format!(
+                    "The query peak memory is {}, over the 10GB threshold",
+                    format_bytes(peak_memory)
+                ),
+                reason: "See the StarRocks official documentation for more information."
+                    .to_string(),
                 suggestions: vec![
-                    "检查是否存在大表 Join".to_string(),
-                    "考虑启用 Spill 功能".to_string(),
-                    "优化查询减少中间结果".to_string(),
+                    "Check whether a large table Join exists".to_string(),
+                    "Consider enabling the spill feature".to_string(),
+                    "Optimize the query to reduce the intermediate results".to_string(),
                 ],
                 parameter_suggestions: {
                     let mut suggestions = Vec::new();
@@ -337,7 +347,7 @@ impl QueryRule for Q003QuerySpill {
         "Q003"
     }
     fn name(&self) -> &str {
-        "查询发生落盘"
+        "Query spilled to disk"
     }
 
     fn evaluate(&self, ctx: &QueryRuleContext) -> Option<QueryDiagnostic> {
@@ -350,12 +360,16 @@ impl QueryRule for Q003QuerySpill {
                 rule_id: self.id().to_string(),
                 rule_name: self.name().to_string(),
                 severity: RuleSeverity::Info,
-                message: format!("查询发生磁盘溢写，溢写数据量 {}", format_bytes(spill_bytes)),
-                reason: "请参考 StarRocks 官方文档了解更多信息。".to_string(),
+                message: format!(
+                    "The query spilled to disk, {} written",
+                    format_bytes(spill_bytes)
+                ),
+                reason: "See the StarRocks official documentation for more information."
+                    .to_string(),
                 suggestions: vec![
-                    "增加内存限制以减少 Spill".to_string(),
-                    "优化查询减少中间结果".to_string(),
-                    "检查 Spill 是否影响性能".to_string(),
+                    "Increase the memory limit to reduce the spill".to_string(),
+                    "Optimize the query to reduce the intermediate results".to_string(),
+                    "Check whether the spill hurts the performance".to_string(),
                 ],
                 parameter_suggestions: {
                     let mut suggestions = Vec::new();
@@ -381,7 +395,7 @@ impl QueryRule for Q005ScanDominates {
         "Q005"
     }
     fn name(&self) -> &str {
-        "扫描时间占比过高"
+        "Scan time share too high"
     }
 
     fn evaluate(&self, ctx: &QueryRuleContext) -> Option<QueryDiagnostic> {
@@ -413,13 +427,17 @@ impl QueryRule for Q005ScanDominates {
                 rule_id: self.id().to_string(),
                 rule_name: self.name().to_string(),
                 severity: RuleSeverity::Warning,
-                message: format!("扫描时间占比 {:.1}%，查询瓶颈在数据扫描", ratio * 100.0),
-                reason: "请参考 StarRocks 官方文档了解更多信息。".to_string(),
+                message: format!(
+                    "The scan time share is {:.1}%, the query bottleneck is the data scan",
+                    ratio * 100.0
+                ),
+                reason: "See the StarRocks official documentation for more information."
+                    .to_string(),
                 suggestions: vec![
-                    "添加过滤条件减少扫描数据量".to_string(),
-                    "检查分区裁剪是否生效".to_string(),
-                    "考虑创建物化视图".to_string(),
-                    "检查存储性能".to_string(),
+                    "Add filter conditions to reduce the scanned data volume".to_string(),
+                    "Check whether partition pruning is effective".to_string(),
+                    "Consider creating a materialized view".to_string(),
+                    "Check the storage performance".to_string(),
                 ],
 
                 parameter_suggestions: ctx
@@ -443,7 +461,7 @@ impl QueryRule for Q006NetworkDominates {
         "Q006"
     }
     fn name(&self) -> &str {
-        "网络时间占比过高"
+        "Network time share too high"
     }
 
     fn evaluate(&self, ctx: &QueryRuleContext) -> Option<QueryDiagnostic> {
@@ -475,12 +493,16 @@ impl QueryRule for Q006NetworkDominates {
                 rule_id: self.id().to_string(),
                 rule_name: self.name().to_string(),
                 severity: RuleSeverity::Warning,
-                message: format!("网络时间占比 {:.1}%，查询瓶颈在网络传输", ratio * 100.0),
-                reason: "请参考 StarRocks 官方文档了解更多信息。".to_string(),
+                message: format!(
+                    "The network time share is {:.1}%, the query bottleneck is the network transfer",
+                    ratio * 100.0
+                ),
+                reason: "See the StarRocks official documentation for more information."
+                    .to_string(),
                 suggestions: vec![
-                    "考虑使用 Colocate Join 减少 Shuffle".to_string(),
-                    "检查网络带宽".to_string(),
-                    "减少跨节点数据传输".to_string(),
+                    "Consider a Colocate Join to reduce the Shuffle".to_string(),
+                    "Check the network bandwidth".to_string(),
+                    "Reduce the data transferred across nodes".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -499,7 +521,7 @@ impl QueryRule for Q004LowCPU {
         "Q004"
     }
     fn name(&self) -> &str {
-        "CPU 利用率低"
+        "Low CPU utilization"
     }
 
     fn evaluate(&self, ctx: &QueryRuleContext) -> Option<QueryDiagnostic> {
@@ -514,9 +536,16 @@ impl QueryRule for Q004LowCPU {
                 rule_id: self.id().to_string(),
                 rule_name: self.name().to_string(),
                 severity: super::RuleSeverity::Warning,
-                message: format!("CPU 利用率仅 {:.1}%，可能存在等待或 IO 瓶颈", ratio * 100.0),
-                reason: "请参考 StarRocks 官方文档了解更多信息。".to_string(),
-                suggestions: vec!["检查是否存在等待".to_string(), "增加并行度".to_string()],
+                message: format!(
+                    "The CPU utilization is only {:.1}%, there may be a wait or an IO bottleneck",
+                    ratio * 100.0
+                ),
+                reason: "See the StarRocks official documentation for more information."
+                    .to_string(),
+                suggestions: vec![
+                    "Check whether there is waiting".to_string(),
+                    "Increase the parallelism".to_string(),
+                ],
                 parameter_suggestions: {
                     let mut suggestions = Vec::new();
                     if let Some(s) = ctx.suggest_parameter("pipeline_dop") {
@@ -540,7 +569,7 @@ impl QueryRule for Q007ProfileCollectSlow {
         "Q007"
     }
     fn name(&self) -> &str {
-        "Profile 收集慢"
+        "Profile collection is slow"
     }
 
     fn evaluate(&self, ctx: &QueryRuleContext) -> Option<QueryDiagnostic> {
@@ -555,9 +584,10 @@ impl QueryRule for Q007ProfileCollectSlow {
                 rule_id: self.id().to_string(),
                 rule_name: self.name().to_string(),
                 severity: super::RuleSeverity::Info,
-                message: format!("Profile 收集时间 {:.1}ms", collect_time / 1_000_000.0),
-                reason: "请参考 StarRocks 官方文档了解更多信息。".to_string(),
-                suggestions: vec!["降低 pipeline_profile_level".to_string()],
+                message: format!("The Profile collection took {:.1}ms", collect_time / 1_000_000.0),
+                reason: "See the StarRocks official documentation for more information."
+                    .to_string(),
+                suggestions: vec!["Lower pipeline_profile_level".to_string()],
                 parameter_suggestions: {
                     let mut suggestions = Vec::new();
                     if let Some(s) = ctx.suggest_parameter("pipeline_profile_level") {
@@ -581,7 +611,7 @@ impl QueryRule for Q008ScheduleTimeLong {
         "Q008"
     }
     fn name(&self) -> &str {
-        "调度时间过长"
+        "Scheduling time too long"
     }
 
     fn evaluate(&self, ctx: &QueryRuleContext) -> Option<QueryDiagnostic> {
@@ -596,9 +626,16 @@ impl QueryRule for Q008ScheduleTimeLong {
                 rule_id: self.id().to_string(),
                 rule_name: self.name().to_string(),
                 severity: super::RuleSeverity::Warning,
-                message: format!("调度时间占比 {:.1}%，Pipeline 调度可能存在瓶颈", ratio * 100.0),
-                reason: "请参考 StarRocks 官方文档了解更多信息。".to_string(),
-                suggestions: vec!["检查 Pipeline 调度瓶颈".to_string(), "增加并行度".to_string()],
+                message: format!(
+                    "The scheduling time share is {:.1}%, the Pipeline scheduling may be a bottleneck",
+                    ratio * 100.0
+                ),
+                reason: "See the StarRocks official documentation for more information."
+                    .to_string(),
+                suggestions: vec![
+                    "Check the Pipeline scheduling bottleneck".to_string(),
+                    "Increase the parallelism".to_string(),
+                ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
             })
@@ -616,7 +653,7 @@ impl QueryRule for Q009ResultDeliverySlow {
         "Q009"
     }
     fn name(&self) -> &str {
-        "结果传输慢"
+        "Slow result delivery"
     }
 
     fn evaluate(&self, ctx: &QueryRuleContext) -> Option<QueryDiagnostic> {
@@ -636,9 +673,13 @@ impl QueryRule for Q009ResultDeliverySlow {
                 rule_id: self.id().to_string(),
                 rule_name: self.name().to_string(),
                 severity: super::RuleSeverity::Info,
-                message: format!("结果传输时间占比 {:.1}%", ratio * 100.0),
-                reason: "请参考 StarRocks 官方文档了解更多信息。".to_string(),
-                suggestions: vec!["检查网络带宽".to_string(), "减少结果集大小".to_string()],
+                message: format!("The result delivery time share is {:.1}%", ratio * 100.0),
+                reason: "See the StarRocks official documentation for more information."
+                    .to_string(),
+                suggestions: vec![
+                    "Check the network bandwidth".to_string(),
+                    "Reduce the result set size".to_string(),
+                ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
             })

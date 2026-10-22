@@ -41,7 +41,7 @@ export class ResourceGroupsListComponent implements OnInit, OnDestroy {
       confirmDelete: true,
     },
     actions: {
-      columnTitle: '操作',
+      columnTitle: 'Actions',
       add: false,
       edit: false,
       delete: false,
@@ -49,17 +49,17 @@ export class ResourceGroupsListComponent implements OnInit, OnDestroy {
       custom: [
         {
           name: 'edit',
-          title: '<i class="nb-edit" title="编辑"></i>',
+          title: '<i class="nb-edit" title="Edit"></i>',
         },
         {
           name: 'delete',
-          title: '<i class="nb-trash" title="删除"></i>',
+          title: '<i class="nb-trash" title="Delete"></i>',
         },
       ],
     },
     columns: {
       name: {
-        title: '资源组名称',
+        title: 'Resource group name',
         type: 'string',
         editable: false,
       },
@@ -70,31 +70,31 @@ export class ResourceGroupsListComponent implements OnInit, OnDestroy {
         width: '5%',
       },
       cpu_weight: {
-        title: 'CPU权重',
+        title: 'CPU weight',
         type: 'number',
         editable: false,
         valuePrepareFunction: (value: any) => value || '-',
       },
       exclusive_cpu_cores: {
-        title: '独占CPU核数',
+        title: 'Exclusive CPU cores',
         type: 'number',
         editable: false,
         valuePrepareFunction: (value: any) => value || '-',
       },
       mem_limit: {
-        title: '内存限制',
+        title: 'Memory limit',
         type: 'string',
         editable: false,
         valuePrepareFunction: (value: any) => value || '-',
       },
       concurrency_limit: {
-        title: '并发限制',
+        title: 'Concurrency limit',
         type: 'number',
         editable: false,
         valuePrepareFunction: (value: any) => value || '-',
       },
       classifiers_count: {
-        title: '分类器数量',
+        title: 'Classifier count',
         type: 'number',
         editable: false,
         valuePrepareFunction: withTableRow((value: any, row: ResourceGroup) => row.classifiers?.length || 0),
@@ -137,7 +137,7 @@ export class ResourceGroupsListComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Failed to load resource groups:', error);
-          this.toastrService.danger('加载资源组列表失败', '错误');
+          this.toastrService.danger('Failed to load resource group list', 'Error');
           this.loading = false;
         },
       });
@@ -165,7 +165,7 @@ export class ResourceGroupsListComponent implements OnInit, OnDestroy {
   }
 
   deleteResourceGroup(group: ResourceGroup): void {
-    this.confirmDialog.confirmDelete(group.name, '此操作不可撤销。').subscribe((confirmed) => {
+    this.confirmDialog.confirmDelete(group.name, 'This action cannot be undone.').subscribe((confirmed) => {
       if (!confirmed) {
         return;
       }
@@ -174,11 +174,11 @@ export class ResourceGroupsListComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: () => {
-            this.toastrService.success('资源组删除成功', '成功');
+            this.toastrService.success('Resource group deleted successfully', 'Success');
             this.loadResourceGroups();
           },
           error: () => {
-            this.toastrService.danger('删除资源组失败', '错误');
+            this.toastrService.danger('Failed to delete resource group', 'Error');
           },
         });
     });

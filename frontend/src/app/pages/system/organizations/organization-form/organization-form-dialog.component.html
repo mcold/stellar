@@ -1,18 +1,18 @@
 <nb-card class="organization-dialog">
-  <nb-card-header>{{ mode === 'create' ? '创建组织' : '编辑组织' }}</nb-card-header>
+  <nb-card-header>{{ mode === 'create' ? 'Create Organization' : 'Edit Organization' }}</nb-card-header>
 
   <nb-card-body>
     <form [formGroup]="form" novalidate>
       <!-- Code & Name (create mode) -->
       <div class="form-row" *ngIf="mode === 'create'">
         <div class="form-group">
-          <label class="label">组织代码</label>
-          <input nbInput fullWidth formControlName="code" placeholder="小写字母、数字、下划线"
+          <label class="label">Organization code</label>
+          <input nbInput fullWidth formControlName="code" placeholder="Lowercase letters, digits, underscores"
             [status]="form.get('code')?.invalid && form.get('code')?.touched ? 'danger' : 'basic'" />
         </div>
         <div class="form-group">
-          <label class="label">组织名称</label>
-          <input nbInput fullWidth formControlName="name" placeholder="组织名称"
+          <label class="label">Organization name</label>
+          <input nbInput fullWidth formControlName="name" placeholder="Organization name"
             [status]="form.get('name')?.invalid && form.get('name')?.touched ? 'danger' : 'basic'" />
         </div>
       </div>
@@ -20,8 +20,8 @@
       <!-- Name only (edit mode) -->
       <div class="form-row" *ngIf="mode === 'edit'">
         <div class="form-group full">
-          <label class="label">组织名称</label>
-          <input nbInput fullWidth formControlName="name" placeholder="组织名称"
+          <label class="label">Organization name</label>
+          <input nbInput fullWidth formControlName="name" placeholder="Organization name"
             [status]="form.get('name')?.invalid && form.get('name')?.touched ? 'danger' : 'basic'" />
         </div>
         </div>
@@ -29,16 +29,16 @@
         <!-- Description -->
       <div class="form-row">
         <div class="form-group full">
-          <label class="label">描述</label>
-          <textarea nbInput fullWidth formControlName="description" placeholder="组织描述（可选）" rows="2"></textarea>
+          <label class="label">Description</label>
+          <textarea nbInput fullWidth formControlName="description" placeholder="Organization description (optional)" rows="2"></textarea>
         </div>
         </div>
 
       <!-- Admin (edit mode) -->
       <div class="form-row" *ngIf="mode === 'edit'">
         <div class="form-group full">
-          <label class="label">管理员</label>
-          <nb-select formControlName="admin_user_id" placeholder="选择管理员（可选）" fullWidth>
+          <label class="label">Admin</label>
+          <nb-select formControlName="admin_user_id" placeholder="Select an admin (optional)" fullWidth>
               <nb-option *ngFor="let user of availableUsers; trackBy: trackByUserId" [value]="user.id">
               {{ user.username }} <span class="hint" *ngIf="user.email">- {{ user.email }}</span>
               </nb-option>
@@ -49,7 +49,7 @@
   </nb-card-body>
 
   <nb-card-footer>
-    <button class="cancel" nbButton status="danger" (click)="cancel()">取消</button>
-    <button nbButton status="success" (click)="submit()" [disabled]="form.invalid">保存</button>
+    <button class="cancel" nbButton status="danger" (click)="cancel()">Cancel</button>
+    <button nbButton status="success" (click)="submit()" [disabled]="form.invalid">Save</button>
   </nb-card-footer>
 </nb-card>

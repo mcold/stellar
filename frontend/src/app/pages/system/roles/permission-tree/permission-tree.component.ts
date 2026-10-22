@@ -83,7 +83,7 @@ export class PermissionTreeComponent implements OnChanges {
     this.buildApiAssociations(menus, apis);
 
     if (!roots.length) {
-      this.treeData = [this.createPlaceholderNode('暂无菜单权限', null)];
+      this.treeData = [this.createPlaceholderNode('No menu permissions available', null)];
     } else {
       this.treeData = roots;
     }

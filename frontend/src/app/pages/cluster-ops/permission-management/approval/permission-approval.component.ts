@@ -37,9 +37,9 @@ export class PermissionApprovalComponent implements OnInit, OnDestroy {
   tableSettings = {
     mode: 'external',
     hideSubHeader: true,
-    noDataMessage: '暂无待审批申请',
+    noDataMessage: 'No pending requests',
     actions: {
-      columnTitle: '操作',
+      columnTitle: 'Actions',
       add: false,
       edit: true,
       delete: false,
@@ -59,34 +59,34 @@ export class PermissionApprovalComponent implements OnInit, OnDestroy {
         width: '50px',
       },
       request_type: {
-        title: '类型',
+        title: 'Type',
         type: 'html',
         sanitizer: { bypassHtml: true },
         width: '90px',
         valuePrepareFunction: (value: string) => {
           const labels: { [key: string]: string } = {
-            grant_role: '授予角色',
-            grant_permission: '授予权限',
-            revoke_permission: '撤销权限',
+            grant_role: 'Grant Role',
+            grant_permission: 'Grant Permission',
+            revoke_permission: 'Revoke Permission',
           };
           return `<span class="badge badge-primary">${labels[value] || value}</span>`;
         },
       },
       applicant_name: {
-        title: '申请人',
+        title: 'Applicant',
         type: 'string',
         width: '80px',
       },
       target: {
-        title: '目标',
+        title: 'Target',
         type: 'string',
       },
       reason: {
-        title: '申请原因',
+        title: 'Reason',
         type: 'string',
       },
       created_at: {
-        title: '申请时间',
+        title: 'Requested At',
         type: 'string',
         width: '180px',
         valuePrepareFunction: (value: string) => {
@@ -98,10 +98,10 @@ export class PermissionApprovalComponent implements OnInit, OnDestroy {
   };
 
   typeOptions = [
-    { label: '全部', value: 'all' },
-    { label: '授予角色', value: 'grant_role' },
-    { label: '授予权限', value: 'grant_permission' },
-    { label: '撤销权限', value: 'revoke_permission' },
+    { label: 'All', value: 'all' },
+    { label: 'Grant Role', value: 'grant_role' },
+    { label: 'Grant Permission', value: 'grant_permission' },
+    { label: 'Revoke Permission', value: 'revoke_permission' },
   ];
 
   selectedRequest: PermissionRequestResponse | null = null;
@@ -145,7 +145,7 @@ export class PermissionApprovalComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to load pending requests:', err);
-        this.toastr.danger('加载待审批申请失败', '错误');
+        this.toastr.danger('Failed to load pending requests', 'Error');
         this.requestsLoading = false;
       },
     });
@@ -209,15 +209,15 @@ export class PermissionApprovalComponent implements OnInit, OnDestroy {
   private performApproval(request: PermissionRequestResponse): void {
     const dialogRef = this.dialogService.open(ConfirmationDialogComponent, {
       context: {
-        title: `批准申请 #${request.id}`,
-        message: `确定要批准 ${request.applicant_name} 的权限申请吗？`,
-        confirmText: '批准',
-        cancelText: '取消',
+        title: `Approve Request #${request.id}`,
+        message: `Do you want to approve the permission request from ${request.applicant_name}?`,
+        confirmText: 'Approve',
+        cancelText: 'Cancel',
         confirmButtonStatus: 'success',
         confirmIcon: 'checkmark-outline',
         showCommentInput: true,
-        commentLabel: '审批备注',
-        commentPlaceholder: '请输入审批备注（可选）...',
+        commentLabel: 'Approval Comment',
+        commentPlaceholder: 'Enter an approval comment (optional)...',
         commentRequired: false,
       },
       hasBackdrop: true,
@@ -229,14 +229,14 @@ export class PermissionApprovalComponent implements OnInit, OnDestroy {
         this.approvalInProgress = true;
         this.permissionService.approveRequest(request.id, { comment: result.comment || '' }).subscribe({
           next: () => {
-            this.toastr.success(`已批准申请 #${request.id}`, '批准成功');
+            this.toastr.success(`Request #${request.id} approved`, 'Approval Successful');
             this.approvalInProgress = false;
             this.processed.emit();
             this.loadPendingRequests();
           },
           error: (err) => {
             console.error('Failed to approve request:', err);
-            this.toastr.danger('批准申请失败: ' + (err.error?.message || err.message), '错误');
+            this.toastr.danger('Failed to approve request: ' + (err.error?.message || err.message), 'Error');
             this.approvalInProgress = false;
           },
         });
@@ -247,17 +247,17 @@ export class PermissionApprovalComponent implements OnInit, OnDestroy {
   private performRejection(request: PermissionRequestResponse): void {
     const dialogRef = this.dialogService.open(ConfirmationDialogComponent, {
       context: {
-        title: `拒绝申请 #${request.id}`,
-        message: `请说明拒绝 ${request.applicant_name} 权限申请的原因。`,
-        confirmText: '拒绝',
-        cancelText: '取消',
+        title: `Reject Request #${request.id}`,
+        message: `Please explain why the permission request from ${request.applicant_name} is rejected.`,
+        confirmText: 'Reject',
+        cancelText: 'Cancel',
         confirmButtonStatus: 'danger',
         confirmIcon: 'close-outline',
         showCommentInput: true,
-        commentLabel: '拒绝原因',
-        commentPlaceholder: '请输入拒绝原因...',
+        commentLabel: 'Rejection Reason',
+        commentPlaceholder: 'Enter the rejection reason...',
         commentRequired: true,
-        commentHint: '拒绝申请时必须填写原因',
+        commentHint: 'A reason is required when rejecting a request',
       },
       hasBackdrop: true,
       closeOnBackdropClick: false,
@@ -268,14 +268,14 @@ export class PermissionApprovalComponent implements OnInit, OnDestroy {
         this.approvalInProgress = true;
         this.permissionService.rejectRequest(request.id, { comment: result.comment }).subscribe({
           next: () => {
-            this.toastr.success(`已拒绝申请 #${request.id}`, '拒绝成功');
+            this.toastr.success(`Request #${request.id} rejected`, 'Rejection Successful');
             this.approvalInProgress = false;
             this.processed.emit();
             this.loadPendingRequests();
           },
           error: (err) => {
             console.error('Failed to reject request:', err);
-            this.toastr.danger('拒绝申请失败: ' + (err.error?.message || err.message), '错误');
+            this.toastr.danger('Failed to reject request: ' + (err.error?.message || err.message), 'Error');
             this.approvalInProgress = false;
           },
         });

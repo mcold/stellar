@@ -56,9 +56,9 @@ export class PermissionRequestComponent implements OnInit, OnDestroy {
 
   // Request types
   requestTypes = [
-    { label: '授予角色', value: 'grant_role' },
-    { label: '授予权限', value: 'grant_permission' },
-    { label: '撤销权限', value: 'revoke_permission' },
+    { label: 'Grant Role', value: 'grant_role' },
+    { label: 'Grant Permission', value: 'grant_permission' },
+    { label: 'Revoke Permission', value: 'revoke_permission' },
   ];
 
   // Resource types
@@ -138,7 +138,7 @@ export class PermissionRequestComponent implements OnInit, OnDestroy {
   tableSettings = {
     mode: 'external',
     hideSubHeader: true,
-    noDataMessage: '暂无申请记录',
+    noDataMessage: 'No request records',
     actions: {
       add: false,
       edit: false,
@@ -155,51 +155,51 @@ export class PermissionRequestComponent implements OnInit, OnDestroy {
         width: '60px',
       },
       request_type: {
-        title: '类型',
+        title: 'Type',
         type: 'html',
         sanitizer: { bypassHtml: true },
         width: '100px',
         valuePrepareFunction: (value: string) => {
           const labels: {[key: string]: string} = {
-            'grant_role': '授予角色',
-            'grant_permission': '授予权限',
-            'revoke_permission': '撤销权限',
+            'grant_role': 'Grant Role',
+            'grant_permission': 'Grant Permission',
+            'revoke_permission': 'Revoke Permission',
           };
           return `<span class="badge badge-primary">${labels[value] || value}</span>`;
         },
       },
       target: {
-        title: '目标',
+        title: 'Target',
         type: 'string',
       },
       permissions: {
-        title: '权限',
+        title: 'Permissions',
         type: 'string',
       },
       reason: {
-        title: '原因',
+        title: 'Reason',
         type: 'string',
       },
       status: {
-        title: '状态',
+        title: 'Status',
         type: 'html',
         sanitizer: { bypassHtml: true },
         width: '90px',
         valuePrepareFunction: (value: string) => {
           const statusMap: {[key: string]: {label: string, badge: string}} = {
-            'pending': { label: '待审批', badge: 'warning' },
-            'approved': { label: '已批准', badge: 'info' },
-            'executing': { label: '执行中', badge: 'primary' },
-            'completed': { label: '已完成', badge: 'success' },
-            'rejected': { label: '已拒绝', badge: 'danger' },
-            'failed': { label: '失败', badge: 'danger' },
+            'pending': { label: 'Pending', badge: 'warning' },
+            'approved': { label: 'Approved', badge: 'info' },
+            'executing': { label: 'Executing', badge: 'primary' },
+            'completed': { label: 'Completed', badge: 'success' },
+            'rejected': { label: 'Rejected', badge: 'danger' },
+            'failed': { label: 'Failed', badge: 'danger' },
           };
           const s = statusMap[value] || { label: value, badge: 'default' };
           return `<span class="badge badge-${s.badge}">${s.label}</span>`;
         },
       },
       created_at: {
-        title: '创建时间',
+        title: 'Created At',
         type: 'string',
         width: '150px',
         valuePrepareFunction: (value: string) => {
@@ -213,13 +213,13 @@ export class PermissionRequestComponent implements OnInit, OnDestroy {
 
   // Status options
   statusOptions = [
-    { label: '全部', value: 'all' },
-    { label: '待审批', value: 'pending' },
-    { label: '已批准', value: 'approved' },
-    { label: '执行中', value: 'executing' },
-    { label: '已完成', value: 'completed' },
-    { label: '已拒绝', value: 'rejected' },
-    { label: '失败', value: 'failed' },
+    { label: 'All', value: 'all' },
+    { label: 'Pending', value: 'pending' },
+    { label: 'Approved', value: 'approved' },
+    { label: 'Executing', value: 'executing' },
+    { label: 'Completed', value: 'completed' },
+    { label: 'Rejected', value: 'rejected' },
+    { label: 'Failed', value: 'failed' },
   ];
 
   private destroy$ = new Subject<void>();
@@ -333,7 +333,7 @@ export class PermissionRequestComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to load initial data:', err);
-        this.toastr.danger('加载基础数据失败', '错误');
+        this.toastr.danger('Failed to load base data', 'Error');
         this.loadingCatalogs = false;
         this.loadingAccounts = false;
         this.loadingRoles = false;
@@ -353,7 +353,7 @@ export class PermissionRequestComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to load databases:', err);
-        this.toastr.danger('加载数据库列表失败', '错误');
+        this.toastr.danger('Failed to load database list', 'Error');
         this.loadingDatabases = false;
       },
     });
@@ -371,7 +371,7 @@ export class PermissionRequestComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to load tables:', err);
-        this.toastr.danger('加载表列表失败', '错误');
+        this.toastr.danger('Failed to load table list', 'Error');
         this.loadingTables = false;
       },
     });
@@ -485,7 +485,7 @@ export class PermissionRequestComponent implements OnInit, OnDestroy {
    */
   onSubmitRequest(): void {
     if (!this.requestForm.valid) {
-      this.toastr.warning('请填写必要字段', '验证失败');
+      this.toastr.warning('Please fill in the required fields', 'Validation Failed');
       return;
     }
 
@@ -497,17 +497,17 @@ export class PermissionRequestComponent implements OnInit, OnDestroy {
     const extraInfo: string[] = [];
 
     if (formValue.new_user_name) {
-      extraInfo.push(`新建数据库账户: ${formValue.new_user_name}`);
+      extraInfo.push(`New database account: ${formValue.new_user_name}`);
     }
     if (formValue.new_user_password) {
-      extraInfo.push(`账户初始密码: ${formValue.new_user_password}`);
+      extraInfo.push(`Initial account password: ${formValue.new_user_password}`);
     }
     if (formValue.new_role_name) {
-      extraInfo.push(`新建数据库角色: ${formValue.new_role_name}`);
+      extraInfo.push(`New database role: ${formValue.new_role_name}`);
     }
 
     if (extraInfo.length > 0) {
-      const extraBlock = `[系统自动补充信息]\n${extraInfo.join('\n')}`;
+      const extraBlock = `[Automatically added information]\n${extraInfo.join('\n')}`;
       reason = reason ? `${reason}\n\n${extraBlock}` : extraBlock;
     }
 
@@ -521,7 +521,7 @@ export class PermissionRequestComponent implements OnInit, OnDestroy {
 
     this.permissionService.submitRequest(dto).subscribe({
       next: (requestId) => {
-        this.toastr.success(`权限申请提交成功 (ID: ${requestId})`, '提交成功');
+        this.toastr.success(`Permission request submitted successfully (ID: ${requestId})`, 'Submitted Successfully');
         this.requestForm.reset({ request_type: 'grant_permission' });
         this.formSubmitting = false;
         this.submitted.emit();
@@ -529,7 +529,7 @@ export class PermissionRequestComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to submit request:', err);
-        this.toastr.danger('提交申请失败: ' + (err.error?.message || err.message), '错误');
+        this.toastr.danger('Failed to submit request: ' + (err.error?.message || err.message), 'Error');
         this.formSubmitting = false;
       },
     });
@@ -593,7 +593,7 @@ export class PermissionRequestComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to load requests:', err);
-        this.toastr.danger('加载申请列表失败', '错误');
+        this.toastr.danger('Failed to load request list', 'Error');
         this.requestsLoading = false;
       },
     });
@@ -658,12 +658,12 @@ export class PermissionRequestComponent implements OnInit, OnDestroy {
    */
   getStatusLabel(status: string): string {
     const statusMap: { [key: string]: string } = {
-      pending: '待审批',
-      approved: '已批准',
-      executing: '执行中',
-      completed: '已完成',
-      rejected: '已拒绝',
-      failed: '失败',
+      pending: 'Pending',
+      approved: 'Approved',
+      executing: 'Executing',
+      completed: 'Completed',
+      rejected: 'Rejected',
+      failed: 'Failed',
     };
     return statusMap[status] || status;
   }
@@ -708,7 +708,7 @@ export class PermissionRequestComponent implements OnInit, OnDestroy {
     this.requestForm.patchValue({
       request_type: 'revoke_permission',
       permissions: [permission.privilege_type],
-      reason: `申请撤销权限: ${permission.privilege_type} on ${permission.resource_path}`,
+      reason: `Request to revoke permission: ${permission.privilege_type} on ${permission.resource_path}`,
     }, { emitEvent: false });
 
     // Set resource type without triggering cascade
@@ -727,7 +727,7 @@ export class PermissionRequestComponent implements OnInit, OnDestroy {
     // Note: Don't auto-fill catalog/database/table as it triggers API calls
     // User should select them manually
 
-    this.toastr.info('已预填撤销信息，请选择用户并补充申请原因', '预填完成');
+    this.toastr.info('Revocation info prefilled, please select the user and add a reason', 'Prefill Complete');
   }
 
   /**

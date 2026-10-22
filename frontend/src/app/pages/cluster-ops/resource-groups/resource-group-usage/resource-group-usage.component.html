@@ -2,7 +2,7 @@
   <div class="col-12">
     <nb-card>
       <nb-card-header class="d-flex justify-content-between align-items-center">
-        <h4>资源组使用情况</h4>
+        <h4>Resource Group Usage</h4>
         <div>
           <button
             nbButton
@@ -11,10 +11,10 @@
             size="small"
             class="me-2"
             (click)="toggleAutoRefresh()"
-            [nbTooltip]="autoRefresh ? '关闭自动刷新' : '开启自动刷新'"
+            [nbTooltip]="autoRefresh ? 'Disable auto refresh' : 'Enable auto refresh'"
           >
             <nb-icon [icon]="autoRefresh ? 'pause-circle-outline' : 'play-circle-outline'"></nb-icon>
-            {{ autoRefresh ? '自动刷新' : '手动刷新' }}
+            {{ autoRefresh ? 'Auto refresh' : 'Manual refresh' }}
           </button>
           <button
             nbButton
@@ -23,10 +23,10 @@
             class="me-2"
             (click)="refreshData()"
             [disabled]="loading"
-            nbTooltip="立即刷新数据"
+            nbTooltip="Refresh data now"
           >
             <nb-icon icon="refresh-outline"></nb-icon>
-            刷新
+            Refresh
           </button>
           <button
             nbButton
@@ -34,10 +34,10 @@
             status="basic"
             size="small"
             (click)="goBack()"
-            nbTooltip="返回资源组列表"
+            nbTooltip="Back to resource group list"
           >
             <nb-icon icon="arrow-back-outline"></nb-icon>
-            返回
+            Back
           </button>
         </div>
       </nb-card-header>
@@ -46,7 +46,7 @@
         <div *ngIf="autoRefresh" class="mb-3">
           <nb-alert status="info" size="small">
             <nb-icon icon="info-outline"></nb-icon>
-            自动刷新已开启，每 {{ refreshInterval }} 秒更新一次数据
+            Auto refresh is on, data is updated every {{ refreshInterval }} seconds
           </nb-alert>
         </div>
 
@@ -63,7 +63,7 @@
 
         <div *ngIf="!loading && source.count() === 0" class="text-center p-4">
           <nb-icon icon="inbox-outline" class="text-muted" style="font-size: 3rem;"></nb-icon>
-          <p class="text-muted mt-2">当前没有资源组在使用资源</p>
+          <p class="text-muted mt-2">No resource group is using resources right now</p>
         </div>
       </nb-card-body>
     </nb-card>

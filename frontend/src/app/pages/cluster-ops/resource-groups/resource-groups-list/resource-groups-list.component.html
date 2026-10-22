@@ -5,10 +5,10 @@
         <div class="d-flex justify-content-between align-items-center">
           <!-- Left: Title | Cluster Name -->
           <div class="d-flex align-items-center gap-2">
-            <h5 class="mb-0">资源组管理</h5>
+            <h5 class="mb-0">Resource Group Management</h5>
             <span class="text-hint">|</span>
             <span class="text-hint" style="font-size: 13px;">
-              集群: <strong>{{ activeCluster?.name || '未选择' }}</strong>
+              Cluster: <strong>{{ activeCluster?.name || 'Not selected' }}</strong>
             </span>
           </div>
 
@@ -21,7 +21,7 @@
               (click)="viewUsage()"
             >
               <nb-icon icon="activity-outline"></nb-icon>
-              使用情况
+              Usage
             </button>
             <button
               nbButton
@@ -30,7 +30,7 @@
               (click)="viewAnalysis()"
             >
               <nb-icon icon="bar-chart-outline"></nb-icon>
-              使用分析
+              Usage analysis
             </button>
             <button
               nbButton
@@ -39,7 +39,7 @@
               (click)="createResourceGroup()"
             >
               <nb-icon icon="plus-outline"></nb-icon>
-              创建资源组
+              Create resource group
             </button>
           </div>
         </div>
@@ -71,10 +71,10 @@
     </nb-card-body>
     <nb-card-footer class="d-flex justify-content-end">
       <button nbButton ghost status="basic" class="me-2" (click)="ref.close(false)">
-        取消
+        Cancel
       </button>
       <button nbButton status="danger" (click)="ref.close(true)">
-        确认删除
+        Confirm delete
       </button>
     </nb-card-footer>
   </nb-card>

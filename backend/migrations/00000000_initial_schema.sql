@@ -526,7 +526,7 @@ CREATE TABLE IF NOT EXISTS llm_usage_stats (
 CREATE INDEX IF NOT EXISTS idx_llm_usage_date ON llm_usage_stats(date, provider_id);
 
 -- ==============================================
--- 4.7 Permission Requests Table (新增鉴权管控工单)
+-- 4.7 Permission Requests Table (added access control work orders)
 -- ==============================================
 CREATE TABLE IF NOT EXISTS permission_requests (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -604,8 +604,8 @@ VALUES ('admin', '$2b$12$LFxvzXbmyBPO9Zp.1MFU4OX3fb8kID8AHYHklokkZvgyzmHuRTc56',
 -- 7.2 Insert Default Roles
 -- ==============================================
 INSERT OR IGNORE INTO roles (code, name, description, is_system, organization_id) VALUES
-('admin', '管理员', '拥有所有权限', 1, NULL),
-('super_admin', '超级管理员', '拥有所有权限(跨组织)', 1, NULL);
+('admin', 'Administrator', 'Has all permissions', 1, NULL),
+('super_admin', 'Super Administrator', 'Has all permissions (across organizations)', 1, NULL);
 
 -- ==============================================
 -- 7.3 Insert Default Organization
@@ -618,233 +618,233 @@ VALUES ('default_org', 'Default Organization', 'System default organization (bui
 -- ==============================================
 INSERT OR IGNORE INTO system_functions (cluster_id, category_name, function_name, description, sql_query, display_order, category_order, is_favorited, is_system, created_by, created_at, updated_at) VALUES
 -- Database Management
-(NULL, '数据库管理', 'dbs', '数据库信息', 'HTTP_QUERY', 0, 0, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(NULL, '数据库管理', 'catalog', 'Catalog信息', 'HTTP_QUERY', 1, 0, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Database Management', 'dbs', 'Database information', 'HTTP_QUERY', 0, 0, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Database Management', 'catalog', 'Catalog information', 'HTTP_QUERY', 1, 0, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Cluster Information
-(NULL, '集群信息', 'backends', 'Backend节点信息', 'HTTP_QUERY', 0, 1, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(NULL, '集群信息', 'frontends', 'Frontend节点信息', 'HTTP_QUERY', 1, 1, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(NULL, '集群信息', 'compute_nodes', '计算节点信息(CN)', 'HTTP_QUERY', 2, 1, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(NULL, '集群信息', 'brokers', 'Broker节点信息', 'HTTP_QUERY', 3, 1, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(NULL, '集群信息', 'statistic', '统计信息', 'HTTP_QUERY', 4, 1, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(NULL, '集群信息', 'monitor', '监控信息', 'HTTP_QUERY', 5, 1, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(NULL, '集群信息', 'cluster_balance', '集群均衡', 'HTTP_QUERY', 6, 1, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(NULL, '集群信息', 'historical_nodes', '历史节点', 'HTTP_QUERY', 7, 1, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Cluster Information', 'backends', 'Backend node information', 'HTTP_QUERY', 0, 1, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Cluster Information', 'frontends', 'Frontend node information', 'HTTP_QUERY', 1, 1, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Cluster Information', 'compute_nodes', 'Compute node information (CN)', 'HTTP_QUERY', 2, 1, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Cluster Information', 'brokers', 'Broker node information', 'HTTP_QUERY', 3, 1, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Cluster Information', 'statistic', 'Statistics', 'HTTP_QUERY', 4, 1, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Cluster Information', 'monitor', 'Monitoring information', 'HTTP_QUERY', 5, 1, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Cluster Information', 'cluster_balance', 'Cluster balance', 'HTTP_QUERY', 6, 1, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Cluster Information', 'historical_nodes', 'Historical nodes', 'HTTP_QUERY', 7, 1, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Transaction Management
-(NULL, '事务管理', 'transactions', '事务信息', 'HTTP_QUERY', 0, 2, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Transaction Management', 'transactions', 'Transaction information', 'HTTP_QUERY', 0, 2, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Task Management
-(NULL, '任务管理', 'routine_loads', 'Routine Load任务', 'HTTP_QUERY', 0, 3, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(NULL, '任务管理', 'stream_loads', 'Stream Load任务', 'HTTP_QUERY', 1, 3, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(NULL, '任务管理', 'load_error_hub', 'Load错误信息', 'HTTP_QUERY', 2, 3, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(NULL, '任务管理', 'tasks', '任务列表', 'HTTP_QUERY', 3, 3, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(NULL, '任务管理', 'replications', '复制任务', 'HTTP_QUERY', 4, 3, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Task Management', 'routine_loads', 'Routine Load jobs', 'HTTP_QUERY', 0, 3, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Task Management', 'stream_loads', 'Stream Load jobs', 'HTTP_QUERY', 1, 3, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Task Management', 'load_error_hub', 'Load error information', 'HTTP_QUERY', 2, 3, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Task Management', 'tasks', 'Task list', 'HTTP_QUERY', 3, 3, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Task Management', 'replications', 'Replication jobs', 'HTTP_QUERY', 4, 3, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Query Management
-(NULL, '查询管理', 'current_queries', '当前查询', 'HTTP_QUERY', 0, 4, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(NULL, '查询管理', 'global_current_queries', '全局当前查询', 'HTTP_QUERY', 1, 4, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(NULL, '查询管理', 'current_backend_instances', '当前后端实例', 'HTTP_QUERY', 2, 4, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Query Management', 'current_queries', 'Current queries', 'HTTP_QUERY', 0, 4, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Query Management', 'global_current_queries', 'Global current queries', 'HTTP_QUERY', 1, 4, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Query Management', 'current_backend_instances', 'Current backend instances', 'HTTP_QUERY', 2, 4, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Resource Management
-(NULL, '资源管理', 'resources', '资源信息', 'HTTP_QUERY', 0, 5, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(NULL, '资源管理', 'warehouses', '数据仓库信息', 'HTTP_QUERY', 1, 5, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Resource Management', 'resources', 'Resource information', 'HTTP_QUERY', 0, 5, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Resource Management', 'warehouses', 'Warehouse information', 'HTTP_QUERY', 1, 5, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Storage Management
-(NULL, '存储管理', 'compactions', '压缩任务信息', 'HTTP_QUERY', 0, 6, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(NULL, '存储管理', 'colocation_group', 'Colocation Group', 'HTTP_QUERY', 1, 6, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Storage', 'compactions', 'Compaction jobs', 'HTTP_QUERY', 0, 6, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Storage', 'colocation_group', 'Colocation Group', 'HTTP_QUERY', 1, 6, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- Job Management
-(NULL, '作业管理', 'jobs', '作业信息', 'HTTP_QUERY', 0, 7, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(NULL, 'Job Management', 'jobs', 'Job information', 'HTTP_QUERY', 0, 7, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 -- System Maintenance
-(NULL, '系统维护', 'meta_recovery', '元数据恢复', 'HTTP_QUERY', 0, 8, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+(NULL, 'System Maintenance', 'meta_recovery', 'Metadata recovery', 'HTTP_QUERY', 0, 8, false, true, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- ==============================================
 -- 7.5 Insert All Permissions (Menu + API)
 -- ==============================================
 INSERT OR IGNORE INTO permissions (code, name, type, resource, action, description) VALUES
 -- Menu Permissions (14 + 3 new)
-('menu:dashboard', '集群列表', 'menu', 'dashboard', 'view', '查看集群列表'),
-('menu:overview', '集群概览', 'menu', 'overview', 'view', '查看集群概览'),
-('menu:nodes', '节点管理', 'menu', 'nodes', 'view', '查看节点管理'),
-('menu:nodes:frontends', 'Frontend节点', 'menu', 'nodes', 'view', '查看Frontend节点'),
-('menu:nodes:backends', 'Backend节点', 'menu', 'nodes', 'view', '查看Backend节点'),
-('menu:queries', '查询管理', 'menu', 'queries', 'view', '查看查询管理'),
-('menu:queries:execution', '实时查询', 'menu', 'queries', 'view', '查看实时查询'),
-('menu:queries:profiles', 'Profiles', 'menu', 'queries', 'view', '查看Profiles'),
-('menu:queries:audit-logs', '审计日志', 'menu', 'queries', 'view', '查看审计日志'),
-('menu:queries:blacklist', 'SQL黑名单', 'menu', 'queries', 'view', '查看SQL黑名单管理'),
-('menu:materialized-views', '物化视图', 'menu', 'materialized-views', 'view', '查看物化视图'),
-('menu:system-functions', '功能卡片', 'menu', 'system-functions', 'view', '查看功能卡片'),
-('menu:sessions', '会话管理', 'menu', 'sessions', 'view', '查看会话管理'),
-('menu:variables', '变量管理', 'menu', 'variables', 'view', '查看变量管理'),
-('menu:system', '系统管理', 'menu', 'system', 'view', '系统管理菜单(父级)'),
-('menu:system:users', '用户管理', 'menu', 'system:users', 'view', '查看用户管理'),
-('menu:system:roles', '角色管理', 'menu', 'system:roles', 'view', '查看角色管理'),
-('menu:system:organizations', '组织管理', 'menu', 'system:organizations', 'view', '组织管理菜单'),
-('menu:system:llm', 'LLM管理', 'menu', 'system:llm', 'view', '查看LLM管理'),
+('menu:dashboard', 'Cluster List', 'menu', 'dashboard', 'view', 'View cluster list'),
+('menu:overview', 'Cluster Overview', 'menu', 'overview', 'view', 'View cluster overview'),
+('menu:nodes', 'Node Management', 'menu', 'nodes', 'view', 'View node management'),
+('menu:nodes:frontends', 'Frontend Nodes', 'menu', 'nodes', 'view', 'View frontend nodes'),
+('menu:nodes:backends', 'Backend Nodes', 'menu', 'nodes', 'view', 'View backend nodes'),
+('menu:queries', 'Query Management', 'menu', 'queries', 'view', 'View query management'),
+('menu:queries:execution', 'Running Queries', 'menu', 'queries', 'view', 'View running queries'),
+('menu:queries:profiles', 'Profiles', 'menu', 'queries', 'view', 'View profiles'),
+('menu:queries:audit-logs', 'Audit Log', 'menu', 'queries', 'view', 'View audit log'),
+('menu:queries:blacklist', 'SQL Blacklist', 'menu', 'queries', 'view', 'View SQL blacklist management'),
+('menu:materialized-views', 'Materialized Views', 'menu', 'materialized-views', 'view', 'View materialized views'),
+('menu:system-functions', 'Feature Cards', 'menu', 'system-functions', 'view', 'View feature cards'),
+('menu:sessions', 'Session Management', 'menu', 'sessions', 'view', 'View session management'),
+('menu:variables', 'Variable Management', 'menu', 'variables', 'view', 'View variable management'),
+('menu:system', 'System Management', 'menu', 'system', 'view', 'System management menu (parent)'),
+('menu:system:users', 'User Management', 'menu', 'system:users', 'view', 'View user management'),
+('menu:system:roles', 'Role Management', 'menu', 'system:roles', 'view', 'View role management'),
+('menu:system:organizations', 'Organization Management', 'menu', 'system:organizations', 'view', 'Organization management menu'),
+('menu:system:llm', 'LLM Management', 'menu', 'system:llm', 'view', 'View LLM management'),
 
--- ============ 新增：集群运维模块 ============
-('menu:cluster-ops', '集群运维', 'menu', 'cluster-ops', 'view', '集群运维菜单(父级)'),
-('menu:cluster-ops:auth', '鉴权管控', 'menu', 'cluster-ops:auth', 'view', '鉴权管控子菜单'),
-('menu:cluster-ops:auth:requests', '权限申请', 'menu', 'cluster-ops:auth:requests', 'view', '查看权限申请'),
-('menu:cluster-ops:auth:approvals', '审批管理', 'menu', 'cluster-ops:auth:approvals', 'view', '查看审批管理'),
+-- ============ Added: Cluster Operations Module ============
+('menu:cluster-ops', 'Cluster Operations', 'menu', 'cluster-ops', 'view', 'Cluster operations menu (parent)'),
+('menu:cluster-ops:auth', 'Permission Management', 'menu', 'cluster-ops:auth', 'view', 'Permission management submenu'),
+('menu:cluster-ops:auth:requests', 'Permission Request', 'menu', 'cluster-ops:auth:requests', 'view', 'View permission requests'),
+('menu:cluster-ops:auth:approvals', 'Permission Approval', 'menu', 'cluster-ops:auth:approvals', 'view', 'View permission approvals'),
 
 -- API Permissions - Cluster Operations (10)
-('api:clusters:list', '查询集群列表', 'api', 'clusters', 'list', 'GET /api/clusters'),
-('api:clusters:create', '创建集群', 'api', 'clusters', 'create', 'POST /api/clusters'),
-('api:clusters:get', '查看集群详情', 'api', 'clusters', 'get', 'GET /api/clusters/:id'),
-('api:clusters:update', '更新集群', 'api', 'clusters', 'update', 'PUT /api/clusters/:id'),
-('api:clusters:delete', '删除集群', 'api', 'clusters', 'delete', 'DELETE /api/clusters/:id'),
-('api:clusters:activate', '激活集群', 'api', 'clusters', 'activate', 'PUT /api/clusters/:id/activate'),
-('api:clusters:active', '获取活跃集群', 'api', 'clusters', 'active', 'GET /api/clusters/active'),
-('api:clusters:health', '集群健康检查', 'api', 'clusters', 'health', 'GET /api/clusters/:id/health'),
-('api:clusters:health:post', '集群健康检查POST', 'api', 'clusters', 'health:post', 'POST /api/clusters/:id/health'),
-('api:clusters:health:test', '测试集群连接', 'api', 'clusters', 'health:test', 'POST /api/clusters/health/test'),
+('api:clusters:list', 'List clusters', 'api', 'clusters', 'list', 'GET /api/clusters'),
+('api:clusters:create', 'Create cluster', 'api', 'clusters', 'create', 'POST /api/clusters'),
+('api:clusters:get', 'Get cluster details', 'api', 'clusters', 'get', 'GET /api/clusters/:id'),
+('api:clusters:update', 'Update cluster', 'api', 'clusters', 'update', 'PUT /api/clusters/:id'),
+('api:clusters:delete', 'Delete cluster', 'api', 'clusters', 'delete', 'DELETE /api/clusters/:id'),
+('api:clusters:activate', 'Activate cluster', 'api', 'clusters', 'activate', 'PUT /api/clusters/:id/activate'),
+('api:clusters:active', 'Get active cluster', 'api', 'clusters', 'active', 'GET /api/clusters/active'),
+('api:clusters:health', 'Cluster health check', 'api', 'clusters', 'health', 'GET /api/clusters/:id/health'),
+('api:clusters:health:post', 'Cluster health check (POST)', 'api', 'clusters', 'health:post', 'POST /api/clusters/:id/health'),
+('api:clusters:health:test', 'Test cluster connection', 'api', 'clusters', 'health:test', 'POST /api/clusters/health/test'),
 
 -- API Permissions - Cluster Overview (8)
-('api:clusters:overview', '集群概览', 'api', 'clusters', 'overview', 'GET /api/clusters/overview'),
-('api:clusters:overview:extended', '扩展集群概览', 'api', 'clusters', 'overview:extended', 'GET /api/clusters/overview/extended'),
-('api:clusters:overview:health', '集群健康卡片', 'api', 'clusters', 'overview:health', 'GET /api/clusters/overview/health'),
-('api:clusters:overview:performance', '性能趋势', 'api', 'clusters', 'overview:performance', 'GET /api/clusters/overview/performance'),
-('api:clusters:overview:resources', '资源趋势', 'api', 'clusters', 'overview:resources', 'GET /api/clusters/overview/resources'),
-('api:clusters:overview:data:stats', '数据统计', 'api', 'clusters', 'overview:data:stats', 'GET /api/clusters/overview/data-stats'),
-('api:clusters:overview:capacity:prediction', '容量预测', 'api', 'clusters', 'overview:capacity:prediction', 'GET /api/clusters/overview/capacity-prediction'),
-('api:clusters:overview:compaction:details', '压缩详情统计', 'api', 'clusters', 'overview:compaction:details', 'GET /api/clusters/overview/compaction-details'),
+('api:clusters:overview', 'Cluster overview', 'api', 'clusters', 'overview', 'GET /api/clusters/overview'),
+('api:clusters:overview:extended', 'Extended cluster overview', 'api', 'clusters', 'overview:extended', 'GET /api/clusters/overview/extended'),
+('api:clusters:overview:health', 'Cluster health card', 'api', 'clusters', 'overview:health', 'GET /api/clusters/overview/health'),
+('api:clusters:overview:performance', 'Performance trend', 'api', 'clusters', 'overview:performance', 'GET /api/clusters/overview/performance'),
+('api:clusters:overview:resources', 'Resource trend', 'api', 'clusters', 'overview:resources', 'GET /api/clusters/overview/resources'),
+('api:clusters:overview:data:stats', 'Data statistics', 'api', 'clusters', 'overview:data:stats', 'GET /api/clusters/overview/data-stats'),
+('api:clusters:overview:capacity:prediction', 'Capacity prediction', 'api', 'clusters', 'overview:capacity:prediction', 'GET /api/clusters/overview/capacity-prediction'),
+('api:clusters:overview:compaction:details', 'Compaction detail statistics', 'api', 'clusters', 'overview:compaction:details', 'GET /api/clusters/overview/compaction-details'),
 
 -- API Permissions - Nodes (3)
-('api:clusters:backends', 'Backend节点列表', 'api', 'clusters', 'backends', 'GET /api/clusters/backends'),
-('api:clusters:backends:delete', '删除Backend节点', 'api', 'clusters', 'backends:delete', 'DELETE /api/clusters/backends/:host/:port'),
-('api:clusters:frontends', 'Frontend节点列表', 'api', 'clusters', 'frontends', 'GET /api/clusters/frontends'),
+('api:clusters:backends', 'Backend node list', 'api', 'clusters', 'backends', 'GET /api/clusters/backends'),
+('api:clusters:backends:delete', 'Delete backend node', 'api', 'clusters', 'backends:delete', 'DELETE /api/clusters/backends/:host/:port'),
+('api:clusters:frontends', 'Frontend node list', 'api', 'clusters', 'frontends', 'GET /api/clusters/frontends'),
 
 -- API Permissions - Query Management (11)
-('api:clusters:catalogs', '查询Catalog列表', 'api', 'clusters', 'catalogs', 'GET /api/clusters/catalogs'),
-('api:clusters:databases', '查询数据库列表', 'api', 'clusters', 'databases', 'GET /api/clusters/databases'),
-('api:clusters:tables', '查询表列表', 'api', 'clusters', 'tables', 'GET /api/clusters/tables'),
-('api:clusters:catalogs:databases', '查询Catalog和数据库树', 'api', 'clusters', 'catalogs:databases', 'GET /api/clusters/catalogs-databases'),
-('api:clusters:queries', '查询管理', 'api', 'clusters', 'queries', 'GET /api/clusters/queries'),
-('api:clusters:queries:execute', '执行查询', 'api', 'clusters', 'queries:execute', 'POST /api/clusters/queries/execute'),
-('api:clusters:queries:kill', '终止查询', 'api', 'clusters', 'queries:kill', 'DELETE /api/clusters/queries/:id'),
-('api:clusters:sql:diagnose', 'SQL诊断', 'api', 'clusters', 'sql:diagnose', 'POST /api/clusters/:cluster_id/sql/diagnose'),
-('api:clusters:queries:history', '查询历史记录', 'api', 'clusters', 'queries:history', 'GET /api/clusters/queries/history'),
-('api:clusters:queries:profile', '查询Profile详情', 'api', 'clusters', 'queries:profile', 'GET /api/clusters/queries/:query_id/profile'),
-('api:clusters:profiles', '查询Profile列表', 'api', 'clusters', 'profiles', 'GET /api/clusters/profiles'),
-('api:clusters:profiles:get', '查看Profile详情', 'api', 'clusters', 'profiles:get', 'GET /api/clusters/profiles/:query_id'),
+('api:clusters:catalogs', 'List catalogs', 'api', 'clusters', 'catalogs', 'GET /api/clusters/catalogs'),
+('api:clusters:databases', 'List databases', 'api', 'clusters', 'databases', 'GET /api/clusters/databases'),
+('api:clusters:tables', 'List tables', 'api', 'clusters', 'tables', 'GET /api/clusters/tables'),
+('api:clusters:catalogs:databases', 'Catalog and database tree', 'api', 'clusters', 'catalogs:databases', 'GET /api/clusters/catalogs-databases'),
+('api:clusters:queries', 'Query management', 'api', 'clusters', 'queries', 'GET /api/clusters/queries'),
+('api:clusters:queries:execute', 'Execute query', 'api', 'clusters', 'queries:execute', 'POST /api/clusters/queries/execute'),
+('api:clusters:queries:kill', 'Kill query', 'api', 'clusters', 'queries:kill', 'DELETE /api/clusters/queries/:id'),
+('api:clusters:sql:diagnose', 'SQL diagnosis', 'api', 'clusters', 'sql:diagnose', 'POST /api/clusters/:cluster_id/sql/diagnose'),
+('api:clusters:queries:history', 'Query history', 'api', 'clusters', 'queries:history', 'GET /api/clusters/queries/history'),
+('api:clusters:queries:profile', 'Get query profile details', 'api', 'clusters', 'queries:profile', 'GET /api/clusters/queries/:query_id/profile'),
+('api:clusters:profiles', 'List query profiles', 'api', 'clusters', 'profiles', 'GET /api/clusters/profiles'),
+('api:clusters:profiles:get', 'Get profile details', 'api', 'clusters', 'profiles:get', 'GET /api/clusters/profiles/:query_id'),
 
 -- API Permissions - Materialized Views (9)
-('api:clusters:materialized_views', '物化视图列表', 'api', 'clusters', 'materialized_views', 'GET /api/clusters/materialized_views'),
-('api:clusters:materialized_views:get', '查看物化视图详情', 'api', 'clusters', 'materialized_views:get', 'GET /api/clusters/materialized_views/:mv_name'),
-('api:clusters:materialized_views:create', '创建物化视图', 'api', 'clusters', 'materialized_views:create', 'POST /api/clusters/materialized_views'),
-('api:clusters:materialized_views:update', '更新物化视图', 'api', 'clusters', 'materialized_views:update', 'PUT /api/clusters/materialized_views/:name'),
-('api:clusters:materialized_views:delete', '删除物化视图', 'api', 'clusters', 'materialized_views:delete', 'DELETE /api/clusters/materialized_views/:name'),
-('api:clusters:materialized_views:ddl', '获取物化视图DDL', 'api', 'clusters', 'materialized_views:ddl', 'GET /api/clusters/materialized_views/:mv_name/ddl'),
-('api:clusters:materialized_views:refresh', '刷新物化视图', 'api', 'clusters', 'materialized_views:refresh', 'POST /api/clusters/materialized_views/:mv_name/refresh'),
-('api:clusters:materialized_views:cancel', '取消刷新物化视图', 'api', 'clusters', 'materialized_views:cancel', 'POST /api/clusters/materialized_views/:mv_name/cancel'),
-('api:clusters:materialized_views:alter', '修改物化视图', 'api', 'clusters', 'materialized_views:alter', 'PUT /api/clusters/materialized_views/:mv_name'),
+('api:clusters:materialized_views', 'Materialized view list', 'api', 'clusters', 'materialized_views', 'GET /api/clusters/materialized_views'),
+('api:clusters:materialized_views:get', 'Get materialized view details', 'api', 'clusters', 'materialized_views:get', 'GET /api/clusters/materialized_views/:mv_name'),
+('api:clusters:materialized_views:create', 'Create materialized view', 'api', 'clusters', 'materialized_views:create', 'POST /api/clusters/materialized_views'),
+('api:clusters:materialized_views:update', 'Update materialized view', 'api', 'clusters', 'materialized_views:update', 'PUT /api/clusters/materialized_views/:name'),
+('api:clusters:materialized_views:delete', 'Delete materialized view', 'api', 'clusters', 'materialized_views:delete', 'DELETE /api/clusters/materialized_views/:name'),
+('api:clusters:materialized_views:ddl', 'Get materialized view DDL', 'api', 'clusters', 'materialized_views:ddl', 'GET /api/clusters/materialized_views/:mv_name/ddl'),
+('api:clusters:materialized_views:refresh', 'Refresh materialized view', 'api', 'clusters', 'materialized_views:refresh', 'POST /api/clusters/materialized_views/:mv_name/refresh'),
+('api:clusters:materialized_views:cancel', 'Cancel materialized view refresh', 'api', 'clusters', 'materialized_views:cancel', 'POST /api/clusters/materialized_views/:mv_name/cancel'),
+('api:clusters:materialized_views:alter', 'Alter materialized view', 'api', 'clusters', 'materialized_views:alter', 'PUT /api/clusters/materialized_views/:mv_name'),
 
 -- API Permissions - Sessions & Variables (5)
-('api:clusters:sessions', '会话管理', 'api', 'clusters', 'sessions', 'GET /api/clusters/sessions'),
-('api:clusters:sessions:kill', '终止会话', 'api', 'clusters', 'sessions:kill', 'DELETE /api/clusters/sessions/:id'),
-('api:clusters:variables', '变量管理', 'api', 'clusters', 'variables', 'GET /api/clusters/variables'),
-('api:clusters:variables:update', '更新变量', 'api', 'clusters', 'variables:update', 'PUT /api/clusters/variables/:name'),
-('api:clusters:configs', '查看FE配置', 'api', 'clusters', 'configs', 'GET /api/clusters/configs'),
+('api:clusters:sessions', 'Session management', 'api', 'clusters', 'sessions', 'GET /api/clusters/sessions'),
+('api:clusters:sessions:kill', 'Kill session', 'api', 'clusters', 'sessions:kill', 'DELETE /api/clusters/sessions/:id'),
+('api:clusters:variables', 'Variable management', 'api', 'clusters', 'variables', 'GET /api/clusters/variables'),
+('api:clusters:variables:update', 'Update variable', 'api', 'clusters', 'variables:update', 'PUT /api/clusters/variables/:name'),
+('api:clusters:configs', 'View FE configs', 'api', 'clusters', 'configs', 'GET /api/clusters/configs'),
 
 -- API Permissions - SQL Blacklist (4)
-('api:clusters:sql:blacklist', '查询SQL黑名单列表', 'api', 'clusters', 'sql:blacklist', 'GET /api/clusters/sql-blacklist'),
-('api:clusters:sql:blacklist:add', '添加SQL黑名单规则', 'api', 'clusters', 'sql:blacklist:add', 'POST /api/clusters/sql-blacklist'),
-('api:clusters:sql:blacklist:delete', '删除SQL黑名单规则', 'api', 'clusters', 'sql:blacklist:delete', 'DELETE /api/clusters/sql-blacklist/:id'),
+('api:clusters:sql:blacklist', 'SQL blacklist list', 'api', 'clusters', 'sql:blacklist', 'GET /api/clusters/sql-blacklist'),
+('api:clusters:sql:blacklist:add', 'Add SQL blacklist rule', 'api', 'clusters', 'sql:blacklist:add', 'POST /api/clusters/sql-blacklist'),
+('api:clusters:sql:blacklist:delete', 'Delete SQL blacklist rule', 'api', 'clusters', 'sql:blacklist:delete', 'DELETE /api/clusters/sql-blacklist/:id'),
 
 -- API Permissions - System Functions (37)
-('api:clusters:system', '功能卡片', 'api', 'clusters', 'system', 'GET /api/clusters/system'),
-('api:clusters:system:runtime_info', '查询运行时信息', 'api', 'clusters', 'system:runtime_info', 'GET /api/clusters/system/runtime_info'),
-('api:clusters:system:brokers', '查询Broker节点', 'api', 'clusters', 'system:brokers', 'GET /api/clusters/system/brokers'),
-('api:clusters:system:frontends', '查询Frontend节点', 'api', 'clusters', 'system:frontends', 'GET /api/clusters/system/frontends'),
-('api:clusters:system:routine_loads', '查询Routine Load任务', 'api', 'clusters', 'system:routine_loads', 'GET /api/clusters/system/routine_loads'),
-('api:clusters:system:catalog', '查询目录', 'api', 'clusters', 'system:catalog', 'GET /api/clusters/system/catalog'),
-('api:clusters:system:colocation_group', '查询Colocation Group', 'api', 'clusters', 'system:colocation_group', 'GET /api/clusters/system/colocation_group'),
-('api:clusters:system:cluster_balance', '查询集群平衡', 'api', 'clusters', 'system:cluster_balance', 'GET /api/clusters/system/cluster_balance'),
-('api:clusters:system:load_error_hub', '查询加载错误信息', 'api', 'clusters', 'system:load_error_hub', 'GET /api/clusters/system/load_error_hub'),
-('api:clusters:system:meta_recovery', '查询元数据恢复', 'api', 'clusters', 'system:meta_recovery', 'GET /api/clusters/system/meta_recovery'),
-('api:clusters:system:global_current_queries', '查询全局当前查询', 'api', 'clusters', 'system:global_current_queries', 'GET /api/clusters/system/global_current_queries'),
-('api:clusters:system:tasks', '查询系统任务', 'api', 'clusters', 'system:tasks', 'GET /api/clusters/system/tasks'),
-('api:clusters:system:compute_nodes', '查询计算节点', 'api', 'clusters', 'system:compute_nodes', 'GET /api/clusters/system/compute_nodes'),
-('api:clusters:system:statistic', '查询统计信息', 'api', 'clusters', 'system:statistic', 'GET /api/clusters/system/statistic'),
-('api:clusters:system:jobs', '查询后台任务', 'api', 'clusters', 'system:jobs', 'GET /api/clusters/system/jobs'),
-('api:clusters:system:warehouses', '查询仓库', 'api', 'clusters', 'system:warehouses', 'GET /api/clusters/system/warehouses'),
-('api:clusters:system:resources', '查询资源', 'api', 'clusters', 'system:resources', 'GET /api/clusters/system/resources'),
-('api:clusters:system:transactions', '查询事务', 'api', 'clusters', 'system:transactions', 'GET /api/clusters/system/transactions'),
-('api:clusters:system:backends', '查询Backend节点', 'api', 'clusters', 'system:backends', 'GET /api/clusters/system/backends'),
-('api:clusters:system:current_queries', '查询当前查询', 'api', 'clusters', 'system:current_queries', 'GET /api/clusters/system/current_queries'),
-('api:clusters:system:stream_loads', '查询Stream Load任务', 'api', 'clusters', 'system:stream_loads', 'GET /api/clusters/system/stream_loads'),
-('api:clusters:system:replications', '查询复制状态', 'api', 'clusters', 'system:replications', 'GET /api/clusters/system/replications'),
-('api:clusters:system:dbs', '查询数据库', 'api', 'clusters', 'system:dbs', 'GET /api/clusters/system/dbs'),
-('api:clusters:system:current_backend_instances', '查询当前Backend实例', 'api', 'clusters', 'system:current_backend_instances', 'GET /api/clusters/system/current_backend_instances'),
-('api:clusters:system:historical_nodes', '查询历史节点', 'api', 'clusters', 'system:historical_nodes', 'GET /api/clusters/system/historical_nodes'),
-('api:clusters:system:compactions', '查询压缩任务', 'api', 'clusters', 'system:compactions', 'GET /api/clusters/system/compactions'),
-('api:clusters:system:monitor', '查询监控信息', 'api', 'clusters', 'system:monitor', 'GET /api/clusters/system/monitor'),
-('api:clusters:system:functions', '查询系统函数列表', 'api', 'clusters', 'system:functions', 'GET /api/clusters/system-functions'),
-('api:clusters:system:functions:create', '创建系统函数', 'api', 'clusters', 'system:functions:create', 'POST /api/clusters/system-functions'),
-('api:clusters:system:functions:update', '更新系统函数', 'api', 'clusters', 'system:functions:update', 'PUT /api/clusters/system-functions/:function_id'),
-('api:clusters:system:functions:delete', '删除系统函数', 'api', 'clusters', 'system:functions:delete', 'DELETE /api/clusters/system-functions/:function_id'),
-('api:clusters:system:functions:orders', '更新系统函数顺序', 'api', 'clusters', 'system:functions:orders', 'PUT /api/clusters/system-functions/orders'),
-('api:clusters:system:functions:execute', '执行系统函数', 'api', 'clusters', 'system:functions:execute', 'POST /api/clusters/system-functions/:function_id/execute'),
-('api:clusters:system:functions:favorite', '切换系统函数收藏', 'api', 'clusters', 'system:functions:favorite', 'PUT /api/clusters/system-functions/:function_id/favorite'),
-('api:system:functions:access-time', '更新系统函数访问时间', 'api', 'system', 'functions:access-time', 'PUT /api/system-functions/:function_name/access-time'),
-('api:system:functions:category:delete', '删除系统函数分类', 'api', 'system', 'functions:category:delete', 'DELETE /api/system-functions/category/:category_name'),
+('api:clusters:system', 'Feature cards', 'api', 'clusters', 'system', 'GET /api/clusters/system'),
+('api:clusters:system:runtime_info', 'Get runtime information', 'api', 'clusters', 'system:runtime_info', 'GET /api/clusters/system/runtime_info'),
+('api:clusters:system:brokers', 'List broker nodes', 'api', 'clusters', 'system:brokers', 'GET /api/clusters/system/brokers'),
+('api:clusters:system:frontends', 'List frontend nodes', 'api', 'clusters', 'system:frontends', 'GET /api/clusters/system/frontends'),
+('api:clusters:system:routine_loads', 'List routine load jobs', 'api', 'clusters', 'system:routine_loads', 'GET /api/clusters/system/routine_loads'),
+('api:clusters:system:catalog', 'Get catalog', 'api', 'clusters', 'system:catalog', 'GET /api/clusters/system/catalog'),
+('api:clusters:system:colocation_group', 'Get colocation group', 'api', 'clusters', 'system:colocation_group', 'GET /api/clusters/system/colocation_group'),
+('api:clusters:system:cluster_balance', 'Get cluster balance', 'api', 'clusters', 'system:cluster_balance', 'GET /api/clusters/system/cluster_balance'),
+('api:clusters:system:load_error_hub', 'Get load error information', 'api', 'clusters', 'system:load_error_hub', 'GET /api/clusters/system/load_error_hub'),
+('api:clusters:system:meta_recovery', 'Get metadata recovery', 'api', 'clusters', 'system:meta_recovery', 'GET /api/clusters/system/meta_recovery'),
+('api:clusters:system:global_current_queries', 'List global current queries', 'api', 'clusters', 'system:global_current_queries', 'GET /api/clusters/system/global_current_queries'),
+('api:clusters:system:tasks', 'List system jobs', 'api', 'clusters', 'system:tasks', 'GET /api/clusters/system/tasks'),
+('api:clusters:system:compute_nodes', 'List compute nodes', 'api', 'clusters', 'system:compute_nodes', 'GET /api/clusters/system/compute_nodes'),
+('api:clusters:system:statistic', 'Get statistics', 'api', 'clusters', 'system:statistic', 'GET /api/clusters/system/statistic'),
+('api:clusters:system:jobs', 'List background jobs', 'api', 'clusters', 'system:jobs', 'GET /api/clusters/system/jobs'),
+('api:clusters:system:warehouses', 'List warehouses', 'api', 'clusters', 'system:warehouses', 'GET /api/clusters/system/warehouses'),
+('api:clusters:system:resources', 'List resources', 'api', 'clusters', 'system:resources', 'GET /api/clusters/system/resources'),
+('api:clusters:system:transactions', 'List transactions', 'api', 'clusters', 'system:transactions', 'GET /api/clusters/system/transactions'),
+('api:clusters:system:backends', 'List backend nodes', 'api', 'clusters', 'system:backends', 'GET /api/clusters/system/backends'),
+('api:clusters:system:current_queries', 'List current queries', 'api', 'clusters', 'system:current_queries', 'GET /api/clusters/system/current_queries'),
+('api:clusters:system:stream_loads', 'List stream load jobs', 'api', 'clusters', 'system:stream_loads', 'GET /api/clusters/system/stream_loads'),
+('api:clusters:system:replications', 'Get replication status', 'api', 'clusters', 'system:replications', 'GET /api/clusters/system/replications'),
+('api:clusters:system:dbs', 'List databases', 'api', 'clusters', 'system:dbs', 'GET /api/clusters/system/dbs'),
+('api:clusters:system:current_backend_instances', 'List current backend instances', 'api', 'clusters', 'system:current_backend_instances', 'GET /api/clusters/system/current_backend_instances'),
+('api:clusters:system:historical_nodes', 'List historical nodes', 'api', 'clusters', 'system:historical_nodes', 'GET /api/clusters/system/historical_nodes'),
+('api:clusters:system:compactions', 'List compaction jobs', 'api', 'clusters', 'system:compactions', 'GET /api/clusters/system/compactions'),
+('api:clusters:system:monitor', 'Get monitoring information', 'api', 'clusters', 'system:monitor', 'GET /api/clusters/system/monitor'),
+('api:clusters:system:functions', 'List system functions', 'api', 'clusters', 'system:functions', 'GET /api/clusters/system-functions'),
+('api:clusters:system:functions:create', 'Create system function', 'api', 'clusters', 'system:functions:create', 'POST /api/clusters/system-functions'),
+('api:clusters:system:functions:update', 'Update system function', 'api', 'clusters', 'system:functions:update', 'PUT /api/clusters/system-functions/:function_id'),
+('api:clusters:system:functions:delete', 'Delete system function', 'api', 'clusters', 'system:functions:delete', 'DELETE /api/clusters/system-functions/:function_id'),
+('api:clusters:system:functions:orders', 'Update system function order', 'api', 'clusters', 'system:functions:orders', 'PUT /api/clusters/system-functions/orders'),
+('api:clusters:system:functions:execute', 'Execute system function', 'api', 'clusters', 'system:functions:execute', 'POST /api/clusters/system-functions/:function_id/execute'),
+('api:clusters:system:functions:favorite', 'Toggle system function favorite', 'api', 'clusters', 'system:functions:favorite', 'PUT /api/clusters/system-functions/:function_id/favorite'),
+('api:system:functions:access-time', 'Update system function access time', 'api', 'system', 'functions:access-time', 'PUT /api/system-functions/:function_name/access-time'),
+('api:system:functions:category:delete', 'Delete system function category', 'api', 'system', 'functions:category:delete', 'DELETE /api/system-functions/category/:category_name'),
 
 -- API Permissions - RBAC Management (17)
-('api:users:list', '查询用户列表', 'api', 'users', 'list', 'GET /api/users'),
-('api:users:get', '查看用户详情', 'api', 'users', 'get', 'GET /api/users/:id'),
-('api:users:create', '创建用户', 'api', 'users', 'create', 'POST /api/users'),
-('api:users:update', '更新用户', 'api', 'users', 'update', 'PUT /api/users/:id'),
-('api:users:delete', '删除用户', 'api', 'users', 'delete', 'DELETE /api/users/:id'),
-('api:users:roles:get', '查看用户角色', 'api', 'users', 'roles:get', 'GET /api/users/:id/roles'),
-('api:users:roles:assign', '分配用户角色', 'api', 'users', 'roles:assign', 'POST /api/users/:id/roles'),
-('api:users:roles:remove', '移除用户角色', 'api', 'users', 'roles:remove', 'DELETE /api/users/:id/roles/:role_id'),
-('api:roles:list', '查询角色列表', 'api', 'roles', 'list', 'GET /api/roles'),
-('api:roles:get', '查看角色详情', 'api', 'roles', 'get', 'GET /api/roles/:id'),
-('api:roles:create', '创建角色', 'api', 'roles', 'create', 'POST /api/roles'),
-('api:roles:update', '更新角色', 'api', 'roles', 'update', 'PUT /api/roles/:id'),
-('api:roles:delete', '删除角色', 'api', 'roles', 'delete', 'DELETE /api/roles/:id'),
-('api:roles:permissions:get', '查看角色权限', 'api', 'roles', 'permissions:get', 'GET /api/roles/:id/permissions'),
-('api:roles:permissions:update', '更新角色权限', 'api', 'roles', 'permissions:update', 'PUT /api/roles/:id/permissions'),
-('api:permissions:list', '查询权限列表', 'api', 'permissions', 'list', 'GET /api/permissions'),
-('api:permissions:menu', '查询菜单权限', 'api', 'permissions', 'menu', 'GET /api/permissions/menu'),
-('api:permissions:api', '查询API权限', 'api', 'permissions', 'api', 'GET /api/permissions/api'),
-('api:permissions:tree', '查询权限树', 'api', 'permissions', 'tree', 'GET /api/permissions/tree'),
+('api:users:list', 'List users', 'api', 'users', 'list', 'GET /api/users'),
+('api:users:get', 'Get user details', 'api', 'users', 'get', 'GET /api/users/:id'),
+('api:users:create', 'Create user', 'api', 'users', 'create', 'POST /api/users'),
+('api:users:update', 'Update user', 'api', 'users', 'update', 'PUT /api/users/:id'),
+('api:users:delete', 'Delete user', 'api', 'users', 'delete', 'DELETE /api/users/:id'),
+('api:users:roles:get', 'Get user roles', 'api', 'users', 'roles:get', 'GET /api/users/:id/roles'),
+('api:users:roles:assign', 'Assign user roles', 'api', 'users', 'roles:assign', 'POST /api/users/:id/roles'),
+('api:users:roles:remove', 'Remove user roles', 'api', 'users', 'roles:remove', 'DELETE /api/users/:id/roles/:role_id'),
+('api:roles:list', 'List roles', 'api', 'roles', 'list', 'GET /api/roles'),
+('api:roles:get', 'Get role details', 'api', 'roles', 'get', 'GET /api/roles/:id'),
+('api:roles:create', 'Create role', 'api', 'roles', 'create', 'POST /api/roles'),
+('api:roles:update', 'Update role', 'api', 'roles', 'update', 'PUT /api/roles/:id'),
+('api:roles:delete', 'Delete role', 'api', 'roles', 'delete', 'DELETE /api/roles/:id'),
+('api:roles:permissions:get', 'Get role permissions', 'api', 'roles', 'permissions:get', 'GET /api/roles/:id/permissions'),
+('api:roles:permissions:update', 'Update role permissions', 'api', 'roles', 'permissions:update', 'PUT /api/roles/:id/permissions'),
+('api:permissions:list', 'List permissions', 'api', 'permissions', 'list', 'GET /api/permissions'),
+('api:permissions:menu', 'List menu permissions', 'api', 'permissions', 'menu', 'GET /api/permissions/menu'),
+('api:permissions:api', 'List API permissions', 'api', 'permissions', 'api', 'GET /api/permissions/api'),
+('api:permissions:tree', 'Get permission tree', 'api', 'permissions', 'tree', 'GET /api/permissions/tree'),
 
 -- API Permissions - Auth (3)
-('api:auth:me', '获取当前用户信息', 'api', 'auth', 'me', 'GET /api/auth/me'),
-('api:auth:me:update', '更新当前用户信息', 'api', 'auth', 'me:update', 'PUT /api/auth/me'),
-('api:auth:permissions', '获取当前用户权限', 'api', 'auth', 'permissions', 'GET /api/auth/permissions'),
+('api:auth:me', 'Get current user info', 'api', 'auth', 'me', 'GET /api/auth/me'),
+('api:auth:me:update', 'Update current user info', 'api', 'auth', 'me:update', 'PUT /api/auth/me'),
+('api:auth:permissions', 'Get current user permissions', 'api', 'auth', 'permissions', 'GET /api/auth/permissions'),
 
 -- API Permissions - Organizations (5)
-('api:organizations:list', '查询组织列表', 'api', 'organizations', 'list', 'GET /api/organizations'),
-('api:organizations:get', '查看组织详情', 'api', 'organizations', 'get', 'GET /api/organizations/:id'),
-('api:organizations:create', '创建组织', 'api', 'organizations', 'create', 'POST /api/organizations'),
-('api:organizations:update', '更新组织', 'api', 'organizations', 'update', 'PUT /api/organizations/:id'),
-('api:organizations:delete', '删除组织', 'api', 'organizations', 'delete', 'DELETE /api/organizations/:id'),
+('api:organizations:list', 'List organizations', 'api', 'organizations', 'list', 'GET /api/organizations'),
+('api:organizations:get', 'Get organization details', 'api', 'organizations', 'get', 'GET /api/organizations/:id'),
+('api:organizations:create', 'Create organization', 'api', 'organizations', 'create', 'POST /api/organizations'),
+('api:organizations:update', 'Update organization', 'api', 'organizations', 'update', 'PUT /api/organizations/:id'),
+('api:organizations:delete', 'Delete organization', 'api', 'organizations', 'delete', 'DELETE /api/organizations/:id'),
 
 -- API Permissions - LLM (11)
-('api:llm:status', 'LLM服务状态', 'api', 'llm', 'status', 'GET /api/llm/status'),
-('api:llm:providers:list', 'LLM提供商列表', 'api', 'llm', 'providers:list', 'GET /api/llm/providers'),
-('api:llm:providers:get', '查看LLM提供商', 'api', 'llm', 'providers:get', 'GET /api/llm/providers/:id'),
-('api:llm:providers:active', '获取活跃LLM提供商', 'api', 'llm', 'providers:active', 'GET /api/llm/providers/active'),
-('api:llm:providers:create', '创建LLM提供商', 'api', 'llm', 'providers:create', 'POST /api/llm/providers'),
-('api:llm:providers:update', '更新LLM提供商', 'api', 'llm', 'providers:update', 'PUT /api/llm/providers/:id'),
-('api:llm:providers:delete', '删除LLM提供商', 'api', 'llm', 'providers:delete', 'DELETE /api/llm/providers/:id'),
-('api:llm:providers:activate', '激活LLM提供商', 'api', 'llm', 'providers:activate', 'POST /api/llm/providers/:id/activate'),
-('api:llm:providers:deactivate', '停用LLM提供商', 'api', 'llm', 'providers:deactivate', 'POST /api/llm/providers/:id/deactivate'),
-('api:llm:providers:test', '测试LLM连接', 'api', 'llm', 'providers:test', 'POST /api/llm/providers/:id/test'),
-('api:llm:analyze:root-cause', 'LLM根因分析', 'api', 'llm', 'analyze:root-cause', 'POST /api/llm/analyze/root-cause'),
+('api:llm:status', 'LLM service status', 'api', 'llm', 'status', 'GET /api/llm/status'),
+('api:llm:providers:list', 'List LLM providers', 'api', 'llm', 'providers:list', 'GET /api/llm/providers'),
+('api:llm:providers:get', 'Get LLM provider', 'api', 'llm', 'providers:get', 'GET /api/llm/providers/:id'),
+('api:llm:providers:active', 'Get active LLM provider', 'api', 'llm', 'providers:active', 'GET /api/llm/providers/active'),
+('api:llm:providers:create', 'Create LLM provider', 'api', 'llm', 'providers:create', 'POST /api/llm/providers'),
+('api:llm:providers:update', 'Update LLM provider', 'api', 'llm', 'providers:update', 'PUT /api/llm/providers/:id'),
+('api:llm:providers:delete', 'Delete LLM provider', 'api', 'llm', 'providers:delete', 'DELETE /api/llm/providers/:id'),
+('api:llm:providers:activate', 'Activate LLM provider', 'api', 'llm', 'providers:activate', 'POST /api/llm/providers/:id/activate'),
+('api:llm:providers:deactivate', 'Deactivate LLM provider', 'api', 'llm', 'providers:deactivate', 'POST /api/llm/providers/:id/deactivate'),
+('api:llm:providers:test', 'Test LLM connection', 'api', 'llm', 'providers:test', 'POST /api/llm/providers/:id/test'),
+('api:llm:analyze:root-cause', 'LLM root cause analysis', 'api', 'llm', 'analyze:root-cause', 'POST /api/llm/analyze/root-cause'),
 
--- ============ 新增：数据库权限相关 API ============
+-- ============ Added: Database Permission APIs ============
 -- API Permissions - Database Authentication (2)
-('api:db-auth:accounts:list', '查询数据库账户', 'api', 'db-auth', 'accounts:list', 'GET /api/clusters/:id/db-auth/accounts'),
-('api:db-auth:roles:list', '查询数据库角色', 'api', 'db-auth', 'roles:list', 'GET /api/clusters/:id/db-auth/roles'),
+('api:db-auth:accounts:list', 'List database accounts', 'api', 'db-auth', 'accounts:list', 'GET /api/clusters/:id/db-auth/accounts'),
+('api:db-auth:roles:list', 'List database roles', 'api', 'db-auth', 'roles:list', 'GET /api/clusters/:id/db-auth/roles'),
 
 -- API Permissions - Permission Requests (8)
-('api:permission-requests:my', '查询我的申请', 'api', 'permission-requests', 'my', 'GET /api/permission-requests/my'),
-('api:permission-requests:pending', '查询待我审批', 'api', 'permission-requests', 'pending', 'GET /api/permission-requests/pending'),
-('api:permission-requests:get', '查看工单详情', 'api', 'permission-requests', 'get', 'GET /api/permission-requests/:id'),
-('api:permission-requests:create', '提交权限申请', 'api', 'permission-requests', 'create', 'POST /api/permission-requests'),
-('api:permission-requests:approve', '审批通过', 'api', 'permission-requests', 'approve', 'POST /api/permission-requests/:id/approve'),
-('api:permission-requests:reject', '审批拒绝', 'api', 'permission-requests', 'reject', 'POST /api/permission-requests/:id/reject'),
-('api:permission-requests:cancel', '撤销申请', 'api', 'permission-requests', 'cancel', 'POST /api/permission-requests/:id/cancel'),
-('api:db-auth:preview-sql', '预览SQL', 'api', 'db-auth', 'preview-sql', 'POST /api/db-auth/preview-sql');
+('api:permission-requests:my', 'List my requests', 'api', 'permission-requests', 'my', 'GET /api/permission-requests/my'),
+('api:permission-requests:pending', 'List pending approvals', 'api', 'permission-requests', 'pending', 'GET /api/permission-requests/pending'),
+('api:permission-requests:get', 'Get request details', 'api', 'permission-requests', 'get', 'GET /api/permission-requests/:id'),
+('api:permission-requests:create', 'Submit permission request', 'api', 'permission-requests', 'create', 'POST /api/permission-requests'),
+('api:permission-requests:approve', 'Approve request', 'api', 'permission-requests', 'approve', 'POST /api/permission-requests/:id/approve'),
+('api:permission-requests:reject', 'Reject request', 'api', 'permission-requests', 'reject', 'POST /api/permission-requests/:id/reject'),
+('api:permission-requests:cancel', 'Cancel request', 'api', 'permission-requests', 'cancel', 'POST /api/permission-requests/:id/cancel'),
+('api:db-auth:preview-sql', 'Preview SQL', 'api', 'db-auth', 'preview-sql', 'POST /api/db-auth/preview-sql');
 
 -- ==============================================
 -- 7.6 Insert Default LLM Provider
@@ -874,7 +874,7 @@ UPDATE permissions
 SET parent_id = (SELECT id FROM permissions WHERE code = 'menu:queries')
 WHERE code IN ('menu:queries:execution', 'menu:queries:profiles', 'menu:queries:audit-logs', 'menu:queries:blacklist');
 
--- ============ 新增：集群运维菜单层级 ============
+-- ============ Added: Cluster Operations Menu Hierarchy ============
 -- Cluster Ops menu children
 UPDATE permissions
 SET parent_id = (SELECT id FROM permissions WHERE code = 'menu:cluster-ops')
@@ -1006,8 +1006,8 @@ UPDATE permissions
 SET parent_id = (SELECT id FROM permissions WHERE code = 'menu:system:llm')
 WHERE code LIKE 'api:llm:%';
 
--- ============ 新增：鉴权管控 API 层级 ============
--- 权限申请 APIs
+-- ============ Added: Permission Management API Hierarchy ============
+-- Permission Request APIs
 UPDATE permissions
 SET parent_id = (SELECT id FROM permissions WHERE code = 'menu:cluster-ops:auth:requests')
 WHERE code IN (
@@ -1018,7 +1018,7 @@ WHERE code IN (
     'api:db-auth:preview-sql'
 );
 
--- 审批管理 APIs
+-- Permission Approval APIs
 UPDATE permissions
 SET parent_id = (SELECT id FROM permissions WHERE code = 'menu:cluster-ops:auth:approvals')
 WHERE code IN (
@@ -1027,7 +1027,7 @@ WHERE code IN (
     'api:permission-requests:reject'
 );
 
--- 账户/角色查询 APIs
+-- Account/Role Query APIs
 UPDATE permissions
 SET parent_id = (SELECT id FROM permissions WHERE code = 'menu:cluster-ops:auth')
 WHERE code IN ('api:db-auth:accounts:list', 'api:db-auth:roles:list');

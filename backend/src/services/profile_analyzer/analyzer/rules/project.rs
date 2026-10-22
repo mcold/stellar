@@ -14,7 +14,7 @@ impl DiagnosticRule for P001ProjectExprHigh {
         "P001"
     }
     fn name(&self) -> &str {
-        "Project 表达式计算耗时高"
+        "Project expression compute time high"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -39,12 +39,12 @@ impl DiagnosticRule for P001ProjectExprHigh {
                     context.node.plan_node_id.unwrap_or(-1)
                 ),
                 plan_node_id: context.node.plan_node_id,
-                message: format!("Project 表达式计算占比过高 ({:.1}%)", ratio * 100.0),
-                reason: "Project 算子执行时间过长，可能是表达式计算复杂或数据量大。".to_string(),
+                message: format!("The Project expression compute takes {:.1}% of the time", ratio * 100.0),
+                reason: "The Project operator takes too long, probably because the expressions are complex or the data volume is large.".to_string(),
                 suggestions: vec![
-                    "简化 SELECT 中的复杂表达式".to_string(),
-                    "将复杂计算移到物化视图中预计算".to_string(),
-                    "检查是否有不必要的类型转换".to_string(),
+                    "Simplify the complex expressions in the SELECT".to_string(),
+                    "Move the complex computation into a materialized view".to_string(),
+                    "Check for unnecessary type casts".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -64,7 +64,7 @@ impl DiagnosticRule for P002CommonSubExprHigh {
         "P002"
     }
     fn name(&self) -> &str {
-        "公共子表达式计算耗时高"
+        "Common sub-expression compute time high"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -110,15 +110,15 @@ impl DiagnosticRule for P002CommonSubExprHigh {
             ),
             plan_node_id: context.node.plan_node_id,
             message: format!(
-                "公共子表达式计算耗时 {}（占表达式总时间 {:.1}%）",
+                "The common sub-expression compute took {} ({:.1}% of the total expression time)",
                 format_duration_ms(time_ms), common_ratio
             ),
-            reason: "复杂 CASE WHEN 表达式或重复子表达式导致计算开销高。StarRocks 会尝试提取公共子表达式以避免重复计算，但提取本身也有开销。".to_string(),
+            reason: "Complex CASE WHEN expressions or repeated sub-expressions make the compute cost high. StarRocks tries to extract the common sub-expressions to avoid the repeated computation, but the extraction itself also costs time.".to_string(),
             suggestions: vec![
-                "简化 CASE WHEN 表达式，减少分支数量".to_string(),
-                "将复杂条件判断移到物化视图预计算".to_string(),
-                "检查是否存在大量重复的表达式计算".to_string(),
-                "考虑使用 IF() 替代简单的 CASE WHEN".to_string(),
+                "Simplify the CASE WHEN expressions and reduce the number of branches".to_string(),
+                "Move the complex condition evaluation into a materialized view".to_string(),
+                "Check whether a lot of expressions are computed repeatedly".to_string(),
+                "Consider IF() instead of a simple CASE WHEN".to_string(),
             ],
             parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -134,7 +134,7 @@ impl DiagnosticRule for L001LocalExchangeMemory {
         "L001"
     }
     fn name(&self) -> &str {
-        "LocalExchange 内存使用过高"
+        "LocalExchange memory usage too high"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -158,11 +158,11 @@ impl DiagnosticRule for L001LocalExchangeMemory {
                     context.node.plan_node_id.unwrap_or(-1)
                 ),
                 plan_node_id: context.node.plan_node_id,
-                message: format!("LocalExchange 内存使用 {}", format_bytes(memory as u64)),
-                reason: "请参考 StarRocks 官方文档了解更多信息。".to_string(),
+                message: format!("LocalExchange memory usage {}", format_bytes(memory as u64)),
+                reason: "See the StarRocks official documentation for more information.".to_string(),
                 suggestions: vec![
-                    "检查上下游算子的数据流是否平衡".to_string(),
-                    "调整 pipeline_dop 参数".to_string(),
+                    "Check whether the data flow between the upstream and the downstream operators is balanced".to_string(),
+                    "Adjust the pipeline_dop parameter".to_string(),
                 ],
                 parameter_suggestions: {
                     let mut suggestions = Vec::new();

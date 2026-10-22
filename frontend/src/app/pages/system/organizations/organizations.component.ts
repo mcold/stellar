@@ -152,7 +152,7 @@ export class OrganizationsComponent implements OnInit, OnDestroy {
     }
 
     this.confirmDialog
-      .confirmDelete(organization.name, '此操作不可恢复，组织下的所有数据将被删除')
+      .confirmDelete(organization.name, 'This action cannot be undone; all data under the organization will be deleted')
       .subscribe((confirmed) => {
         if (confirmed) {
           this.performDelete(organization.id);
@@ -170,7 +170,7 @@ export class OrganizationsComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.organizationService.createOrganization(payload).subscribe({
       next: () => {
-        this.toastrService.success('组织创建成功', '成功');
+        this.toastrService.success('Organization created successfully', 'Success');
         this.loadOrganizations();
       },
       error: (error) => {
@@ -190,7 +190,7 @@ export class OrganizationsComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.organizationService.updateOrganization(id, payload).subscribe({
       next: () => {
-        this.toastrService.success('组织更新成功', '成功');
+        this.toastrService.success('Organization updated successfully', 'Success');
         this.loadOrganizations();
       },
       error: (error) => {
@@ -204,7 +204,7 @@ export class OrganizationsComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.organizationService.deleteOrganization(id).subscribe({
       next: () => {
-        this.toastrService.success('组织删除成功', '成功');
+        this.toastrService.success('Organization deleted successfully', 'Success');
         this.loadOrganizations();
       },
       error: (error) => {
@@ -243,41 +243,41 @@ export class OrganizationsComponent implements OnInit, OnDestroy {
       },
       columns: {
         code: {
-          title: '组织代码',
+          title: 'Organization code',
           type: 'string',
           width: '15%',
         },
         name: {
-          title: '组织名称',
+          title: 'Organization name',
           type: 'string',
           width: '20%',
         },
         description: {
-          title: '描述',
+          title: 'Description',
           type: 'string',
           width: '30%',
         },
         is_system: {
-          title: '系统组织',
+          title: 'System organization',
           type: 'html',
           sanitizer: { bypassHtml: true },
           width: '10%',
           valuePrepareFunction: (cell: boolean) => {
             return cell
-              ? '<span class="badge badge-danger">是</span>'
-              : '<span class="badge badge-basic">否</span>';
+              ? '<span class="badge badge-danger">Yes</span>'
+              : '<span class="badge badge-basic">No</span>';
           },
         },
         created_at: {
-          title: '创建时间',
+          title: 'Created at',
           type: 'string',
           width: '15%',
           valuePrepareFunction: (cell: string) => {
-            return cell ? new Date(cell).toLocaleString('zh-CN') : '';
+            return cell ? new Date(cell).toLocaleString('en-US') : '';
           },
         },
         actions: {
-          title: '操作',
+          title: 'Actions',
           type: 'custom',
           width: '10%',
           isFilterable: false,

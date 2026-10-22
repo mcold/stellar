@@ -14,7 +14,7 @@ impl DiagnosticRule for J001ResultExplosion {
         "J001"
     }
     fn name(&self) -> &str {
-        "Join 结果膨胀"
+        "Join result explosion"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -46,14 +46,14 @@ impl DiagnosticRule for J001ResultExplosion {
                     context.node.plan_node_id.unwrap_or(-1)),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "Join 结果膨胀 {:.1} 倍 (输出 {:.0} 行 / 探测 {:.0} 行)",
+                    "The Join result is {:.1}x larger (output {:.0} rows / probe {:.0} rows)",
                     ratio, output_rows, probe_rows
                 ),
-                reason: "Join 输出结果显著大于输入，通常是缺少 Join 条件导致 Cross Join，或 Join 条件错误导致 1:N 匹配。".to_string(),
+                reason: "The Join output is significantly larger than its input, usually because a join condition is missing (making it a Cross Join) or because a wrong join condition produces 1:N matches.".to_string(),
                 suggestions: vec![
-                    "检查 JOIN 条件是否缺失或不完整".to_string(),
-                    "检查是否存在多对多关系".to_string(),
-                    "考虑添加更多过滤条件".to_string(),
+                    "Check whether the JOIN condition is missing or incomplete".to_string(),
+                    "Check whether a many-to-many relationship exists".to_string(),
+                    "Consider adding more filter conditions".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -73,7 +73,7 @@ impl DiagnosticRule for J002BuildLargerThanProbe {
         "J002"
     }
     fn name(&self) -> &str {
-        "Join Build 端过大"
+        "Join build side too large"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -95,14 +95,14 @@ impl DiagnosticRule for J002BuildLargerThanProbe {
                     context.node.plan_node_id.unwrap_or(-1)),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "Build 端行数 ({:.0}) 大于 Probe 端 ({:.0})，Join 顺序可能不优",
+                    "The build side has more rows ({:.0}) than the probe side ({:.0}), the Join order may be suboptimal",
                     build_rows, probe_rows
                 ),
-                reason: "在 Hash Join 中，Build 端数据量大于 Probe 端，导致 HashTable 过大。优化器可能因统计信息不准确选择了错误的 Build 端。".to_string(),
+                reason: "In a Hash Join the build side holds more data than the probe side, which makes the HashTable too large. The optimizer may have picked the wrong build side because the statistics are inaccurate.".to_string(),
                 suggestions: vec![
-                    "执行 ANALYZE TABLE 更新统计信息".to_string(),
-                    "检查优化器是否选择了正确的 Join 顺序".to_string(),
-                    "考虑使用 Hint 指定 Join 顺序".to_string(),
+                    "Run ANALYZE TABLE to refresh statistics".to_string(),
+                    "Check whether the optimizer chose the right Join order".to_string(),
+                    "Consider using a hint to force the Join order".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -123,7 +123,7 @@ impl DiagnosticRule for J003HashTableTooLarge {
         "J003"
     }
     fn name(&self) -> &str {
-        "HashTable 内存过大"
+        "HashTable memory too large"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -150,16 +150,16 @@ impl DiagnosticRule for J003HashTableTooLarge {
                 ),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "HashTable 内存使用 {}，可能导致内存压力 (阈值: {})",
+                    "HashTable memory usage {}, which may cause memory pressure (threshold: {})",
                     format_bytes(hash_memory as u64),
                     format_bytes(memory_threshold as u64)
                 ),
-                reason: "Join 的 HashTable 占用内存过大，可能导致内存压力或触发 Spill。"
+                reason: "The HashTable of the Join takes too much memory, which may cause memory pressure or trigger a spill."
                     .to_string(),
                 suggestions: vec![
-                    "检查 Build 端数据量是否过大".to_string(),
-                    "考虑使用 Runtime Filter 减少数据量".to_string(),
-                    "启用 Spill 功能避免 OOM".to_string(),
+                    "Check whether the build side holds too much data".to_string(),
+                    "Consider using a Runtime Filter to reduce the data volume".to_string(),
+                    "Enable the spill feature to avoid OOM".to_string(),
                 ],
                 parameter_suggestions: {
                     let mut suggestions = Vec::new();
@@ -185,7 +185,7 @@ impl DiagnosticRule for J004NoRuntimeFilter {
         "J004"
     }
     fn name(&self) -> &str {
-        "未生成 Runtime Filter"
+        "No Runtime Filter generated"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -206,14 +206,14 @@ impl DiagnosticRule for J004NoRuntimeFilter {
                     context.node.plan_node_id.unwrap_or(-1)),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "Join 未生成 Runtime Filter，Build 端有 {:.0} 行",
+                    "The Join generated no Runtime Filter, the build side has {:.0} rows",
                     build_rows
                 ),
-                reason: "Runtime Filter 未生效或效果差，Scan 端未能有效过滤数据。可能是 Filter 构建失败或选择性差。".to_string(),
+                reason: "The Runtime Filter was not generated or is not effective, so the Scan side cannot filter the data. The filter build may have failed or may have poor selectivity.".to_string(),
                 suggestions: vec![
-                    "检查 enable_global_runtime_filter 是否启用".to_string(),
-                    "检查 Join 条件是否适合生成 RF".to_string(),
-                    "检查 Build 端行数是否超过阈值".to_string(),
+                    "Check whether enable_global_runtime_filter is enabled".to_string(),
+                    "Check whether the Join conditions suit generating a RF".to_string(),
+                    "Check whether the build side exceeds the row threshold".to_string(),
                 ],
                 parameter_suggestions: {
                     let mut suggestions = Vec::new();
@@ -242,7 +242,7 @@ impl DiagnosticRule for J009NonEquiJoin {
         "J009"
     }
     fn name(&self) -> &str {
-        "非等式 Join 回退"
+        "Non-equi Join fallback"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -264,14 +264,14 @@ impl DiagnosticRule for J009NonEquiJoin {
                     context.node.plan_node_id.unwrap_or(-1)),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "使用了 {} 算子，可能是非等式 Join 导致",
+                    "The {} operator is used, which is likely caused by a non-equi Join",
                     context.node.operator_name
                 ),
-                reason: "Join 条件包含非等式条件，无法使用 Hash Join，退化为 Nested Loop Join，性能较差。".to_string(),
+                reason: "The Join conditions contain non-equi predicates, so a Hash Join cannot be used and the plan degrades to a Nested Loop Join, which performs poorly.".to_string(),
                 suggestions: vec![
-                    "检查 JOIN 条件是否包含等式条件".to_string(),
-                    "尝试将非等式条件转换为等式条件".to_string(),
-                    "考虑重构查询逻辑".to_string(),
+                    "Check whether the JOIN condition contains an equality predicate".to_string(),
+                    "Try to turn the non-equi condition into an equality condition".to_string(),
+                    "Consider restructuring the query logic".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -291,7 +291,7 @@ impl DiagnosticRule for J010ProbeCacheUnfriendly {
         "J010"
     }
     fn name(&self) -> &str {
-        "探测缓存不友好"
+        "Probe cache unfriendly"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -318,14 +318,14 @@ impl DiagnosticRule for J010ProbeCacheUnfriendly {
                     context.node.plan_node_id.unwrap_or(-1)),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "HashTable ({}) 超过 L3 缓存，探测行数 ({:.0}) 远大于构建行数 ({:.0})，可能存在缓存不友好",
+                    "The HashTable ({}) exceeds the L3 cache, the probe rows ({:.0}) are far more than the build rows ({:.0}), the cache access is likely unfriendly",
                     format_bytes(hash_memory as u64), probe_rows, build_rows
                 ),
-                reason: "Hash 表探测时缓存命中率低，可能是 HashTable 过大超出 CPU 缓存或探测数据访问模式不友好。".to_string(),
+                reason: "The hash table probe has a low cache hit rate, probably because the HashTable is too large for the CPU cache or because the probe access pattern is unfriendly.".to_string(),
                 suggestions: vec![
-                    "考虑交换 Join 左右表顺序".to_string(),
-                    "使用 Hint 指定 Join 顺序".to_string(),
-                    "检查统计信息是否准确".to_string(),
+                    "Consider swapping the left and right tables of the Join".to_string(),
+                    "Use a hint to force the Join order".to_string(),
+                    "Check whether the statistics are accurate".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -344,7 +344,7 @@ impl DiagnosticRule for J005HashCollision {
         "J005"
     }
     fn name(&self) -> &str {
-        "Hash 碰撞严重"
+        "Severe hash collisions"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -356,7 +356,7 @@ impl DiagnosticRule for J005HashCollision {
         if keys_per_bucket > 10.0 {
             let join_pred = context
                 .get_join_predicates()
-                .unwrap_or_else(|| "未知".to_string());
+                .unwrap_or_else(|| "Unknown".to_string());
             let build_rows = context.get_metric("BuildRows").unwrap_or(0.0);
 
             Some(Diagnostic {
@@ -369,15 +369,23 @@ impl DiagnosticRule for J005HashCollision {
                     context.node.plan_node_id.unwrap_or(-1)
                 ),
                 plan_node_id: context.node.plan_node_id,
-                message: format!("Hash 表碰撞严重，平均每桶 {:.0} 个键", keys_per_bucket),
+                message: format!(
+                    "The hash table has severe collisions, {:.0} keys per bucket on average",
+                    keys_per_bucket
+                ),
                 reason: format!(
-                    "Join 条件「{}」的 Hash 表存在大量冲突（Build 端 {:.0} 行），导致探测效率下降。可能是 Join 键分布不均匀或 Hash 函数效果差。",
+                    "The hash table of the Join condition 「{}」 has a lot of conflicts (the build side holds {:.0} rows), which slows the probe down. This is probably caused by an uneven distribution of the Join keys or by a poor hash function.",
                     join_pred, build_rows
                 ),
                 suggestions: vec![
-                    format!("检查 Join 键「{}」是否存在大量重复值或 NULL 值", join_pred),
-                    "考虑添加更多等值 Join 条件分散 Hash 分布".to_string(),
-                    "检查 Build 表的数据分布，必要时添加预过滤".to_string(),
+                    format!(
+                        "Check whether the Join key 「{}」 has many duplicate or NULL values",
+                        join_pred
+                    ),
+                    "Consider adding more equi-join conditions to spread the hash distribution"
+                        .to_string(),
+                    "Check the data distribution of the build table and add a pre-filter if needed"
+                        .to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -397,7 +405,7 @@ impl DiagnosticRule for J006ShuffleSkew {
         "J006"
     }
     fn name(&self) -> &str {
-        "Join Shuffle 倾斜"
+        "Join shuffle skew"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -417,7 +425,7 @@ impl DiagnosticRule for J006ShuffleSkew {
         if ratio > skew_threshold {
             let join_pred = context
                 .get_join_predicates()
-                .unwrap_or_else(|| "未知".to_string());
+                .unwrap_or_else(|| "Unknown".to_string());
 
             Some(Diagnostic {
                 rule_id: self.id().to_string(),
@@ -430,17 +438,20 @@ impl DiagnosticRule for J006ShuffleSkew {
                 ),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "Join 数据分布倾斜，max/avg 比率为 {:.2} (阈值: {:.1})",
+                    "The Join data distribution is skewed, max/avg ratio is {:.2} (threshold: {:.1})",
                     ratio, skew_threshold
                 ),
                 reason: format!(
-                    "Shuffle Join 按「{}」分发数据时分布不均匀，max 实例处理 {:.0} 行，min 实例仅 {:.0} 行。通常是 Join 键存在热点值导致。",
+                    "The Shuffle Join distributes the data unevenly on 「{}」, the largest instance handles {:.0} rows while the smallest handles only {:.0} rows. This is usually caused by hot values in the Join key.",
                     join_pred, max_probe, min_probe
                 ),
                 suggestions: vec![
-                    format!("检查 Join 键「{}」中是否存在热点值（如 NULL 或高频值）", join_pred),
-                    "考虑添加更多 Join 条件分散数据分布".to_string(),
-                    "对热点键值单独处理或添加盐值打散".to_string(),
+                    format!(
+                        "Check whether the Join key 「{}」 holds hot values (e.g. NULL or very frequent values)",
+                        join_pred
+                    ),
+                    "Consider adding more Join conditions to spread the data".to_string(),
+                    "Handle the hot keys separately or add a salt key to spread them".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -459,7 +470,7 @@ impl DiagnosticRule for J007PartitionProbeOverhead {
         "J007"
     }
     fn name(&self) -> &str {
-        "分区 Join 探测开销高"
+        "High partition join probe overhead"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -482,14 +493,14 @@ impl DiagnosticRule for J007PartitionProbeOverhead {
                 ),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "分区探测开销占比 {:.1}%，分区数为 {:.0}",
+                    "The partition probe overhead is {:.1}% of the probe time, with {:.0} partitions",
                     probe_overhead / search_time * 100.0,
                     partition_nums
                 ),
-                reason: "分区探测开销过高，可能是分区数过多或分区策略不当。".to_string(),
+                reason: "The partition probe overhead is too high, probably because there are too many partitions or the partitioning strategy is poor.".to_string(),
                 suggestions: vec![
-                    "检查分区数是否合理".to_string(),
-                    "考虑增加内存限制避免过度分区".to_string(),
+                    "Check whether the partition count is reasonable".to_string(),
+                    "Consider raising the memory limit to avoid over-partitioning".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -508,7 +519,7 @@ impl DiagnosticRule for J008RFMemoryHigh {
         "J008"
     }
     fn name(&self) -> &str {
-        "Runtime Filter 内存占用高"
+        "Runtime Filter memory usage high"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -529,12 +540,12 @@ impl DiagnosticRule for J008RFMemoryHigh {
                     context.node.plan_node_id.unwrap_or(-1)
                 ),
                 plan_node_id: context.node.plan_node_id,
-                message: format!("Runtime Filter 内存占用 {}", format_bytes(rf_bytes as u64)),
-                reason: "Runtime Filter 占用内存过高，可能是 Filter 数量过多或单个 Filter 过大。"
+                message: format!("Runtime Filter memory usage {}", format_bytes(rf_bytes as u64)),
+                reason: "The Runtime Filter takes too much memory, probably because there are too many filters or a single filter is too large."
                     .to_string(),
                 suggestions: vec![
-                    "降低 runtime_filter_max_size 配置".to_string(),
-                    "检查 Join 键基数是否过高".to_string(),
+                    "Lower the runtime_filter_max_size setting".to_string(),
+                    "Check whether the Join key cardinality is too high".to_string(),
                 ],
                 parameter_suggestions: vec![ParameterSuggestion::new(
                     "runtime_filter_max_size",
@@ -560,7 +571,7 @@ impl DiagnosticRule for J011BroadcastNotRecommended {
         "J011"
     }
     fn name(&self) -> &str {
-        "Join 不应使用 Broadcast"
+        "Join should not use Broadcast"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -582,7 +593,7 @@ impl DiagnosticRule for J011BroadcastNotRecommended {
         if build_rows > rows_threshold || hash_table_memory > memory_threshold {
             let join_pred = context
                 .get_join_predicates()
-                .unwrap_or_else(|| "未知".to_string());
+                .unwrap_or_else(|| "Unknown".to_string());
             let probe_rows = context.get_metric("ProbeRows").unwrap_or(0.0);
 
             Some(Diagnostic {
@@ -596,24 +607,25 @@ impl DiagnosticRule for J011BroadcastNotRecommended {
                 ),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "Broadcast Join Build 端数据量过大 ({:.0} 行, {})",
+                    "The build side of the Broadcast Join is too large ({:.0} rows, {})",
                     build_rows,
                     format_bytes(hash_table_memory as u64)
                 ),
                 reason: format!(
-                    "当小表与大表 Join 时，Broadcast Join 会将小表广播到所有节点。\
-                    但当 Build 端数据量过大时，会增加网络和计算成本。\
-                    当前 Join 条件「{}」的 Build 端有 {:.0} 行，Probe 端有 {:.0} 行，\
-                    可能是统计信息不准确导致优化器错误估计了表大小。",
+                    "When a small table is joined with a large table, a Broadcast Join broadcasts the small table to every node.\
+                    But when the build side is too large, the network and compute cost grows.\
+                    The build side of the Join condition 「{}」 has {:.0} rows and the probe side has {:.0} rows,\
+                    which is likely caused by inaccurate statistics that made the optimizer misestimate the table size.",
                     join_pred, build_rows, probe_rows
                 ),
                 suggestions: vec![
                     format!(
-                        "在 JOIN 关键字后添加 [shuffle] Hint: SELECT ... FROM a JOIN [shuffle] b ON {}",
+                        "Add the [shuffle] hint after the JOIN keyword: SELECT ... FROM a JOIN [shuffle] b ON {}",
                         join_pred
                     ),
-                    "执行 ANALYZE TABLE <build_table> 更新统计信息".to_string(),
-                    "检查 Join 顺序，确保小表在 Build 端".to_string(),
+                    "Run ANALYZE TABLE <build_table> to refresh statistics".to_string(),
+                    "Check the Join order and make sure the small table is on the build side"
+                        .to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,

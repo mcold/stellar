@@ -27,38 +27,38 @@ export class SqlBlacklistComponent implements OnInit, OnDestroy {
 
   exampleTemplates = [
     {
-      title: '禁止 SELECT *',
-      description: '防止全表扫描，提升查询性能',
+      title: 'Block SELECT *',
+      description: 'Prevent full table scans and improve query performance',
       pattern: 'select\\\\s+\\\\*\\\\s+from',
       icon: 'eye-off-outline'
     },
     {
-      title: '禁止 COUNT(*)',
-      description: '避免大表计数操作',
+      title: 'Block COUNT(*)',
+      description: 'Avoid count operations on large tables',
       pattern: 'select\\\\s+count\\\\(\\\\*\\\\)\\\\s+from',
       icon: 'hash-outline'
     },
     {
-      title: '禁止 DROP 操作',
-      description: '防止误删表、库、视图',
+      title: 'Block DROP operations',
+      description: 'Prevent accidental deletion of tables, databases and views',
       pattern: '.*DROP\\\\s+(TABLE|DATABASE|VIEW).*',
       icon: 'trash-2-outline'
     },
     {
-      title: '禁止无条件 DELETE',
-      description: '防止误删全表数据',
+      title: 'Block unconditional DELETE',
+      description: 'Prevent accidental deletion of all table data',
       pattern: 'DELETE\\\\s+FROM\\\\s+\\\\w+\\\\s*$',
       icon: 'alert-triangle-outline'
     },
     {
-      title: '禁止敏感表查询',
-      description: '保护特定敏感数据表',
+      title: 'Block queries on sensitive tables',
+      description: 'Protect specific sensitive data tables',
       pattern: '.*FROM\\\\s+sensitive_table.*',
       icon: 'shield-outline'
     },
     {
-      title: '禁止大批量 INSERT',
-      description: '限制单次插入数据量',
+      title: 'Block large bulk INSERT',
+      description: 'Limit the number of rows inserted at once',
       pattern: 'INSERT\\\\s+INTO.*VALUES\\\\s*\\\\(.*\\\\)\\\\s*,.*\\\\)\\\\s*,.*\\\\)',
       icon: 'download-outline'
     }
@@ -67,12 +67,12 @@ export class SqlBlacklistComponent implements OnInit, OnDestroy {
   blacklistSettings = {
     mode: 'external',
     hideSubHeader: true,
-    noDataMessage: '暂无 SQL 黑名单规则',
+    noDataMessage: 'No SQL blacklist rules',
     actions: { add: false, edit: false, delete: true, position: 'right' },
     delete: { deleteButtonContent: '<i class="nb-trash"></i>', confirmDelete: true },
     columns: {
       Id: { title: 'ID', type: 'string', width: '10%' },
-      Pattern: { title: '正则表达式', type: 'string', width: '90%' },
+      Pattern: { title: 'Regular Expression', type: 'string', width: '90%' },
     },
   };
 
@@ -117,7 +117,7 @@ export class SqlBlacklistComponent implements OnInit, OnDestroy {
       },
       error: error => {
         console.error('SQL Blacklist load error:', error);
-        this.toastrService.danger(ErrorHandler.extractErrorMessage(error), '加载失败');
+        this.toastrService.danger(ErrorHandler.extractErrorMessage(error), 'Load failed');
         this.loading = false;
       },
     });
@@ -130,14 +130,14 @@ export class SqlBlacklistComponent implements OnInit, OnDestroy {
 
   submitPattern(): void {
     const pattern = this.newBlacklistPattern.trim();
-    if (!pattern) { this.toastrService.warning('请输入正则表达式', '提示'); return; }
+    if (!pattern) { this.toastrService.warning('Please enter a regular expression', 'Hint'); return; }
     this.nodeService.addSqlBlacklist(pattern).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
-        this.toastrService.success('SQL 黑名单规则添加成功', '成功');
+        this.toastrService.success('SQL blacklist rule added', 'Success');
         this.blacklistDialogRef?.close();
         this.loadBlacklist();
       },
-      error: error => { this.toastrService.danger(ErrorHandler.extractErrorMessage(error), '添加失败'); },
+      error: error => { this.toastrService.danger(ErrorHandler.extractErrorMessage(error), 'Add failed'); },
     });
   }
 
@@ -153,11 +153,11 @@ export class SqlBlacklistComponent implements OnInit, OnDestroy {
 
   onDeleteConfirm(event: any): void {
     const item = event.data;
-    this.confirmDialogService.confirm('确认删除', `确定要删除黑名单规则 #${item.Id} 吗？`, '删除', '取消', 'danger').subscribe(confirmed => {
+    this.confirmDialogService.confirm('Confirm delete', `Are you sure you want to delete blacklist rule #${item.Id}?`, 'Delete', 'Cancel', 'danger').subscribe(confirmed => {
       if (!confirmed) { event.confirm.reject(); return; }
       this.nodeService.deleteSqlBlacklist(item.Id).pipe(takeUntil(this.destroy$)).subscribe({
-        next: () => { this.toastrService.success('SQL 黑名单规则删除成功', '成功'); this.loadBlacklist(); event.confirm.resolve(); },
-        error: error => { this.toastrService.danger(ErrorHandler.extractErrorMessage(error), '删除失败'); event.confirm.reject(); },
+        next: () => { this.toastrService.success('SQL blacklist rule deleted', 'Success'); this.loadBlacklist(); event.confirm.resolve(); },
+        error: error => { this.toastrService.danger(ErrorHandler.extractErrorMessage(error), 'Delete failed'); event.confirm.reject(); },
       });
     });
   }

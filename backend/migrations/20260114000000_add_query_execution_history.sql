@@ -1,6 +1,6 @@
 -- ==============================================
 -- Query Execution History Table
--- 用户在实时查询页面执行的 SQL 历史记录
+-- SQL execution history of the SQL run on the Running Queries page
 -- ==============================================
 CREATE TABLE IF NOT EXISTS query_execution_history (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -25,13 +25,13 @@ CREATE INDEX IF NOT EXISTS idx_query_history_sql_hash
     ON query_execution_history(user_id, cluster_id, sql_hash);
 
 -- ==============================================
--- 权限配置
--- 查询历史 API 权限绑定到实时查询菜单权限
+-- Permission configuration
+-- The query history API permission is bound to the Running Queries menu permission
 -- URI: /api/clusters/queries/execution-history
--- 权限提取: resource=clusters, action=queries:execution:history
+-- Permission extraction: resource=clusters, action=queries:execution:history
 -- ==============================================
 INSERT OR IGNORE INTO permissions (code, name, type, resource, action, description) VALUES
-('api:clusters:queries:execution:history', '查询执行历史', 'api', 'clusters', 'queries:execution:history', 'GET/DELETE /api/clusters/queries/execution-history');
+('api:clusters:queries:execution:history', 'Query execution history', 'api', 'clusters', 'queries:execution:history', 'GET/DELETE /api/clusters/queries/execution-history');
 
 UPDATE permissions
 SET parent_id = (SELECT id FROM permissions WHERE code = 'menu:queries:execution')

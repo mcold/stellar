@@ -26,25 +26,25 @@ export class ResourceGroupUsageComponent implements OnInit, OnDestroy {
     actions: false,
     columns: {
       id: {
-        title: '资源组 ID',
+        title: 'Resource group ID',
         type: 'number',
       },
       backend: {
-        title: 'BE 节点',
+        title: 'BE node',
         type: 'string',
       },
       be_in_use_cpu_cores: {
-        title: 'CPU 使用核数',
+        title: 'CPU cores in use',
         type: 'number',
         valuePrepareFunction: (value: number) => value.toFixed(2),
       },
       be_in_use_mem_bytes: {
-        title: '内存使用量',
+        title: 'Memory usage',
         type: 'string',
         valuePrepareFunction: (value: number) => this.formatBytes(value),
       },
       be_running_queries: {
-        title: '运行中查询数',
+        title: 'Running queries',
         type: 'number',
       },
     },
@@ -79,7 +79,7 @@ export class ResourceGroupUsageComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Failed to load resource group usage:', error);
-          this.toastrService.danger('加载资源组使用情况失败', '错误');
+          this.toastrService.danger('Failed to load resource group usage', 'Error');
           this.loading = false;
         },
       });
@@ -96,7 +96,7 @@ export class ResourceGroupUsageComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Failed to load resource group usage:', error);
-          this.toastrService.danger('加载资源组使用情况失败', '错误');
+          this.toastrService.danger('Failed to load resource group usage', 'Error');
           this.loading = false;
         },
       });

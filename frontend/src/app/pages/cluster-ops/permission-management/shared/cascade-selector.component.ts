@@ -22,11 +22,11 @@ import { NbToastrService } from '@nebular/theme';
         <label>Catalog</label>
         <nb-select
           [(selected)]="selectedCatalog"
-          placeholder="选择 Catalog"
+          placeholder="Select Catalog"
           [disabled]="!clusterId || catalogLoading"
           (selectedChange)="onCatalogChange($event)"
           fullWidth>
-          <nb-option value="">全部</nb-option>
+          <nb-option value="">All</nb-option>
           <nb-option *ngFor="let catalog of catalogs" [value]="catalog">
             {{ catalog }}
           </nb-option>
@@ -39,11 +39,11 @@ import { NbToastrService } from '@nebular/theme';
         <label>Database</label>
         <nb-select
           [(selected)]="selectedDatabase"
-          placeholder="选择 Database"
+          placeholder="Select Database"
           [disabled]="!clusterId || (!selectedCatalog && requireCatalog) || databaseLoading"
           (selectedChange)="onDatabaseChange($event)"
           fullWidth>
-          <nb-option value="">全部</nb-option>
+          <nb-option value="">All</nb-option>
           <nb-option *ngFor="let database of databases" [value]="database">
             {{ database }}
           </nb-option>
@@ -56,11 +56,11 @@ import { NbToastrService } from '@nebular/theme';
         <label>Table</label>
         <nb-select
           [(selected)]="selectedTable"
-          placeholder="选择 Table"
+          placeholder="Select Table"
           [disabled]="!clusterId || !selectedDatabase || tableLoading"
           (selectedChange)="onTableChange($event)"
           fullWidth>
-          <nb-option value="">全部</nb-option>
+          <nb-option value="">All</nb-option>
           <nb-option *ngFor="let table of tables" [value]="table">
             {{ table }}
           </nb-option>
@@ -72,7 +72,7 @@ import { NbToastrService } from '@nebular/theme';
       <div class="selector-actions" *ngIf="showClearButton">
         <button nbButton ghost status="basic" size="small" (click)="clearSelection()">
           <nb-icon icon="refresh-outline"></nb-icon>
-          清空选择
+          Clear Selection
         </button>
       </div>
     </div>
@@ -195,7 +195,7 @@ export class CascadeSelectorComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to load catalogs:', err);
-        this.toastr.danger('加载 Catalog 列表失败', '错误');
+        this.toastr.danger('Failed to load Catalog list', 'Error');
         this.catalogLoading = false;
       },
     });
@@ -238,7 +238,7 @@ export class CascadeSelectorComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to load databases:', err);
-        this.toastr.danger('加载 Database 列表失败', '错误');
+        this.toastr.danger('Failed to load Database list', 'Error');
         this.databaseLoading = false;
       },
     });
@@ -282,7 +282,7 @@ export class CascadeSelectorComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to load tables:', err);
-        this.toastr.danger('加载 Table 列表失败', '错误');
+        this.toastr.danger('Failed to load Table list', 'Error');
         this.tableLoading = false;
       },
     });

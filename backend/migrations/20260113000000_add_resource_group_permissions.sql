@@ -6,22 +6,22 @@
 
 -- ============ Menu Permissions ============
 INSERT OR IGNORE INTO permissions (code, name, type, resource, action, description) VALUES
-('menu:cluster-ops:resource-groups', '资源组管理', 'menu', 'cluster-ops:resource-groups', 'view', '查看资源组管理');
+('menu:cluster-ops:resource-groups', 'Resource Group Management', 'menu', 'cluster-ops:resource-groups', 'view', 'View resource group management');
 
 -- ============ API Permissions ============
 INSERT OR IGNORE INTO permissions (code, name, type, resource, action, description) VALUES
 -- Resource Group CRUD
-('api:resource-groups:list', '查询资源组列表', 'api', 'resource-groups', 'list', 'GET /api/clusters/resource-groups'),
-('api:resource-groups:get', '查看资源组详情', 'api', 'resource-groups', 'get', 'GET /api/clusters/resource-groups/:name'),
-('api:resource-groups:create', '创建资源组', 'api', 'resource-groups', 'create', 'POST /api/clusters/resource-groups'),
-('api:resource-groups:update', '更新资源组', 'api', 'resource-groups', 'update', 'PUT /api/clusters/resource-groups/:name'),
-('api:resource-groups:delete', '删除资源组', 'api', 'resource-groups', 'delete', 'DELETE /api/clusters/resource-groups/:name'),
+('api:resource-groups:list', 'List resource groups', 'api', 'resource-groups', 'list', 'GET /api/clusters/resource-groups'),
+('api:resource-groups:get', 'Get resource group details', 'api', 'resource-groups', 'get', 'GET /api/clusters/resource-groups/:name'),
+('api:resource-groups:create', 'Create resource group', 'api', 'resource-groups', 'create', 'POST /api/clusters/resource-groups'),
+('api:resource-groups:update', 'Update resource group', 'api', 'resource-groups', 'update', 'PUT /api/clusters/resource-groups/:name'),
+('api:resource-groups:delete', 'Delete resource group', 'api', 'resource-groups', 'delete', 'DELETE /api/clusters/resource-groups/:name'),
 
 -- Resource Group Monitoring
-('api:resource-groups:usage', '查询资源组使用情况', 'api', 'resource-groups', 'usage', 'GET /api/clusters/resource-groups/usage'),
+('api:resource-groups:usage', 'Get resource group usage', 'api', 'resource-groups', 'usage', 'GET /api/clusters/resource-groups/usage'),
 
 -- Resource Group Analysis
-('api:resource-groups:analysis', '资源使用分析', 'api', 'resource-groups', 'analysis', 'GET /api/clusters/resource-groups/analysis');
+('api:resource-groups:analysis', 'Resource usage analysis', 'api', 'resource-groups', 'analysis', 'GET /api/clusters/resource-groups/analysis');
 
 -- ============ Set Parent Relationships ============
 -- Set menu parent

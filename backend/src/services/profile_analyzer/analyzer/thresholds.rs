@@ -570,7 +570,7 @@ impl ExternalScanType {
             Self::Paimon => "Paimon",
             Self::Hdfs => "HDFS",
             Self::File => "File",
-            Self::S3 => "S3/对象存储",
+            Self::S3 => "S3/Object storage",
             Self::Jdbc => "JDBC",
             Self::Mysql => "MySQL",
             Self::Elasticsearch => "Elasticsearch",
@@ -583,48 +583,54 @@ impl ExternalScanType {
 pub fn generate_small_file_suggestions(scan_type: &ExternalScanType, table: &str) -> Vec<String> {
     match scan_type {
         ExternalScanType::Hive => vec![
-            format!("合并小文件: INSERT OVERWRITE {} SELECT * FROM {}", table, table),
-            "调整 Hive 表的 mapreduce.input.fileinputformat.split.minsize".to_string(),
-            "使用 ALTER TABLE CONCATENATE 合并小文件".to_string(),
+            format!("Merge the small files: INSERT OVERWRITE {} SELECT * FROM {}", table, table),
+            "Adjust the mapreduce.input.fileinputformat.split.minsize of the Hive table"
+                .to_string(),
+            "Use ALTER TABLE CONCATENATE to merge the small files".to_string(),
         ],
         ExternalScanType::Iceberg => vec![
-            format!("执行 Compaction: CALL rewrite_data_files(table => '{}')", table),
-            "调整 write.target-file-size-bytes 参数（建议 128MB-256MB）".to_string(),
-            "启用 Iceberg 自动 Compaction".to_string(),
+            format!("Run Compaction: CALL rewrite_data_files(table => '{}')", table),
+            "Adjust the write.target-file-size-bytes parameter (128MB-256MB is recommended)"
+                .to_string(),
+            "Enable the Iceberg automatic Compaction".to_string(),
         ],
         ExternalScanType::Hudi => vec![
-            "执行 Hudi Compaction 合并小文件".to_string(),
-            "调整 hoodie.parquet.small.file.limit 参数".to_string(),
-            "检查 Hudi 表的 Compaction 策略配置".to_string(),
+            "Run the Hudi Compaction to merge the small files".to_string(),
+            "Adjust the hoodie.parquet.small.file.limit parameter".to_string(),
+            "Check the Compaction strategy configuration of the Hudi table".to_string(),
         ],
         ExternalScanType::DeltaLake => vec![
-            format!("执行 OPTIMIZE {} ZORDER BY ...", table),
-            "启用 Delta Lake Auto Compaction".to_string(),
-            "调整 spark.databricks.delta.autoCompact.minNumFiles".to_string(),
+            format!("Run OPTIMIZE {} ZORDER BY ...", table),
+            "Enable the Delta Lake Auto Compaction".to_string(),
+            "Adjust spark.databricks.delta.autoCompact.minNumFiles".to_string(),
         ],
         ExternalScanType::Paimon => vec![
-            "执行 Paimon Compaction 合并小文件".to_string(),
-            "调整 write.target-file-size 参数".to_string(),
-            "检查 Paimon 表的 Compaction 配置".to_string(),
+            "Run the Paimon Compaction to merge the small files".to_string(),
+            "Adjust the write.target-file-size parameter".to_string(),
+            "Check the Compaction configuration of the Paimon table".to_string(),
         ],
         ExternalScanType::Hdfs => vec![
-            "使用 Hadoop Archive (HAR) 合并小文件".to_string(),
-            "调整上游 ETL 输出文件大小（建议 128MB-256MB）".to_string(),
-            "使用 Spark coalesce/repartition 合并输出文件".to_string(),
+            "Use the Hadoop Archive (HAR) to merge the small files".to_string(),
+            "Adjust the output file size of the upstream ETL (128MB-256MB is recommended)"
+                .to_string(),
+            "Use the Spark coalesce/repartition to merge the output files".to_string(),
         ],
         ExternalScanType::S3 => vec![
-            "使用 Spark/Flink 合并小文件".to_string(),
-            "调整写入任务的并行度减少小文件产生".to_string(),
-            "考虑使用更大的 Parquet row group size".to_string(),
-            "对于 Iceberg/Hudi 表，执行 OPTIMIZE 或 Compaction".to_string(),
+            "Use Spark/Flink to merge the small files".to_string(),
+            "Adjust the parallelism of the write job to produce fewer small files".to_string(),
+            "Consider a larger Parquet row group size".to_string(),
+            "For Iceberg/Hudi tables, run OPTIMIZE or a Compaction".to_string(),
         ],
         ExternalScanType::File => {
-            vec!["合并本地小文件".to_string(), "调整写入程序的输出文件大小".to_string()]
+            vec![
+                "Merge the local small files".to_string(),
+                "Adjust the output file size of the writing program".to_string(),
+            ]
         },
         ExternalScanType::Connector => vec![
-            "合并小文件以提升查询性能".to_string(),
-            "考虑将热点数据导入 StarRocks 内表".to_string(),
-            "调整上游数据写入的文件大小配置".to_string(),
+            "Merge the small files to improve the query performance".to_string(),
+            "Consider loading the hot data into a StarRocks internal table".to_string(),
+            "Adjust the file size configuration of the upstream writer".to_string(),
         ],
 
         ExternalScanType::Jdbc | ExternalScanType::Mysql | ExternalScanType::Elasticsearch => {

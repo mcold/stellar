@@ -16,7 +16,7 @@ import { PermissionService } from '../../../../@core/data/permission.service';
         ghost
         size="tiny"
         status="primary"
-        nbTooltip="编辑组织信息"
+        nbTooltip="Edit organization"
         nbTooltipPlacement="top"
         [disabled]="!canEdit"
         (click)="onEditClick($event)"
@@ -29,7 +29,7 @@ import { PermissionService } from '../../../../@core/data/permission.service';
         ghost
         size="tiny"
         status="danger"
-        [nbTooltip]="rowData?.is_system ? '系统组织无法删除' : '删除组织'"
+        [nbTooltip]="rowData?.is_system ? 'System organizations cannot be deleted' : 'Delete organization'"
         nbTooltipPlacement="top"
         [disabled]="!canDelete"
         (click)="onDeleteClick($event)"

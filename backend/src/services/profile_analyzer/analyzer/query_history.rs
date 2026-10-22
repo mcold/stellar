@@ -391,33 +391,33 @@ impl QueryHistoryService {
             };
 
             let time_display = if current_time_ms >= 60000.0 {
-                format!("{:.1}分钟", current_time_ms / 60000.0)
+                format!("{:.1}min", current_time_ms / 60000.0)
             } else if current_time_ms >= 1000.0 {
-                format!("{:.1}秒", current_time_ms / 1000.0)
+                format!("{:.1}s", current_time_ms / 1000.0)
             } else {
                 format!("{:.0}ms", current_time_ms)
             };
 
             let p90_display = if p90 >= 60000.0 {
-                format!("{:.1}分钟", p90 / 60000.0)
+                format!("{:.1}min", p90 / 60000.0)
             } else if p90 >= 1000.0 {
-                format!("{:.1}秒", p90 / 1000.0)
+                format!("{:.1}s", p90 / 1000.0)
             } else {
                 format!("{:.0}ms", p90)
             };
 
             Some(Diagnostic {
                 rule_id: "REG001".to_string(),
-                rule_name: "性能回归".to_string(),
+                rule_name: "Performance regression".to_string(),
                 severity,
                 node_path: "Query".to_string(),
                 plan_node_id: None,
                 message: format!(
-                    "查询执行时间 {} 是历史 P90 ({}) 的 {:.1} 倍",
+                    "The query took {}, which is {:.1}x the historical P90 ({})",
                     time_display, p90_display, ratio
                 ),
                 reason: format!(
-                    "同类查询（{}）历史执行 {} 次，P50={:.0}ms P90={:.0}ms P99={:.0}ms，当前执行显著慢于历史表现。",
+                    "The same kind of query ({}) ran {} times historically, P50={:.0}ms P90={:.0}ms P99={:.0}ms. The current run is significantly slower than the historical performance.",
                     fingerprint.tables.join(", "),
                     baseline.time_stats.count(),
                     baseline.time_stats.p50(),
@@ -425,10 +425,11 @@ impl QueryHistoryService {
                     baseline.time_stats.p99()
                 ),
                 suggestions: vec![
-                    "检查是否有数据分布变化导致执行计划改变".to_string(),
-                    "检查是否有并发查询导致资源竞争".to_string(),
-                    "检查相关表的统计信息是否过期".to_string(),
-                    "对比历史执行计划是否有差异".to_string(),
+                    "Check whether a change in the data distribution changed the execution plan"
+                        .to_string(),
+                    "Check whether concurrent queries cause resource contention".to_string(),
+                    "Check whether the statistics of the related tables are stale".to_string(),
+                    "Compare the historical execution plans for any difference".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,

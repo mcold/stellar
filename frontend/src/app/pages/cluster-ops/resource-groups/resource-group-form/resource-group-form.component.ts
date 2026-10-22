@@ -95,7 +95,7 @@ export class ResourceGroupFormComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Failed to load resource group:', error);
-          this.toastrService.danger('加载资源组失败', '错误');
+          this.toastrService.danger('Failed to load resource group', 'Error');
           this.loading = false;
         },
       });
@@ -155,7 +155,7 @@ export class ResourceGroupFormComponent implements OnInit, OnDestroy {
     if (this.form.invalid) {
       this.markFormGroupTouched(this.form);
       this.navigateToFirstInvalidTab();
-      this.toastrService.warning('请填写必填字段', '提示');
+      this.toastrService.warning('Please fill in the required fields', 'Hint');
       return;
     }
 
@@ -168,7 +168,7 @@ export class ResourceGroupFormComponent implements OnInit, OnDestroy {
       formValue.concurrency_limit;
     
     if (!hasResourceLimit) {
-      this.toastrService.warning('请至少配置一个资源限制（CPU 权重、独占 CPU 核数、内存限制或并发限制）', '配置不完整');
+      this.toastrService.warning('Please configure at least one resource limit (CPU weight, exclusive CPU cores, memory limit or concurrency limit)', 'Incomplete configuration');
       this.tabset.selectTab(this.tabset.tabs.toArray()[1]);
       return;
     }
@@ -176,7 +176,7 @@ export class ResourceGroupFormComponent implements OnInit, OnDestroy {
     const hasClassifier = formValue.classifiers && formValue.classifiers.length > 0;
     
     if (!hasClassifier) {
-      this.toastrService.warning('请至少添加一个分类器，否则查询无法分配到此资源组', '配置不完整');
+      this.toastrService.warning('Please add at least one classifier, otherwise queries cannot be assigned to this resource group', 'Incomplete configuration');
       this.tabset.selectTab(this.tabset.tabs.last);
       return;
     }
@@ -218,12 +218,12 @@ export class ResourceGroupFormComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.toastrService.success('资源组创建成功', '成功');
+          this.toastrService.success('Resource group created successfully', 'Success');
           this.router.navigate(['/pages/cluster-ops/resource-groups']);
         },
         error: (error) => {
           console.error('Failed to create resource group:', error);
-          this.toastrService.danger('创建资源组失败', '错误');
+          this.toastrService.danger('Failed to create resource group', 'Error');
           this.loading = false;
         },
       });
@@ -247,12 +247,12 @@ export class ResourceGroupFormComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.toastrService.success('资源组更新成功', '成功');
+          this.toastrService.success('Resource group updated successfully', 'Success');
           this.router.navigate(['/pages/cluster-ops/resource-groups']);
         },
         error: (error) => {
           console.error('Failed to update resource group:', error);
-          this.toastrService.danger('更新资源组失败', '错误');
+          this.toastrService.danger('Failed to update resource group', 'Error');
           this.loading = false;
         },
       });

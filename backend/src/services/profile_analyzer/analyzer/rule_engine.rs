@@ -216,7 +216,7 @@ impl RuleEngine {
     /// Generate a conclusion based on diagnostics and profile
     pub fn generate_conclusion(diagnostics: &[Diagnostic], profile: &Profile) -> String {
         if diagnostics.is_empty() {
-            return "查询执行良好，未发现明显性能问题。".to_string();
+            return "The query ran well, no obvious performance problem was found.".to_string();
         }
 
         let error_count = diagnostics
@@ -232,24 +232,30 @@ impl RuleEngine {
 
         if error_count > 0 {
             format!(
-                "查询存在{}个严重性能问题，执行时间较长（{}）。主要问题是{}。建议优先解决严重问题。",
+                "The query has {} severe performance problems and takes a long time ({}). The main problem is {}. Fix the severe problems first.",
                 error_count,
                 Self::format_duration(total_time),
                 diagnostics
                     .first()
                     .map(|d| d.rule_name.as_str())
-                    .unwrap_or("未知")
+                    .unwrap_or("Unknown")
             )
         } else if warning_count > 2 {
             format!(
-                "查询存在{}个中等程度性能问题，整体性能需优化。执行时间{}。",
+                "The query has {} moderate performance problems, the overall performance needs to be optimized. Execution time {}.",
                 warning_count,
                 Self::format_duration(total_time)
             )
         } else if total_time > 300.0 {
-            format!("查询执行时间较长（{}），建议关注性能热点。", Self::format_duration(total_time))
+            format!(
+                "The query takes a long time ({}), check the performance hotspots.",
+                Self::format_duration(total_time)
+            )
         } else {
-            format!("查询发现{}个小问题，整体性能可接受。", diagnostics.len())
+            format!(
+                "The query has {} minor problems, the overall performance is acceptable.",
+                diagnostics.len()
+            )
         }
     }
 
@@ -346,11 +352,11 @@ impl RuleEngine {
     /// Format duration to human-readable string
     fn format_duration(seconds: f64) -> String {
         if seconds >= 3600.0 {
-            format!("{:.1}小时", seconds / 3600.0)
+            format!("{:.1}h", seconds / 3600.0)
         } else if seconds >= 60.0 {
-            format!("{:.0}分钟", seconds / 60.0)
+            format!("{:.0}min", seconds / 60.0)
         } else {
-            format!("{:.1}秒", seconds)
+            format!("{:.1}s", seconds)
         }
     }
 }

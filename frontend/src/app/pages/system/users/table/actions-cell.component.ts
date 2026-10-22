@@ -14,7 +14,7 @@ import { UserWithRoles } from '../../../../@core/data/user.service';
         status="primary"
         *ngIf="value?.canEdit"
         (click)="editUser.emit(rowData)"
-        nbTooltip="编辑用户信息"
+        nbTooltip="Edit user"
         nbTooltipPlacement="top"
         class="action-btn"
       >
@@ -28,7 +28,7 @@ import { UserWithRoles } from '../../../../@core/data/user.service';
         status="danger"
         *ngIf="value?.canDelete"
         (click)="deleteUser.emit(rowData)"
-        nbTooltip="删除用户"
+        nbTooltip="Delete user"
         nbTooltipPlacement="top"
         class="action-btn"
       >

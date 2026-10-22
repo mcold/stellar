@@ -61,39 +61,39 @@ export class SystemManagementComponent implements OnInit, OnDestroy {
   // replications, dbs, current_backend_instances, historical_nodes, compactions
   systemFunctions: SystemFunctionOld[] = [
     // 集群信息
-    { name: 'backends', description: '计算节点信息(BE)', category: '集群信息', status: 'active', last_updated: '2024-01-01' },
-    { name: 'compute_nodes', description: '计算节点信息(CN)', category: '集群信息', status: 'active', last_updated: '2024-01-01' },
-    { name: 'frontends', description: 'Frontend节点信息', category: '集群信息', status: 'active', last_updated: '2024-01-01' },
-    { name: 'brokers', description: 'Broker节点信息', category: '集群信息', status: 'active', last_updated: '2024-01-01' },
-    { name: 'statistic', description: '统计信息', category: '集群信息', status: 'active', last_updated: '2024-01-01' },
-    { name: 'monitor', description: '监控信息', category: '集群信息', status: 'active', last_updated: '2024-01-01' },
-    { name: 'cluster_balance', description: '集群均衡', category: '集群信息', status: 'active', last_updated: '2024-01-01' },
-    { name: 'historical_nodes', description: '历史节点', category: '集群信息', status: 'active', last_updated: '2024-01-01' },
+    { name: 'backends', description: 'Backend node information (BE)', category: 'Cluster Information', status: 'active', last_updated: '2024-01-01' },
+    { name: 'compute_nodes', description: 'Compute node information (CN)', category: 'Cluster Information', status: 'active', last_updated: '2024-01-01' },
+    { name: 'frontends', description: 'Frontend node information', category: 'Cluster Information', status: 'active', last_updated: '2024-01-01' },
+    { name: 'brokers', description: 'Broker node information', category: 'Cluster Information', status: 'active', last_updated: '2024-01-01' },
+    { name: 'statistic', description: 'Statistics', category: 'Cluster Information', status: 'active', last_updated: '2024-01-01' },
+    { name: 'monitor', description: 'Monitoring information', category: 'Cluster Information', status: 'active', last_updated: '2024-01-01' },
+    { name: 'cluster_balance', description: 'Cluster balance', category: 'Cluster Information', status: 'active', last_updated: '2024-01-01' },
+    { name: 'historical_nodes', description: 'Historical nodes', category: 'Cluster Information', status: 'active', last_updated: '2024-01-01' },
     // 数据库管理
-    { name: 'dbs', description: '数据库信息', category: '数据库管理', status: 'active', last_updated: '2024-01-01' },
-    { name: 'catalog', description: 'Catalog信息', category: '数据库管理', status: 'active', last_updated: '2024-01-01' },
+    { name: 'dbs', description: 'Database information', category: 'Database Management', status: 'active', last_updated: '2024-01-01' },
+    { name: 'catalog', description: 'Catalog information', category: 'Database Management', status: 'active', last_updated: '2024-01-01' },
     // 事务管理
-    { name: 'transactions', description: '事务信息', category: '事务管理', status: 'active', last_updated: '2024-01-01' },
+    { name: 'transactions', description: 'Transaction information', category: 'Transaction Management', status: 'active', last_updated: '2024-01-01' },
     // 任务管理
-    { name: 'routine_loads', description: 'Routine Load任务', category: '任务管理', status: 'active', last_updated: '2024-01-01' },
-    { name: 'stream_loads', description: 'Stream Load任务', category: '任务管理', status: 'active', last_updated: '2024-01-01' },
-    { name: 'load_error_hub', description: 'Load错误信息', category: '任务管理', status: 'active', last_updated: '2024-01-01' },
-    { name: 'tasks', description: '任务列表', category: '任务管理', status: 'active', last_updated: '2024-01-01' },
-    { name: 'replications', description: '复制任务', category: '任务管理', status: 'active', last_updated: '2024-01-01' },
+    { name: 'routine_loads', description: 'Routine Load jobs', category: 'Task Management', status: 'active', last_updated: '2024-01-01' },
+    { name: 'stream_loads', description: 'Stream Load jobs', category: 'Task Management', status: 'active', last_updated: '2024-01-01' },
+    { name: 'load_error_hub', description: 'Load error information', category: 'Task Management', status: 'active', last_updated: '2024-01-01' },
+    { name: 'tasks', description: 'Task list', category: 'Task Management', status: 'active', last_updated: '2024-01-01' },
+    { name: 'replications', description: 'Replication jobs', category: 'Task Management', status: 'active', last_updated: '2024-01-01' },
     // 查询管理
-    { name: 'current_queries', description: '当前查询', category: '查询管理', status: 'active', last_updated: '2024-01-01' },
-    { name: 'global_current_queries', description: '全局当前查询', category: '查询管理', status: 'active', last_updated: '2024-01-01' },
-    { name: 'current_backend_instances', description: '当前后端实例', category: '查询管理', status: 'active', last_updated: '2024-01-01' },
+    { name: 'current_queries', description: 'Current queries', category: 'Query Management', status: 'active', last_updated: '2024-01-01' },
+    { name: 'global_current_queries', description: 'Global current queries', category: 'Query Management', status: 'active', last_updated: '2024-01-01' },
+    { name: 'current_backend_instances', description: 'Current backend instances', category: 'Query Management', status: 'active', last_updated: '2024-01-01' },
     // 资源管理
-    { name: 'resources', description: '资源信息', category: '资源管理', status: 'active', last_updated: '2024-01-01' },
-    { name: 'warehouses', description: '仓库信息', category: '资源管理', status: 'active', last_updated: '2024-01-01' },
+    { name: 'resources', description: 'Resource information', category: 'Resource Management', status: 'active', last_updated: '2024-01-01' },
+    { name: 'warehouses', description: 'Warehouse information', category: 'Resource Management', status: 'active', last_updated: '2024-01-01' },
     // 存储管理
-    { name: 'compactions', description: '压缩任务', category: '存储管理', status: 'active', last_updated: '2024-01-01' },
-    { name: 'colocation_group', description: 'Colocation Group', category: '存储管理', status: 'active', last_updated: '2024-01-01' },
+    { name: 'compactions', description: 'Compaction jobs', category: 'Storage', status: 'active', last_updated: '2024-01-01' },
+    { name: 'colocation_group', description: 'Colocation Group', category: 'Storage', status: 'active', last_updated: '2024-01-01' },
     // 作业管理
-    { name: 'jobs', description: '作业信息', category: '作业管理', status: 'active', last_updated: '2024-01-01' },
+    { name: 'jobs', description: 'Job information', category: 'Job Management', status: 'active', last_updated: '2024-01-01' },
     // 元数据恢复
-    { name: 'meta_recovery', description: '元数据恢复', category: '系统维护', status: 'active', last_updated: '2024-01-01' }
+    { name: 'meta_recovery', description: 'Metadata recovery', category: 'System Maintenance', status: 'active', last_updated: '2024-01-01' }
   ];
 
   // 自定义功能
@@ -217,7 +217,7 @@ export class SystemManagementComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Failed to load system functions:', error);
-        this.toastrService.danger(ErrorHandler.extractErrorMessage(error), '加载失败');
+        this.toastrService.danger(ErrorHandler.extractErrorMessage(error), 'Load failed');
         this.loading = false;
       }
     });
@@ -304,11 +304,11 @@ export class SystemManagementComponent implements OnInit, OnDestroy {
         next: (newFunction) => {
           this.customFunctions.push(newFunction);
           this.mergeAndOrganizeFunctions();
-          this.toastrService.success('功能添加成功', '成功');
+          this.toastrService.success('Function added successfully', 'Success');
         },
         error: (error) => {
           console.error('Failed to create function:', error);
-          this.toastrService.danger(ErrorHandler.extractErrorMessage(error), '添加失败');
+          this.toastrService.danger(ErrorHandler.extractErrorMessage(error), 'Add failed');
         }
       });
   }
@@ -330,11 +330,11 @@ export class SystemManagementComponent implements OnInit, OnDestroy {
             this.customFunctions[index] = updatedFunction;
             this.mergeAndOrganizeFunctions();
           }
-          this.toastrService.success('功能更新成功', '成功');
+          this.toastrService.success('Function updated successfully', 'Success');
         },
         error: (error) => {
           console.error('Failed to update function:', error);
-          this.toastrService.danger(ErrorHandler.extractErrorMessage(error), '更新失败');
+          this.toastrService.danger(ErrorHandler.extractErrorMessage(error), 'Update failed');
         }
       });
   }
@@ -394,11 +394,11 @@ export class SystemManagementComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: () => {
-            this.toastrService.success('分类顺序已保存', '成功');
+            this.toastrService.success('Category order saved', 'Success');
           },
           error: (error) => {
             console.error('Failed to save category orders:', error);
-            this.toastrService.danger(ErrorHandler.extractErrorMessage(error), '保存失败');
+            this.toastrService.danger(ErrorHandler.extractErrorMessage(error), 'Save failed');
           }
         });
     }
@@ -424,11 +424,11 @@ export class SystemManagementComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: () => {
-            this.toastrService.success('功能顺序已保存', '成功');
+            this.toastrService.success('Function order saved', 'Success');
           },
           error: (error) => {
             console.error('Failed to save function orders:', error);
-            this.toastrService.danger(ErrorHandler.extractErrorMessage(error), '保存失败');
+            this.toastrService.danger(ErrorHandler.extractErrorMessage(error), 'Save failed');
           }
         });
     }
@@ -447,13 +447,13 @@ export class SystemManagementComponent implements OnInit, OnDestroy {
             this.mergeAndOrganizeFunctions();
           }
           this.toastrService.success(
-            updatedFunction.isFavorited ? '已添加到收藏' : '已取消收藏',
-            '成功'
+            updatedFunction.isFavorited ? 'Added to favorites' : 'Removed from favorites',
+            'Success'
           );
         },
         error: (error) => {
           console.error('Failed to toggle favorite:', error);
-          this.toastrService.danger(ErrorHandler.extractErrorMessage(error), '操作失败');
+          this.toastrService.danger(ErrorHandler.extractErrorMessage(error), 'Operation failed');
         }
       });
   }
@@ -475,11 +475,11 @@ export class SystemManagementComponent implements OnInit, OnDestroy {
                 // 从本地数据中移除
                 this.customFunctions = this.customFunctions.filter(f => f.id !== functionId);
                 this.mergeAndOrganizeFunctions();
-                this.toastrService.success('功能已删除', '成功');
+                this.toastrService.success('Function deleted', 'Success');
               },
               error: (error) => {
                 console.error('Failed to delete function:', error);
-                this.toastrService.danger(ErrorHandler.extractErrorMessage(error), '删除失败');
+                this.toastrService.danger(ErrorHandler.extractErrorMessage(error), 'Delete failed');
               }
             });
         }
@@ -556,7 +556,7 @@ export class SystemManagementComponent implements OnInit, OnDestroy {
           },
           error: (error) => {
             console.error('Failed to execute custom function:', error);
-            this.toastrService.danger(ErrorHandler.extractErrorMessage(error), '执行失败');
+            this.toastrService.danger(ErrorHandler.extractErrorMessage(error), 'Execution failed');
           }
         });
     }
@@ -588,7 +588,7 @@ export class SystemManagementComponent implements OnInit, OnDestroy {
           this.selectedFunction = {
             name: functionName,
             description: this.getFunctionDescription(functionName),
-            category: '系统功能',
+            category: 'System Function',
             status: 'active',
             last_updated: new Date().toISOString()
           };
@@ -604,7 +604,7 @@ export class SystemManagementComponent implements OnInit, OnDestroy {
       error: (error) => {
         console.error('[SystemManagement] Failed to load function data:', error);
         this.loading = false;
-        this.toastrService.danger(ErrorHandler.extractErrorMessage(error), '加载失败');
+        this.toastrService.danger(ErrorHandler.extractErrorMessage(error), 'Load failed');
       }
     });
   }
@@ -675,7 +675,7 @@ export class SystemManagementComponent implements OnInit, OnDestroy {
         display: true,
         perPage: 10
       },
-      noDataMessage: '暂无数据'
+      noDataMessage: 'No data'
     };
   }
 
@@ -751,33 +751,33 @@ export class SystemManagementComponent implements OnInit, OnDestroy {
   // 获取功能描述
   getFunctionDescription(functionName: string): string {
     const descriptionMap: { [key: string]: string } = {
-      'backends': '计算节点信息(BE/CN)',
-      'frontends': 'Frontend节点信息',
-      'brokers': 'Broker节点信息',
-      'statistic': '统计信息',
-      'dbs': '数据库信息',
-      'tables': '表信息',
+      'backends': 'Backend node information (BE/CN)',
+      'frontends': 'Frontend node information',
+      'brokers': 'Broker node information',
+      'statistic': 'Statistics',
+      'dbs': 'Database information',
+      'tables': 'Table information',
       'tablet_schema': 'Tablet Schema',
-      'partitions': '分区信息',
-      'transactions': '事务信息',
-      'routine_loads': 'Routine Load任务',
-      'stream_loads': 'Stream Load任务',
-      'loads': 'Load任务',
-      'load_error_hub': 'Load错误信息',
-      'catalog': 'Catalog信息',
-      'resources': '资源信息',
-      'workload_groups': '工作负载组',
-      'workload_sched_policy': '工作负载调度策略',
-      'compactions': '压缩任务',
+      'partitions': 'Partition information',
+      'transactions': 'Transaction information',
+      'routine_loads': 'Routine Load jobs',
+      'stream_loads': 'Stream Load jobs',
+      'loads': 'Load jobs',
+      'load_error_hub': 'Load error information',
+      'catalog': 'Catalog information',
+      'resources': 'Resource information',
+      'workload_groups': 'Workload groups',
+      'workload_sched_policy': 'Workload scheduling policy',
+      'compactions': 'Compaction jobs',
       'colocate_group': 'Colocate Group',
-      'bdbje': 'BDBJE信息',
-      'small_files': '小文件信息',
-      'trash': '回收站',
-      'jobs': '作业信息',
-      'repositories': '仓库信息'
+      'bdbje': 'BDBJE information',
+      'small_files': 'Small file information',
+      'trash': 'Recycle bin',
+      'jobs': 'Job information',
+      'repositories': 'Repository information'
     };
     
-    return descriptionMap[functionName] || '系统功能';
+    return descriptionMap[functionName] || 'System Function';
   }
 
   // 格式化最后更新时间
@@ -789,13 +789,13 @@ export class SystemManagementComponent implements OnInit, OnDestroy {
   getCategoryColor(categoryName: string): string {
     // 使用 ngx-admin 的标准状态颜色
     const colorMap: { [key: string]: string } = {
-      '集群信息': 'info',
-      '数据库管理': 'success', 
-      '事务管理': 'warning',
-      '任务管理': 'primary',
-      '元数据管理': 'basic',
-      '存储管理': 'danger',
-      '作业管理': 'control'
+      'Cluster Information': 'info',
+      'Database Management': 'success', 
+      'Transaction Management': 'warning',
+      'Task Management': 'primary',
+      'Metadata Management': 'basic',
+      'Storage': 'danger',
+      'Job Management': 'control'
     };
     
     // 如果分类已定义，返回对应颜色
@@ -822,28 +822,28 @@ export class SystemManagementComponent implements OnInit, OnDestroy {
 
   // 判断是否为自定义分类
   isCustomCategory(categoryName: string): boolean {
-    const systemCategories = ['集群信息', '数据库管理', '事务管理', '任务管理', '元数据管理', '存储管理', '作业管理'];
+    const systemCategories = ['Cluster Information', 'Database Management', 'Transaction Management', 'Task Management', 'Metadata Management', 'Storage', 'Job Management'];
     return !systemCategories.includes(categoryName);
   }
 
   // 删除分类
   deleteCategory(categoryName: string) {
     this.confirmDialogService.confirm(
-      '确认删除分类',
-      `确定要删除分类 "${categoryName}" 吗？\n\n这将删除该分类下的所有自定义功能。`,
-      '删除',
-      '取消',
+      'Delete category',
+      `Delete the category "${categoryName}"?\n\nThis will delete all custom functions in this category.`,
+      'Delete',
+      'Cancel',
       'danger'
     ).subscribe(confirmed => {
       if (confirmed) {
         this.systemFunctionService.deleteCategory(categoryName).subscribe({
           next: () => {
-            this.toastrService.success('分类删除成功');
+            this.toastrService.success('Category deleted');
             this.loadSystemFunctions(); // 重新加载功能列表
           },
           error: (error) => {
-            console.error('删除分类失败:', error);
-            this.toastrService.danger(ErrorHandler.extractErrorMessage(error), '删除失败');
+            console.error('Failed to delete category:', error);
+            this.toastrService.danger(ErrorHandler.extractErrorMessage(error), 'Delete failed');
           }
         });
       }
@@ -853,13 +853,13 @@ export class SystemManagementComponent implements OnInit, OnDestroy {
   // 获取分类图标
   getCategoryIcon(categoryName: string): string {
     const iconMap: { [key: string]: string } = {
-      '集群信息': 'cube-outline',
-      '数据库管理': 'archive-outline',
-      '事务管理': 'sync-outline',
-      '任务管理': 'activity-outline',
-      '元数据管理': 'layers-outline',
-      '存储管理': 'hard-drive-outline',
-      '作业管理': 'briefcase-outline'
+      'Cluster Information': 'cube-outline',
+      'Database Management': 'archive-outline',
+      'Transaction Management': 'sync-outline',
+      'Task Management': 'activity-outline',
+      'Metadata Management': 'layers-outline',
+      'Storage': 'hard-drive-outline',
+      'Job Management': 'briefcase-outline'
     };
     
     // 如果分类已定义，返回对应图标

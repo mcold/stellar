@@ -31,34 +31,34 @@ export class ResourceGroupAnalysisComponent implements OnInit, OnDestroy {
   concurrencySource: LocalDataSource = new LocalDataSource();
 
   daysOptions = [
-    { value: 7, label: '最近 7 天' },
-    { value: 30, label: '最近 30 天' },
-    { value: 90, label: '最近 90 天' },
+    { value: 7, label: 'Last 7 days' },
+    { value: 30, label: 'Last 30 days' },
+    { value: 90, label: 'Last 90 days' },
   ];
 
   cpuSettings = {
     actions: false,
     columns: {
       user: {
-        title: '用户',
+        title: 'User',
         type: 'string',
       },
       total_cpu_seconds: {
-        title: 'CPU 总时间 (秒)',
+        title: 'Total CPU time (s)',
         type: 'number',
         valuePrepareFunction: (value: number) => value.toFixed(2),
       },
       cpu_usage_percentage: {
-        title: 'CPU 使用占比 (%)',
+        title: 'CPU usage share (%)',
         type: 'number',
         valuePrepareFunction: (value: number) => value.toFixed(2) + '%',
       },
       suggested_cpu_weight: {
-        title: '建议 CPU 权重',
+        title: 'Suggested CPU weight',
         type: 'number',
       },
       suggested_exclusive_cores: {
-        title: '建议独占核数',
+        title: 'Suggested exclusive cores',
         type: 'number',
       },
     },
@@ -68,20 +68,20 @@ export class ResourceGroupAnalysisComponent implements OnInit, OnDestroy {
     actions: false,
     columns: {
       user: {
-        title: '用户',
+        title: 'User',
         type: 'string',
       },
       max_mem_mb: {
-        title: '最大内存 (MB)',
+        title: 'Max memory (MB)',
         type: 'number',
         valuePrepareFunction: (value: number) => value.toFixed(2),
       },
       suggested_mem_limit: {
-        title: '建议内存限制',
+        title: 'Suggested memory limit',
         type: 'string',
       },
       suggested_big_query_mem_limit: {
-        title: '建议大查询内存限制',
+        title: 'Suggested big query memory limit',
         type: 'string',
       },
     },
@@ -91,16 +91,16 @@ export class ResourceGroupAnalysisComponent implements OnInit, OnDestroy {
     actions: false,
     columns: {
       user: {
-        title: '用户',
+        title: 'User',
         type: 'string',
       },
       max_concurrency_per_second: {
-        title: '最大并发 (每秒)',
+        title: 'Max concurrency (per second)',
         type: 'number',
         valuePrepareFunction: (value: number) => value.toFixed(2),
       },
       suggested_concurrency_limit: {
-        title: '建议并发限制',
+        title: 'Suggested concurrency limit',
         type: 'number',
       },
     },
@@ -136,7 +136,7 @@ export class ResourceGroupAnalysisComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Failed to load resource usage analysis:', error);
-          this.toastrService.danger('加载资源使用分析失败', '错误');
+          this.toastrService.danger('Failed to load resource usage analysis', 'Error');
           this.loading = false;
         },
       });
@@ -178,7 +178,7 @@ export class ResourceGroupAnalysisComponent implements OnInit, OnDestroy {
 
     // 复制到剪贴板
     navigator.clipboard.writeText(sql).then(() => {
-      this.toastrService.success(`用户 ${user} 的资源组 SQL 已复制到剪贴板`, '成功');
+      this.toastrService.success(`Resource group SQL for user ${user} copied to clipboard`, 'Success');
     });
   }
 

@@ -355,7 +355,7 @@ async fn enhance_with_llm(
                 .unwrap_or("unknown")
                 .to_string(),
             plan_node_id: None,
-            message: format!("{} ({}个节点)", d.message, d.node_count),
+            message: format!("{} ({} nodes)", d.message, d.node_count),
             evidence: {
                 let mut e = HashMap::new();
                 e.insert("reason".to_string(), d.reason.clone());

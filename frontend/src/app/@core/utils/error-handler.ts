@@ -2,7 +2,7 @@ import { NbToastrService } from '@nebular/theme';
 
 export class ErrorHandler {
   static extractErrorMessage(error: any): string {
-    if (!error) return '操作失败，请稍后重试';
+    if (!error) return 'Operation failed, please try again later';
 
     // Handle string error directly
     if (typeof error === 'string') return error;
@@ -39,7 +39,7 @@ export class ErrorHandler {
         return this.getDefaultMessageByStatus(error.status);
     }
     
-    return '操作失败，请稍后重试';
+    return 'Operation failed, please try again later';
   }
   
   /**
@@ -50,15 +50,14 @@ export class ErrorHandler {
     const errorMsg = this.extractErrorMessage(error);
     
     // If error message mentions "No active cluster" or similar, return unified message
-    if (errorMsg.includes('No active cluster') || 
-        errorMsg.includes('没有激活') ||
+    if (errorMsg.includes('No active cluster') ||
         (error.status === 404 && errorMsg.includes('System function'))) {
-      return '请先激活一个集群';
+      return 'Please activate a cluster first';
     }
     
     // If it's a 404, likely a cluster issue
     if (error.status === 404) {
-      return '请先激活一个集群';
+      return 'Please activate a cluster first';
     }
     
     return errorMsg;
@@ -66,14 +65,14 @@ export class ErrorHandler {
   
   private static getDefaultMessageByStatus(status: number): string {
     const statusMessages: { [key: number]: string } = {
-      400: '请求参数有误',
-      401: '没有权限执行此操作',
-      403: '没有权限执行此操作',
-      404: '请求的资源不存在',
-      500: '服务器内部错误',
-      503: '服务暂时不可用'
+      400: 'Invalid request parameters',
+      401: 'No permission to perform this operation',
+      403: 'No permission to perform this operation',
+      404: 'The requested resource does not exist',
+      500: 'Internal server error',
+      503: 'Service temporarily unavailable'
     };
-    return statusMessages[status] || '网络请求失败';
+    return statusMessages[status] || 'Network request failed';
   }
 
   /**
@@ -81,6 +80,6 @@ export class ErrorHandler {
    */
   static handleHttpError(error: any, toastrService: NbToastrService): void {
     const errorMsg = this.extractErrorMessage(error);
-    toastrService.danger(errorMsg, '错误', { duration: 5000 });
+    toastrService.danger(errorMsg, 'Error', { duration: 5000 });
   }
 }

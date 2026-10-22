@@ -49,9 +49,9 @@ export class ClusterOverviewComponent implements OnInit, OnDestroy, AfterViewIni
   // Latency percentile selection
   selectedLatencyPercentile: 'P50' | 'P95' | 'P99' = 'P99';
   latencyPercentileOptions = [
-    { label: 'P50 (中位数)', value: 'P50' },
+    { label: 'P50 (median)', value: 'P50' },
     { label: 'P95', value: 'P95' },
-    { label: 'P99 (长尾)', value: 'P99' }
+    { label: 'P99 (long tail)', value: 'P99' }
   ];
   
   // Disk/Cache metric selection
@@ -75,10 +75,10 @@ export class ClusterOverviewComponent implements OnInit, OnDestroy, AfterViewIni
 
   // Refresh interval options (Grafana style)
   refreshIntervalOptions = [
-    { label: '关闭', value: 'off' },
-    { label: '15秒', value: 15 },
-    { label: '30秒', value: 30 },
-    { label: '1分钟', value: 60 },
+    { label: 'Off', value: 'off' },
+    { label: '15s', value: 15 },
+    { label: '30s', value: 30 },
+    { label: '1m', value: 60 },
   ];
 
   /**
@@ -204,20 +204,20 @@ export class ClusterOverviewComponent implements OnInit, OnDestroy, AfterViewIni
             error: err.error
           });
           
-          let errorMsg = '加载集群概览失败';
+          let errorMsg = 'Failed to load cluster overview';
           
           // Show backend error message directly
           if (err.error?.message) {
             errorMsg = err.error.message;
           } else if (err.status === 0) {
-            errorMsg = '无法连接到服务器';
+            errorMsg = 'Unable to connect to the server';
           } else if (err.status === 404) {
-            errorMsg = '未找到数据或未激活集群';
+            errorMsg = 'No data found or no active cluster';
           } else if (err.status === 401) {
-            errorMsg = '没有权限执行此操作';
+            errorMsg = 'Permission denied for this operation';
           }
           
-          this.toastr.danger(errorMsg, '错误');
+          this.toastr.danger(errorMsg, 'Error');
           this.loading = false;
           this.cdr.markForCheck();
         }
@@ -357,10 +357,10 @@ export class ClusterOverviewComponent implements OnInit, OnDestroy, AfterViewIni
     const units = [
       { name: 'ms', threshold: 1000 },
       { name: 's', threshold: 60 },
-      { name: '分', threshold: 60 },
-      { name: '时', threshold: 24 },
-      { name: '天', threshold: 7 },
-      { name: '周', threshold: Number.MAX_VALUE }
+      { name: 'm', threshold: 60 },
+      { name: 'h', threshold: 24 },
+      { name: 'd', threshold: 7 },
+      { name: 'w', threshold: Number.MAX_VALUE }
     ];
     
     let value = ms;
@@ -473,7 +473,7 @@ export class ClusterOverviewComponent implements OnInit, OnDestroy, AfterViewIni
   }
 
   getLatencyCardTitle(): string {
-    return `${this.selectedLatencyPercentile} 延迟`;
+    return `${this.selectedLatencyPercentile} Latency`;
   }
   
   // Cycle through disk/cache metrics on click
@@ -504,13 +504,13 @@ export class ClusterOverviewComponent implements OnInit, OnDestroy, AfterViewIni
   }
   
   getDiskCardTitle(): string {
-    return this.selectedDiskMetric === 'percentage' ? '本地磁盘' : '缓存使用';
+    return this.selectedDiskMetric === 'percentage' ? 'Local disk' : 'Cache usage';
   }
   
   getDiskCardDescription(): string {
     return this.selectedDiskMetric === 'percentage' 
-      ? '计算节点本地磁盘最大使用率（点击切换）'
-      : '使用率最高节点的本地缓存数据量（点击切换）';
+      ? 'Max local disk usage across compute nodes (click to switch)'
+      : 'Local cache data size on the node with the highest usage (click to switch)';
   }
   
   getDiskCardStatus(): string {
@@ -680,7 +680,7 @@ export class ClusterOverviewComponent implements OnInit, OnDestroy, AfterViewIni
     return {
       ...this.getBaseChartOptions(qpsColor),
       legend: {
-        data: ['QPS (查询/秒)', 'RPS (请求/秒)'],
+        data: ['QPS (queries/sec)', 'RPS (requests/sec)'],
         textStyle: { color: this.chartColors.textBasic },
         top: 0,
       },
@@ -696,12 +696,12 @@ export class ClusterOverviewComponent implements OnInit, OnDestroy, AfterViewIni
       },
       yAxis: {
         ...this.getBaseChartOptions(qpsColor).yAxis,
-        name: '次数/秒',
+        name: 'Count/sec',
         nameTextStyle: { color: this.chartColors.textHint },
       },
       series: [
-        this.getLineSeries('QPS (查询/秒)', qpsValues, qpsColor),
-        this.getLineSeries('RPS (请求/秒)', rpsValues, rpsColor),
+        this.getLineSeries('QPS (queries/sec)', qpsValues, qpsColor),
+        this.getLineSeries('RPS (requests/sec)', rpsValues, rpsColor),
       ],
     };
   }
@@ -726,7 +726,7 @@ export class ClusterOverviewComponent implements OnInit, OnDestroy, AfterViewIni
     return {
       ...this.getBaseChartOptions(p99Color),
       legend: {
-        data: ['P50 (中位数)', 'P95', 'P99 (最差)'],
+        data: ['P50 (median)', 'P95', 'P99 (worst)'],
         textStyle: { color: this.chartColors.textBasic },
         top: 0,
       },
@@ -749,7 +749,7 @@ export class ClusterOverviewComponent implements OnInit, OnDestroy, AfterViewIni
       },
       yAxis: {
         ...this.getBaseChartOptions(p99Color).yAxis,
-        name: '延迟 (ms)',
+        name: 'Latency (ms)',
         nameTextStyle: { color: this.chartColors.textHint },
         axisLabel: { 
           ...this.getBaseChartOptions(p99Color).yAxis.axisLabel,
@@ -757,9 +757,9 @@ export class ClusterOverviewComponent implements OnInit, OnDestroy, AfterViewIni
         },
       },
       series: [
-        this.getLineSeries('P50 (中位数)', p50Values, p50Color, false),  // No area fill
+        this.getLineSeries('P50 (median)', p50Values, p50Color, false),  // No area fill
         this.getLineSeries('P95', p95Values, p95Color, false),  // No area fill
-        this.getLineSeries('P99 (最差)', p99Values, p99Color, true),  // With area fill
+        this.getLineSeries('P99 (worst)', p99Values, p99Color, true),  // With area fill
       ],
     };
   }
@@ -880,7 +880,7 @@ export class ClusterOverviewComponent implements OnInit, OnDestroy, AfterViewIni
         textStyle: { color: this.chartColors.textBasic },
         formatter: (params: any) => {
           const value = params[0].value;
-          return `${params[0].axisValue}<br/>${params[0].marker} JVM 堆内存: ${value.toFixed(1)}%`;
+          return `${params[0].axisValue}<br/>${params[0].marker} JVM heap memory: ${value.toFixed(1)}%`;
         },
       },
       xAxis: {
@@ -890,7 +890,7 @@ export class ClusterOverviewComponent implements OnInit, OnDestroy, AfterViewIni
       yAxis: {
         ...this.getBaseChartOptions(color).yAxis,
         max: 100,
-        name: '使用率 (%)',
+        name: 'Usage (%)',
         nameTextStyle: { color: this.chartColors.textHint },
         axisLabel: { 
           ...this.getBaseChartOptions(color).yAxis.axisLabel,
@@ -928,7 +928,7 @@ export class ClusterOverviewComponent implements OnInit, OnDestroy, AfterViewIni
           markLine: {
             silent: true,
             lineStyle: { color: this.chartColors.danger, type: 'dashed', width: 2 },
-            data: [{ yAxis: 80, label: { formatter: '警戒线 80%', color: this.chartColors.danger } }],
+            data: [{ yAxis: 80, label: { formatter: 'Warning line 80%', color: this.chartColors.danger } }],
           },
         },
       ],
@@ -1256,9 +1256,9 @@ export class ClusterOverviewComponent implements OnInit, OnDestroy, AfterViewIni
 
   getTrendLabel(trend: string): string {
     const labels: { [key: string]: string } = {
-      'increasing': '增长中',
-      'decreasing': '下降中',
-      'stable': '稳定'
+      'increasing': 'Increasing',
+      'decreasing': 'Decreasing',
+      'stable': 'Stable'
     };
     return labels[trend] || trend;
   }

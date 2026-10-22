@@ -16,10 +16,10 @@ interface RoleRow {
       status="info"
       [disabled]="rowData?.is_system"
       (click)="configure.emit(rowData)"
-      nbTooltip="配置权限"
+      nbTooltip="Configure permissions"
     >
       <nb-icon icon="settings-2-outline"></nb-icon>
-      配置权限
+      Configure permissions
     </button>
   `,
 })

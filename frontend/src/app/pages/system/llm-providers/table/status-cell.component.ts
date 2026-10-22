@@ -7,12 +7,12 @@ import { LLMProvider } from '../../../../@core/data/llm-provider.service';
   template: `
     <div class="d-flex flex-wrap align-items-center">
       <nb-badge
-        [text]="rowData.is_active ? '已激活' : '未激活'"
+        [text]="rowData.is_active ? 'Active' : 'Inactive'"
         [status]="rowData.is_active ? 'success' : 'basic'"
         class="mr-1"
       ></nb-badge>
       <nb-badge
-        [text]="rowData.enabled ? '启用' : '禁用'"
+        [text]="rowData.enabled ? 'Enabled' : 'Disabled'"
         [status]="rowData.enabled ? 'info' : 'warning'"
       ></nb-badge>
     </div>

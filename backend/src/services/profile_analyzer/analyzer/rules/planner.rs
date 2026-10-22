@@ -34,7 +34,7 @@ impl PlannerDiagnosticRule for PL001HMSMetadataSlow {
         "PL001"
     }
     fn name(&self) -> &str {
-        "HMS 元数据获取慢"
+        "HMS metadata retrieval is slow"
     }
 
     fn evaluate(&self, context: &PlannerRuleContext) -> Option<Diagnostic> {
@@ -81,9 +81,9 @@ impl PlannerDiagnosticRule for PL001HMSMetadataSlow {
         }
 
         let (ratio_base, ratio_label) = if context.planner.total_time_ms > 0.0 {
-            (context.planner.total_time_ms, "Planner")
+            (context.planner.total_time_ms, "planner")
         } else if context.query_time_ms > 0.0 {
-            (context.query_time_ms, "查询总")
+            (context.query_time_ms, "total query")
         } else {
             (0.0, "")
         };
@@ -98,20 +98,20 @@ impl PlannerDiagnosticRule for PL001HMSMetadataSlow {
         };
 
         let ratio_info = if ratio_base > 0.0 {
-            format!("（占{}时间 {:.1}%）", ratio_label, hms_ratio)
+            format!(" ({:.1}% of the {} time)", hms_ratio, ratio_label)
         } else {
             String::new()
         };
 
         let message = if slow_calls.is_empty() {
             format!(
-                "HMS 元数据获取总耗时 {}{}",
+                "HMS metadata retrieval took {}{}",
                 format_duration_ms(hms.total_hms_time_ms),
                 ratio_info
             )
         } else {
             format!(
-                "HMS 元数据获取总耗时 {}{}，慢调用: {}",
+                "HMS metadata retrieval took {}{}, slow calls: {}",
                 format_duration_ms(hms.total_hms_time_ms),
                 ratio_info,
                 slow_calls.join(", ")
@@ -125,13 +125,13 @@ impl PlannerDiagnosticRule for PL001HMSMetadataSlow {
             node_path: "Planner".to_string(),
             plan_node_id: None,
             message,
-            reason: "Hive MetaStore 响应慢会阻塞查询规划，可能是 HMS 服务负载高或网络延迟"
+            reason: "A slow Hive MetaStore blocks the query planning, usually because the HMS service is under a high load or because of network latency"
                 .to_string(),
             suggestions: vec![
-                "检查 HMS 服务状态和负载".to_string(),
-                "减少查询涉及的分区数量".to_string(),
-                "考虑启用元数据缓存".to_string(),
-                "检查网络延迟".to_string(),
+                "Check the status and the load of the HMS service".to_string(),
+                "Reduce the number of partitions involved in the query".to_string(),
+                "Consider enabling the metadata cache".to_string(),
+                "Check the network latency".to_string(),
             ],
             parameter_suggestions: vec![],
             threshold_metadata: None,
@@ -152,7 +152,7 @@ impl PlannerDiagnosticRule for PL002OptimizerSlow {
         "PL002"
     }
     fn name(&self) -> &str {
-        "优化器耗时过长"
+        "Optimizer takes too long"
     }
 
     fn evaluate(&self, context: &PlannerRuleContext) -> Option<Diagnostic> {
@@ -178,16 +178,16 @@ impl PlannerDiagnosticRule for PL002OptimizerSlow {
             node_path: "Planner".to_string(),
             plan_node_id: None,
             message: format!(
-                "优化器耗时 {}（占 Planner 时间 {:.1}%）",
+                "The optimizer took {} ({:.1}% of the planner time)",
                 format_duration_ms(optimizer_ms),
                 ratio
             ),
-            reason: "查询优化器花费过长时间，可能是查询过于复杂或统计信息不准确".to_string(),
+            reason: "The query optimizer took too long, probably because the query is too complex or the statistics are inaccurate".to_string(),
             suggestions: vec![
-                "简化查询结构，减少 JOIN 和子查询数量".to_string(),
-                "更新表的统计信息: ANALYZE TABLE".to_string(),
-                "检查 new_planner_optimize_timeout 参数设置".to_string(),
-                "考虑拆分为多个简单查询".to_string(),
+                "Simplify the query structure and reduce the number of JOINs and subqueries".to_string(),
+                "Update the table statistics: ANALYZE TABLE".to_string(),
+                "Check the new_planner_optimize_timeout parameter setting".to_string(),
+                "Consider splitting the query into several simpler queries".to_string(),
             ],
             parameter_suggestions: vec![],
             threshold_metadata: None,
@@ -208,7 +208,7 @@ impl PlannerDiagnosticRule for PL003HighPlannerRatio {
         "PL003"
     }
     fn name(&self) -> &str {
-        "规划时间占比过高"
+        "Planner time share too high"
     }
 
     fn evaluate(&self, context: &PlannerRuleContext) -> Option<Diagnostic> {
@@ -234,14 +234,14 @@ impl PlannerDiagnosticRule for PL003HighPlannerRatio {
             node_path: "Planner".to_string(),
             plan_node_id: None,
             message: format!(
-                "规划时间 {} 占查询总时间的 {:.1}%",
+                "The planning took {}, which is {:.1}% of the total query time",
                 format_duration_ms(planner_ms),
                 ratio
             ),
-            reason: "查询规划占用了大量时间，通常是元数据获取或优化器导致".to_string(),
+            reason: "The query planning took a lot of time, usually because of the metadata retrieval or the optimizer".to_string(),
             suggestions: vec![
-                "参见 PL001/PL002 获取具体原因".to_string(),
-                "减少查询涉及的表和分区数量".to_string(),
+                "See PL001/PL002 for the specific cause".to_string(),
+                "Reduce the number of tables and partitions involved in the query".to_string(),
             ],
             parameter_suggestions: vec![],
             threshold_metadata: None,

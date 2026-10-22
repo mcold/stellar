@@ -92,17 +92,17 @@ import { NbDialogRef } from '@nebular/theme';
   `],
 })
 export class ConfirmationDialogComponent {
-  @Input() title: string = '确认';
+  @Input() title: string = 'Confirm';
   @Input() message: string = '';
-  @Input() confirmText: string = '确认';
-  @Input() cancelText: string = '取消';
+  @Input() confirmText: string = 'Confirm';
+  @Input() cancelText: string = 'Cancel';
   @Input() confirmButtonStatus: string = 'primary';
   @Input() confirmIcon: string = '';
 
   // Comment input configuration
   @Input() showCommentInput: boolean = false;
-  @Input() commentLabel: string = '备注';
-  @Input() commentPlaceholder: string = '请输入备注...';
+  @Input() commentLabel: string = 'Comment';
+  @Input() commentPlaceholder: string = 'Enter a comment...';
   @Input() commentRequired: boolean = false;
   @Input() commentRows: number = 3;
   @Input() commentHint: string = '';
@@ -117,7 +117,7 @@ export class ConfirmationDialogComponent {
 
   confirm() {
     if (this.showCommentInput && this.commentRequired && !this.comment?.trim()) {
-      this.alertMessage = '请填写必填项';
+      this.alertMessage = 'Please fill in the required fields';
       this.alertStatus = 'warning';
       return;
     }

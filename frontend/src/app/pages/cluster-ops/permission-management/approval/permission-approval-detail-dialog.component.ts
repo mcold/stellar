@@ -13,7 +13,7 @@ import { PermissionRequestResponse } from '../../../../@core/data/permission-req
   template: `
     <nb-card class="approval-detail-dialog">
       <nb-card-header>
-        申请详情
+        Request Detail
         <nb-badge [text]="getRequestTypeLabel(request.request_type)" [status]="getRequestTypeStatus(request.request_type)"></nb-badge>
         <nb-badge [text]="getStatusLabel(request.status)" [status]="getStatusBadge(request.status)"></nb-badge>
       </nb-card-header>
@@ -23,30 +23,30 @@ import { PermissionRequestResponse } from '../../../../@core/data/permission-req
         <div class="section">
           <div class="section-title">
             <nb-icon icon="person-outline"></nb-icon>
-            <span>基本信息</span>
+            <span>Basic Information</span>
           </div>
           <nb-list class="info-list">
             <nb-list-item>
               <div class="list-item-content">
-                <span class="item-label">申请人</span>
+                <span class="item-label">Applicant</span>
                 <span class="item-value">{{ request.applicant_name || '-' }}</span>
               </div>
             </nb-list-item>
             <nb-list-item>
               <div class="list-item-content">
-                <span class="item-label">目标集群</span>
+                <span class="item-label">Target Cluster</span>
                 <span class="item-value">{{ request.cluster_name || '-' }}</span>
               </div>
             </nb-list-item>
             <nb-list-item>
               <div class="list-item-content">
-                <span class="item-label">申请时间</span>
+                <span class="item-label">Requested At</span>
                 <span class="item-value">{{ formatDateTime(request.created_at) }}</span>
               </div>
             </nb-list-item>
             <nb-list-item *ngIf="request.valid_until">
               <div class="list-item-content">
-                <span class="item-label">有效期至</span>
+                <span class="item-label">Valid Until</span>
                 <span class="item-value">{{ formatDateTime(request.valid_until) }}</span>
               </div>
             </nb-list-item>
@@ -57,20 +57,20 @@ import { PermissionRequestResponse } from '../../../../@core/data/permission-req
         <div class="section" *ngIf="request.request_details">
           <div class="section-title">
             <nb-icon icon="shield-outline"></nb-icon>
-            <span>权限详情</span>
+            <span>Permission Detail</span>
           </div>
 
           <!-- 授予角色类型 -->
           <nb-list class="info-list" *ngIf="request.request_type === 'grant_role'">
             <nb-list-item>
               <div class="list-item-content">
-                <span class="item-label">目标用户</span>
+                <span class="item-label">Target User</span>
                 <code class="item-code">{{ request.request_details.target_user || '-' }}</code>
               </div>
             </nb-list-item>
             <nb-list-item>
               <div class="list-item-content">
-                <span class="item-label">授予角色</span>
+                <span class="item-label">Granted Role</span>
                 <nb-badge [text]="request.request_details.target_role || '-'" status="info"></nb-badge>
               </div>
             </nb-list-item>
@@ -80,13 +80,13 @@ import { PermissionRequestResponse } from '../../../../@core/data/permission-req
           <nb-list class="info-list" *ngIf="request.request_type !== 'grant_role'">
             <nb-list-item>
               <div class="list-item-content">
-                <span class="item-label">目标用户</span>
+                <span class="item-label">Target User</span>
                 <code class="item-code">{{ request.request_details.target_user || '-' }}</code>
               </div>
             </nb-list-item>
             <nb-list-item *ngIf="request.request_details.permissions?.length">
               <div class="list-item-content">
-                <span class="item-label">申请权限</span>
+                <span class="item-label">Requested Permissions</span>
                 <div class="permission-tags">
                   <nb-badge *ngFor="let perm of request.request_details.permissions" [text]="perm" status="success"></nb-badge>
                 </div>
@@ -94,7 +94,7 @@ import { PermissionRequestResponse } from '../../../../@core/data/permission-req
             </nb-list-item>
             <nb-list-item>
               <div class="list-item-content">
-                <span class="item-label">资源范围</span>
+                <span class="item-label">Resource Scope</span>
                 <code class="item-code">{{ buildResourcePath() }}</code>
               </div>
             </nb-list-item>
@@ -104,7 +104,7 @@ import { PermissionRequestResponse } from '../../../../@core/data/permission-req
           <div class="resource-details" *ngIf="request.request_type !== 'grant_role'">
             <span *ngIf="request.request_details.resource_type" class="resource-item">
               <nb-icon icon="layers-outline"></nb-icon>
-              类型: {{ request.request_details.resource_type }}
+              Type: {{ request.request_details.resource_type }}
             </span>
             <span *ngIf="request.request_details.catalog" class="resource-item">
               <nb-icon icon="folder-outline"></nb-icon>
@@ -125,7 +125,7 @@ import { PermissionRequestResponse } from '../../../../@core/data/permission-req
         <div class="section" *ngIf="request.reason">
           <div class="section-title">
             <nb-icon icon="message-square-outline"></nb-icon>
-            <span>申请理由</span>
+            <span>Reason</span>
           </div>
           <div class="reason-box">
             {{ request.reason }}
@@ -136,24 +136,24 @@ import { PermissionRequestResponse } from '../../../../@core/data/permission-req
         <div class="section" *ngIf="request.status !== 'pending'">
           <div class="section-title">
             <nb-icon icon="checkmark-circle-outline"></nb-icon>
-            <span>审批信息</span>
+            <span>Approval Information</span>
           </div>
           <nb-list class="info-list">
             <nb-list-item>
               <div class="list-item-content">
-                <span class="item-label">审批人</span>
+                <span class="item-label">Approver</span>
                 <span class="item-value">{{ request.approver_name || '-' }}</span>
               </div>
             </nb-list-item>
             <nb-list-item>
               <div class="list-item-content">
-                <span class="item-label">审批时间</span>
+                <span class="item-label">Approved At</span>
                 <span class="item-value">{{ formatDateTime(request.approved_at) }}</span>
               </div>
             </nb-list-item>
           </nb-list>
           <div class="reason-box mt-2" *ngIf="request.approval_comment">
-            <label>审批备注</label>
+            <label>Approval Comment</label>
             {{ request.approval_comment }}
           </div>
         </div>
@@ -162,12 +162,12 @@ import { PermissionRequestResponse } from '../../../../@core/data/permission-req
         <div class="section" *ngIf="request.status === 'completed' || request.status === 'failed'">
           <div class="section-title">
             <nb-icon icon="flash-outline"></nb-icon>
-            <span>执行结果</span>
+            <span>Execution Result</span>
           </div>
           <div class="execution-result" [ngClass]="request.status">
             <nb-icon [icon]="request.status === 'completed' ? 'checkmark-circle-2-outline' : 'alert-circle-outline'"></nb-icon>
             <div class="result-content">
-              <span class="result-status">{{ request.status === 'completed' ? '执行成功' : '执行失败' }}</span>
+              <span class="result-status">{{ request.status === 'completed' ? 'Execution Succeeded' : 'Execution Failed' }}</span>
               <span class="result-time" *ngIf="request.executed_at">{{ formatDateTime(request.executed_at) }}</span>
               <p class="result-message" *ngIf="request.execution_result">{{ request.execution_result }}</p>
             </div>
@@ -177,16 +177,16 @@ import { PermissionRequestResponse } from '../../../../@core/data/permission-req
 
       <nb-card-footer *ngIf="showActions && request.status === 'pending'">
         <button nbButton status="success" size="small" (click)="approve()">
-          <nb-icon icon="checkmark-outline"></nb-icon> 批准
+          <nb-icon icon="checkmark-outline"></nb-icon> Approve
         </button>
         <button nbButton status="danger" size="small" (click)="reject()">
-          <nb-icon icon="close-outline"></nb-icon> 拒绝
+          <nb-icon icon="close-outline"></nb-icon> Reject
         </button>
-        <button nbButton status="basic" size="small" (click)="close()">关闭</button>
+        <button nbButton status="basic" size="small" (click)="close()">Close</button>
       </nb-card-footer>
 
       <nb-card-footer *ngIf="!showActions || request.status !== 'pending'">
-        <button nbButton status="basic" size="small" (click)="close()">关闭</button>
+        <button nbButton status="basic" size="small" (click)="close()">Close</button>
       </nb-card-footer>
     </nb-card>
   `,
@@ -419,7 +419,7 @@ export class PermissionApprovalDetailDialogComponent {
     if (parts.length === 0) {
       // resource_type 可能是 'global' 或其他值
       const resourceType = (details.resource_type as string)?.toUpperCase();
-      if (resourceType === 'GLOBAL') return 'GLOBAL (全局)';
+      if (resourceType === 'GLOBAL') return 'GLOBAL (global)';
       return details.scope || '-';
     }
 
@@ -428,10 +428,10 @@ export class PermissionApprovalDetailDialogComponent {
 
   getRequestTypeLabel(type: string): string {
     const labels: { [key: string]: string } = {
-      grant_role: '授予角色',
-      grant_permission: '授予权限',
-      revoke_role: '撤销角色',
-      revoke_permission: '撤销权限',
+      grant_role: 'Grant Role',
+      grant_permission: 'Grant Permission',
+      revoke_role: 'Revoke Role',
+      revoke_permission: 'Revoke Permission',
     };
     return labels[type] || type;
   }
@@ -444,13 +444,13 @@ export class PermissionApprovalDetailDialogComponent {
 
   getStatusLabel(status: string): string {
     const labels: { [key: string]: string } = {
-      pending: '待审批',
-      approved: '已批准',
-      rejected: '已拒绝',
-      executing: '执行中',
-      completed: '已完成',
-      failed: '执行失败',
-      expired: '已过期',
+      pending: 'Pending',
+      approved: 'Approved',
+      rejected: 'Rejected',
+      executing: 'Executing',
+      completed: 'Completed',
+      failed: 'Execution Failed',
+      expired: 'Expired',
     };
     return labels[status] || status;
   }

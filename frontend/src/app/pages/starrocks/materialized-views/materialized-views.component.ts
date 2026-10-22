@@ -53,26 +53,26 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
   // Options for filters
   databases: string[] = [];
   refreshTypeOptions = [
-    { value: 'all', label: '全部类型' },
-    { value: 'ASYNC', label: '自动刷新' },
-    { value: 'MANUAL', label: '手动刷新' },
-    { value: 'ROLLUP', label: '同步' },
-    { value: 'INCREMENTAL', label: '增量' },
+    { value: 'all', label: 'All types' },
+    { value: 'ASYNC', label: 'Auto refresh' },
+    { value: 'MANUAL', label: 'Manual refresh' },
+    { value: 'ROLLUP', label: 'Sync' },
+    { value: 'INCREMENTAL', label: 'Incremental' },
   ];
   activeStateOptions = [
-    { value: 'all', label: '全部' },
+    { value: 'all', label: 'All' },
     { value: 'active', label: 'Active' },
     { value: 'inactive', label: 'Inactive' },
   ];
   refreshStateOptions = [
-    { value: 'all', label: '全部' },
-    { value: 'SUCCESS', label: '成功' },
-    { value: 'RUNNING', label: '运行中' },
-    { value: 'FAILED', label: '失败' },
-    { value: 'PENDING', label: '等待中' },
+    { value: 'all', label: 'All' },
+    { value: 'SUCCESS', label: 'Success' },
+    { value: 'RUNNING', label: 'Running' },
+    { value: 'FAILED', label: 'Failed' },
+    { value: 'PENDING', label: 'Waiting' },
   ];
   partitionTypeOptions = [
-    { value: 'all', label: '全部分区类型' },
+    { value: 'all', label: 'All partition types' },
     { value: 'RANGE', label: 'RANGE' },
     { value: 'LIST', label: 'LIST' },
     { value: 'UNPARTITIONED', label: 'UNPARTITIONED' },
@@ -115,16 +115,16 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
   editing = false;
 
   refreshModeOptions = [
-    { value: 'ASYNC', label: '异步模式' },
-    { value: 'SYNC', label: '同步模式' },
+    { value: 'ASYNC', label: 'Async mode' },
+    { value: 'SYNC', label: 'Sync mode' },
   ];
 
   settings = {
     mode: 'external',
     hideSubHeader: false,
-    noDataMessage: '暂无物化视图数据',
+    noDataMessage: 'No materialized view data',
     actions: {
-      columnTitle: '操作',
+      columnTitle: 'Actions',
       add: false,
       edit: true,
       delete: true,
@@ -144,30 +144,30 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
     },
     columns: {
       name: {
-        title: '名称',
+        title: 'Name',
         type: 'string',
         width: '12%',
       },
       database_name: {
-        title: '数据库',
+        title: 'Database',
         type: 'string',
         width: '10%',
       },
       mv_type: {
-        title: '类型',
+        title: 'Type',
         type: 'html',
         sanitizer: { bypassHtml: true },
         width: '7%',
         valuePrepareFunction: withTableRow((value: any, row: MaterializedView) => {
           if (row.refresh_type === 'ROLLUP') {
-            return '<span class="badge badge-primary">同步</span>';
+            return '<span class="badge badge-primary">Sync</span>';
           } else {
-            return '<span class="badge badge-info">异步</span>';
+            return '<span class="badge badge-info">Async</span>';
           }
         }),
       },
       refresh_type: {
-        title: '刷新策略',
+        title: 'Refresh strategy',
         type: 'html',
         sanitizer: { bypassHtml: true },
         width: '9%',
@@ -176,7 +176,7 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
         },
       },
       is_active: {
-        title: '状态',
+        title: 'Status',
         type: 'custom',
         width: '12%',
         renderComponent: ActiveToggleRenderComponent,
@@ -187,7 +187,7 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
         },
       },
       last_refresh_state: {
-        title: '刷新状态',
+        title: 'Refresh state',
         type: 'html',
         sanitizer: { bypassHtml: true },
         width: '9%',
@@ -197,13 +197,13 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
         }),
       },
       last_refresh_finished_time: {
-        title: '最后刷新时间',
+        title: 'Last refresh time',
         type: 'string',
         width: '15%',
         valuePrepareFunction: (value: string) => value || '-',
       },
       rows: {
-        title: '行数',
+        title: 'Rows',
         type: 'string',
         width: '8%',
         valuePrepareFunction: (value: number) => {
@@ -212,20 +212,20 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
         },
       },
       partition_type: {
-        title: '分区类型',
+        title: 'Partition type',
         type: 'string',
         width: '8%',
         valuePrepareFunction: (value: string) => value || '-',
       },
       error_info: {
-        title: '错误信息',
+        title: 'Error message',
         type: 'html',
         sanitizer: { bypassHtml: true },
         width: '8%',
         valuePrepareFunction: withTableRow((value: any, row: MaterializedView) => {
           if (row.last_refresh_error_message) {
             return `<span class="text-danger" title="${row.last_refresh_error_message}">
-              <i class="nb-alert-circle"></i> 错误
+              <i class="nb-alert-circle"></i> Error
             </span>`;
           }
           return '-';
@@ -284,7 +284,7 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
         error: (error) => {
           this.toastrService.danger(
             ErrorHandler.extractErrorMessage(error),
-            '加载集群信息失败',
+            'Failed to load cluster information',
           );
         },
       });
@@ -306,7 +306,7 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
         error: (error) => {
           this.toastrService.danger(
             ErrorHandler.handleClusterError(error),
-            '加载物化视图失败',
+            'Failed to load materialized views',
           );
           this.loading = false;
         },
@@ -485,7 +485,7 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
 
   createMV() {
     if (!this.createSQL.trim()) {
-      this.toastrService.warning('请输入CREATE MATERIALIZED VIEW SQL语句', '输入错误');
+      this.toastrService.warning('Enter the CREATE MATERIALIZED VIEW SQL statement', 'Invalid input');
       return;
     }
 
@@ -495,14 +495,14 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.toastrService.success('物化视图创建成功', '成功');
+          this.toastrService.success('Materialized view created successfully', 'Success');
           this.closeCreateDialog();
           this.loadMaterializedViews();
         },
         error: (error) => {
           this.toastrService.danger(
             ErrorHandler.extractErrorMessage(error),
-            '创建物化视图失败',
+            'Failed to create materialized view',
           );
           this.creating = false;
         },
@@ -524,7 +524,7 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
         error: (error) => {
           this.toastrService.danger(
             ErrorHandler.extractErrorMessage(error),
-            '加载DDL失败',
+            'Failed to load DDL',
           );
         },
       });
@@ -573,14 +573,14 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.toastrService.success('刷新任务已启动', '成功');
+          this.toastrService.success('Refresh job started', 'Success');
           this.closeRefreshDialog();
           setTimeout(() => this.loadMaterializedViews(), 1000);
         },
         error: (error) => {
           this.toastrService.danger(
             ErrorHandler.extractErrorMessage(error),
-            '刷新失败',
+            'Refresh failed',
           );
           this.refreshing = false;
         },
@@ -590,10 +590,10 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
   cancelRefresh(mv: MaterializedView) {
     this.confirmDialogService
       .confirm(
-        '取消刷新',
-        `确定要取消物化视图 "${mv.name}" 的刷新任务吗？`,
-        '取消刷新',
-        '不取消',
+        'Cancel refresh',
+        `Cancel the refresh job for materialized view "${mv.name}"?`,
+        'Cancel refresh',
+        'Do not cancel',
       )
       .subscribe((confirmed) => {
         if (confirmed) {
@@ -602,13 +602,13 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: () => {
-                this.toastrService.success('刷新任务已取消', '成功');
+                this.toastrService.success('Refresh job cancelled', 'Success');
                 this.loadMaterializedViews();
               },
               error: (error) => {
                 this.toastrService.danger(
                   ErrorHandler.extractErrorMessage(error),
-                  '取消刷新失败',
+                  'Failed to cancel refresh',
                 );
               },
             });
@@ -622,14 +622,14 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.toastrService.success('物化视图删除成功', '成功');
+          this.toastrService.success('Materialized view deleted successfully', 'Success');
           tableEvent?.confirm.resolve();
           this.loadMaterializedViews();
         },
         error: (error) => {
           this.toastrService.danger(
             ErrorHandler.extractErrorMessage(error),
-            '删除失败',
+            'Delete failed',
           );
           tableEvent?.confirm.reject();
         },
@@ -639,14 +639,14 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
   // Toggle Active/Inactive state
   toggleActiveState(mv: MaterializedView) {
     const newState = mv.is_active ? 'INACTIVE' : 'ACTIVE';
-    const action = mv.is_active ? '停用' : '激活';
+    const action = mv.is_active ? 'Disable' : 'Enable';
     
     this.confirmDialogService
       .confirm(
-        `${action}物化视图`,
-        `确定要${action}物化视图 "${mv.name}" 吗？`,
+        `${action} materialized view`,
+        `Do you want to ${action} materialized view "${mv.name}"?`,
         action,
-        '取消',
+        'Cancel',
       )
       .subscribe((confirmed) => {
         if (confirmed) {
@@ -655,13 +655,13 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: () => {
-                this.toastrService.success(`物化视图已${action}`, '成功');
+                this.toastrService.success(`Materialized view has been ${action}d`, 'Success');
                 this.loadMaterializedViews();
               },
               error: (error) => {
                 this.toastrService.danger(
                   ErrorHandler.extractErrorMessage(error),
-                  `${action}失败`,
+                  `${action} failed`,
                 );
               },
             });
@@ -702,11 +702,11 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
     switch (this.editAction) {
       case 'rename':
         if (!this.editNewName.trim()) {
-          this.toastrService.warning('请输入新名称', '输入错误');
+          this.toastrService.warning('Enter a new name', 'Invalid input');
           return;
         }
         if (this.editNewName === this.selectedMV.name) {
-          this.toastrService.warning('新名称与当前名称相同', '输入错误');
+          this.toastrService.warning('The new name is the same as the current name', 'Invalid input');
           return;
         }
         alterClause = `RENAME ${this.editNewName}`;
@@ -718,7 +718,7 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
         } else {
           const interval = parseInt(this.editRefreshInterval);
           if (!interval || interval <= 0) {
-            this.toastrService.warning('请输入有效的刷新间隔', '输入错误');
+            this.toastrService.warning('Enter a valid refresh interval', 'Invalid input');
             return;
           }
           alterClause = `REFRESH ASYNC EVERY(INTERVAL ${interval} ${this.editRefreshUnit})`;
@@ -727,7 +727,7 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
         
       case 'properties':
         if (!this.editPropertyKey.trim() || !this.editPropertyValue.trim()) {
-          this.toastrService.warning('请输入属性名称和值', '输入错误');
+          this.toastrService.warning('Enter the property name and value', 'Invalid input');
           return;
         }
         // Add session. prefix if it's a session variable
@@ -739,7 +739,7 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
         
       case 'advanced':
         if (!this.editAdvancedClause.trim()) {
-          this.toastrService.warning('请输入ALTER子句', '输入错误');
+          this.toastrService.warning('Enter the ALTER clause', 'Invalid input');
           return;
         }
         alterClause = this.editAdvancedClause;
@@ -752,14 +752,14 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.toastrService.success('物化视图修改成功', '成功');
+          this.toastrService.success('Materialized view updated successfully', 'Success');
           this.closeEditDialog();
           this.loadMaterializedViews();
         },
         error: (error) => {
           this.toastrService.danger(
             ErrorHandler.extractErrorMessage(error),
-            '修改失败',
+            'Update failed',
           );
           this.editing = false;
         },
@@ -768,10 +768,10 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
 
   getRefreshTypeBadge(type: string): string {
     const badges = {
-      ASYNC: '<span class="badge badge-success">自动</span>',
-      MANUAL: '<span class="badge badge-info">手动</span>',
-      ROLLUP: '<span class="badge badge-primary">同步</span>',
-      INCREMENTAL: '<span class="badge badge-warning">增量</span>',
+      ASYNC: '<span class="badge badge-success">Auto</span>',
+      MANUAL: '<span class="badge badge-info">Manual</span>',
+      ROLLUP: '<span class="badge badge-primary">Sync</span>',
+      INCREMENTAL: '<span class="badge badge-warning">Incremental</span>',
     };
     return badges[type] || `<span class="badge badge-basic">${type}</span>`;
   }
@@ -779,10 +779,10 @@ export class MaterializedViewsComponent implements OnInit, OnDestroy {
   getRefreshStateBadge(state: string): string {
     if (!state) return '-';
     const badges = {
-      SUCCESS: '<span class="badge badge-success">成功</span>',
-      RUNNING: '<span class="badge badge-info">运行中</span>',
-      FAILED: '<span class="badge badge-danger">失败</span>',
-      PENDING: '<span class="badge badge-warning">等待中</span>',
+      SUCCESS: '<span class="badge badge-success">Success</span>',
+      RUNNING: '<span class="badge badge-info">Running</span>',
+      FAILED: '<span class="badge badge-danger">Failed</span>',
+      PENDING: '<span class="badge badge-warning">Waiting</span>',
     };
     return badges[state] || `<span class="badge badge-basic">${state}</span>`;
   }

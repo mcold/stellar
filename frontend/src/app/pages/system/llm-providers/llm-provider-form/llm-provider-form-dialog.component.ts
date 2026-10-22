@@ -35,9 +35,9 @@ export class LLMProviderFormDialogComponent implements OnInit {
   presets = [
     { name: 'openai', display: 'OpenAI', api_base: 'https://api.openai.com/v1', model: 'gpt-4o' },
     { name: 'deepseek', display: 'DeepSeek', api_base: 'https://api.deepseek.com/v1', model: 'deepseek-chat' },
-    { name: 'qwen', display: '通义千问', api_base: 'https://dashscope.aliyuncs.com/compatible-mode/v1', model: 'qwen-plus' },
+    { name: 'qwen', display: 'Qwen', api_base: 'https://dashscope.aliyuncs.com/compatible-mode/v1', model: 'qwen-plus' },
     { name: 'openrouter', display: 'OpenRouter', api_base: 'https://openrouter.ai/api/v1', model: 'openai/gpt-4o' },
-    { name: 'custom', display: '自定义', api_base: '', model: '' },
+    { name: 'custom', display: 'Custom', api_base: '', model: '' },
   ];
 
   constructor(

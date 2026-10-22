@@ -96,18 +96,18 @@ impl BaselineDriftResult {
             .collect();
 
         if degraded.is_empty() {
-            "基线检测到性能改善".to_string()
+            "The baseline shows a performance improvement".to_string()
         } else {
             let details: Vec<String> = degraded
                 .iter()
                 .map(|d| {
                     format!(
-                        "{:?}: P95 从 {:.0}ms 变为 {:.0}ms ({:.1}x)",
+                        "{:?}: P95 changed from {:.0}ms to {:.0}ms ({:.1}x)",
                         d.complexity, d.old_p95_ms, d.new_p95_ms, d.ratio
                     )
                 })
                 .collect();
-            format!("⚠️ 基线漂移检测到性能下降: {}", details.join(", "))
+            format!("⚠️ The baseline drift shows a performance degradation: {}", details.join(", "))
         }
     }
 }

@@ -138,7 +138,7 @@ export class ClusterFormComponent implements OnInit {
       error: (error) => {
         this.toastrService.danger(
           ErrorHandler.extractErrorMessage(error),
-          '错误',
+          'Error',
         );
         this.loading = false;
       },
@@ -182,14 +182,14 @@ export class ClusterFormComponent implements OnInit {
         if (!this.isEditMode && cluster.id) {
           this.testConnectionAfterCreate(cluster.id);
         } else {
-          this.toastrService.success('集群更新成功', '成功');
+          this.toastrService.success('Cluster updated', 'Success');
           this.navigateToDashboardWithRefresh();
         }
       },
       error: (error) => {
         this.toastrService.danger(
           ErrorHandler.extractErrorMessage(error),
-          '错误',
+          'Error',
         );
         this.loading = false;
       },
@@ -200,16 +200,16 @@ export class ClusterFormComponent implements OnInit {
     this.clusterService.getHealth(clusterId).subscribe({
       next: (health) => {
         if (health.status === 'healthy') {
-          this.toastrService.success('集群创建成功，健康检查通过', '成功');
+          this.toastrService.success('Cluster created, health check passed', 'Success');
         } else if (health.status === 'warning') {
-          this.toastrService.warning('集群已创建，但健康检查发现问题。请检查配置', '警告');
+          this.toastrService.warning('Cluster created, but the health check found issues. Please check the configuration', 'Warning');
         } else {
-          this.toastrService.warning('集群已创建，但健康检查失败。请检查配置', '警告');
+          this.toastrService.warning('Cluster created, but the health check failed. Please check the configuration', 'Warning');
         }
         this.navigateToDashboardWithRefresh();
       },
       error: () => {
-        this.toastrService.warning('集群已创建，但健康检查失败。请检查配置', '警告');
+        this.toastrService.warning('Cluster created, but the health check failed. Please check the configuration', 'Warning');
         this.navigateToDashboardWithRefresh();
       },
     });
@@ -226,7 +226,7 @@ export class ClusterFormComponent implements OnInit {
       const missingFields = requiredFields.filter(field => !this.clusterForm.get(field)?.value);
       
       if (missingFields.length > 0) {
-        this.toastrService.warning('请先填写完整的连接信息（FE地址、端口、用户名、密码）', '提示');
+        this.toastrService.warning('Please fill in the complete connection information (FE address, ports, username, password)', 'Hint');
         return;
       }
     }
@@ -263,21 +263,21 @@ export class ClusterFormComponent implements OnInit {
     if (health.status === 'healthy') {
       // For healthy status, show detailed checks
       const details = health.checks.map((c: any) => `✓ ${c.name}: ${c.message}`).join('\n');
-      this.toastrService.success(`健康检查通过\n\n${details}`, '连接成功');
+      this.toastrService.success(`Health check passed\n\n${details}`, 'Connection successful');
     } else if (health.status === 'warning') {
       // For warning status, highlight problematic checks
       const warnings = health.checks
         .filter((c: any) => c.status !== 'ok')
         .map((c: any) => `⚠ ${c.name}: ${c.message}`)
         .join('\n');
-      this.toastrService.warning(`健康检查发现问题\n\n${warnings || '请检查集群配置'}`, '警告');
+      this.toastrService.warning(`Health check found issues\n\n${warnings || 'Please check the cluster configuration'}`, 'Warning');
     } else {
       // For critical status, show error details
       const errors = health.checks
         .filter((c: any) => c.status === 'critical' || c.status === 'warning')
         .map((c: any) => `✗ ${c.name}: ${c.message}`)
         .join('\n');
-      this.toastrService.danger(`健康检查失败\n\n${errors || '请检查集群配置'}`, '连接失败');
+      this.toastrService.danger(`Health check failed\n\n${errors || 'Please check the cluster configuration'}`, 'Connection failed');
     }
     this.loading = false;
   }
@@ -285,7 +285,7 @@ export class ClusterFormComponent implements OnInit {
   private handleHealthCheckError(error: any): void {
     this.toastrService.danger(
       ErrorHandler.extractErrorMessage(error),
-      '错误',
+      'Error',
     );
     this.loading = false;
   }

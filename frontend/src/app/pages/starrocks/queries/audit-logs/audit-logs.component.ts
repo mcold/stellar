@@ -33,12 +33,12 @@ export class AuditLogsComponent implements OnInit, OnDestroy {
   refreshInterval: any;
   selectedRefreshInterval: number | 'off' = 'off'; // Default: off (Grafana style)
   refreshIntervalOptions = [
-    { value: 'off', label: '关闭' },
-    { value: 3, label: '3秒' },
-    { value: 5, label: '5秒' },
-    { value: 10, label: '10秒' },
-    { value: 30, label: '30秒' },
-    { value: 60, label: '1分钟' },
+    { value: 'off', label: 'Off' },
+    { value: 3, label: '3s' },
+    { value: 5, label: '5s' },
+    { value: 10, label: '10s' },
+    { value: 30, label: '30s' },
+    { value: 60, label: '1m' },
   ];
   private destroy$ = new Subject<void>();
   private readonly durationThresholds: MetricThresholds = { warn: 3000, danger: 10000 };
@@ -61,7 +61,7 @@ export class AuditLogsComponent implements OnInit, OnDestroy {
   historySettings = {
     mode: 'external',
     hideSubHeader: false, // Enable search
-    noDataMessage: '暂无审计日志记录',
+    noDataMessage: 'No audit log records',
     actions: {
       add: false,
       edit: true,
@@ -77,13 +77,13 @@ export class AuditLogsComponent implements OnInit, OnDestroy {
     },
     columns: {
       query_id: { title: 'Query ID', type: 'string' },
-      user: { title: '用户', type: 'string', width: '8%' },
-      default_db: { title: '数据库', type: 'string', width: '8%' },
-      query_type: { title: '类型', type: 'string', width: '8%' },
-      query_state: { title: '状态', type: 'string', width: '8%' },
-      start_time: { title: '开始时间', type: 'string', width: '12%' },
+      user: { title: 'User', type: 'string', width: '8%' },
+      default_db: { title: 'Database', type: 'string', width: '8%' },
+      query_type: { title: 'Type', type: 'string', width: '8%' },
+      query_state: { title: 'Status', type: 'string', width: '8%' },
+      start_time: { title: 'Start Time', type: 'string', width: '12%' },
       total_ms: {
-        title: '耗时(ms)',
+        title: 'Duration (ms)',
         type: 'html',
         sanitizer: { bypassHtml: true },
         width: '8%',
@@ -212,7 +212,7 @@ export class AuditLogsComponent implements OnInit, OnDestroy {
         error: (error) => {
           this.toastrService.danger(
             ErrorHandler.handleClusterError(error),
-            '加载失败'
+            'Failed to load'
           );
           this.historySource.load([]);
           this.loading = false;
@@ -287,7 +287,7 @@ export class AuditLogsComponent implements OnInit, OnDestroy {
         });
       },
       error: (error) => {
-        this.toastrService.danger(ErrorHandler.extractErrorMessage(error), '加载失败');
+        this.toastrService.danger(ErrorHandler.extractErrorMessage(error), 'Failed to load');
       },
     });
   }

@@ -383,7 +383,7 @@ impl SystemFunctionService {
 
         if let Some(keyword) = found_keyword {
             return Err(ApiError::sql_safety_violation(format!(
-                "SQL查询包含不允许的关键字：{}",
+                "SQL query contains a forbidden keyword: {}",
                 keyword
             )));
         }
@@ -393,17 +393,17 @@ impl SystemFunctionService {
 
     pub async fn delete_category(&self, category_name: &str) -> ApiResult<()> {
         let system_categories = [
-            "集群信息",
-            "数据库管理",
-            "事务管理",
-            "任务管理",
-            "元数据管理",
-            "存储管理",
-            "作业管理",
+            "Cluster Information",
+            "Database Management",
+            "Transaction Management",
+            "Task Management",
+            "Metadata Management",
+            "Storage",
+            "Job Management",
         ];
 
         if system_categories.contains(&category_name) {
-            return Err(ApiError::invalid_data("不能删除系统默认分类"));
+            return Err(ApiError::invalid_data("Cannot delete a system default category"));
         }
 
         sqlx::query(

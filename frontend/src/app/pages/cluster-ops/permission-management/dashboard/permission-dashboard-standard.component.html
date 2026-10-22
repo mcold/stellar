@@ -6,22 +6,22 @@
           <div class="mr-4 mb-2">
             <nb-icon icon="shield-outline" status="primary"></nb-icon>
             <span class="h6 mb-0 ml-1">{{ stats.totalRoles }}</span>
-            <span class="text-hint ml-1">角色</span>
+            <span class="text-hint ml-1">Roles</span>
           </div>
           <div class="mr-4 mb-2">
             <nb-icon icon="globe-outline" status="success"></nb-icon>
             <span class="h6 mb-0 ml-1">{{ stats.globalPermissions }}</span>
-            <span class="text-hint ml-1">全局</span>
+            <span class="text-hint ml-1">Global</span>
           </div>
           <div class="mr-4 mb-2">
             <nb-icon icon="layers-outline" status="info"></nb-icon>
             <span class="h6 mb-0 ml-1">{{ stats.dbPermissions }}</span>
-            <span class="text-hint ml-1">库级</span>
+            <span class="text-hint ml-1">Database</span>
           </div>
           <div class="mb-2">
             <nb-icon icon="grid-outline" status="warning"></nb-icon>
             <span class="h6 mb-0 ml-1">{{ stats.tablePermissions }}</span>
-            <span class="text-hint ml-1">表级</span>
+            <span class="text-hint ml-1">Table</span>
           </div>
         </div>
       </nb-card-body>
@@ -32,7 +32,7 @@
 <nb-card>
   <nb-card-header>
     <div class="d-flex justify-content-between align-items-center">
-      <span>权限列表 <span class="text-hint">共 {{ filteredPermissions.length }} 条</span></span>
+      <span>Permission List <span class="text-hint">{{ filteredPermissions.length }} total</span></span>
       <button nbButton status="primary" size="small" (click)="loadPermissions()">
         <nb-icon icon="refresh-outline"></nb-icon>
       </button>
@@ -52,10 +52,10 @@
     </angular2-smart-table>
 
     <div *ngIf="!loading && filteredPermissions.length === 0" class="text-center p-4">
-      <p class="text-hint">暂无权限数据</p>
+      <p class="text-hint">No permission data</p>
       <button nbButton status="primary" size="small" (click)="switchToRequest.emit({type: 'grant_permission'})">
         <nb-icon icon="plus-outline"></nb-icon>
-        申请权限
+        Request Permission
       </button>
     </div>
   </nb-card-body>
@@ -63,27 +63,27 @@
 
 <ng-template #detailDialog let-ref="dialogRef">
   <nb-card>
-    <nb-card-header>{{ isRolePermission ? '角色权限详情' : '权限详情' }}</nb-card-header>
+    <nb-card-header>{{ isRolePermission ? 'Role Permission Detail' : 'Permission Detail' }}</nb-card-header>
     <nb-card-body *ngIf="selectedPermission">
       <nb-list>
         <nb-list-item>
-          <span class="text-hint">权限类型</span>
+          <span class="text-hint">Permission Type</span>
           <nb-badge [text]="selectedPermission.privilege_type" status="primary"></nb-badge>
         </nb-list-item>
         <nb-list-item>
-          <span class="text-hint">资源类型</span>
+          <span class="text-hint">Resource Type</span>
           <nb-badge [text]="selectedPermission.resource_type" status="info"></nb-badge>
         </nb-list-item>
         <nb-list-item>
-          <span class="text-hint">资源路径</span>
+          <span class="text-hint">Resource Path</span>
           <span>{{ selectedPermission.resource_path }}</span>
         </nb-list-item>
         <nb-list-item>
-          <span class="text-hint">授权方式</span>
-          <span>{{ selectedPermission.granted_role || '直接授权' }}</span>
+          <span class="text-hint">Grant Method</span>
+          <span>{{ selectedPermission.granted_role || 'Direct grant' }}</span>
         </nb-list-item>
         <nb-list-item>
-          <span class="text-hint">风险等级</span>
+          <span class="text-hint">Risk Level</span>
           <nb-badge
             [text]="getRiskLabel(selectedPermission.risk_level)"
             [status]="getRiskColor(selectedPermission.risk_level)">
@@ -93,28 +93,28 @@
 
       <nb-accordion>
         <nb-accordion-item [expanded]="true">
-          <nb-accordion-item-header>权限说明</nb-accordion-item-header>
+          <nb-accordion-item-header>Permission Description</nb-accordion-item-header>
           <nb-accordion-item-body>
             <p>{{ getPrivilegeDescription(selectedPermission.privilege_type) }}</p>
             <p class="text-hint">
-              影响范围：{{ getResourceScopeDescription(selectedPermission.resource_type, selectedPermission.resource_path) }}
+              Scope: {{ getResourceScopeDescription(selectedPermission.resource_type, selectedPermission.resource_path) }}
             </p>
             <p class="text-hint" *ngIf="getPrivilegeUsage(selectedPermission.privilege_type)">
-              使用场景：{{ getPrivilegeUsage(selectedPermission.privilege_type) }}
+              Common uses: {{ getPrivilegeUsage(selectedPermission.privilege_type) }}
             </p>
           </nb-accordion-item-body>
         </nb-accordion-item>
 
         <nb-accordion-item *ngIf="isRolePermission" [expanded]="true">
           <nb-accordion-item-header>
-            角色 "{{ selectedPermission.resource_path }}" 包含的权限
+            Permissions contained in role "{{ selectedPermission.resource_path }}"
           </nb-accordion-item-header>
           <nb-accordion-item-body>
             <div *ngIf="loadingRolePermissions" class="text-center">
               <nb-spinner size="small" status="primary"></nb-spinner>
             </div>
             <p *ngIf="!loadingRolePermissions && rolePermissions.length === 0" class="text-hint">
-              该角色暂无权限或无法查询
+              This role has no permissions or they cannot be queried
             </p>
             <nb-list *ngIf="!loadingRolePermissions && rolePermissions.length > 0">
               <nb-list-item *ngFor="let perm of rolePermissions">
@@ -128,9 +128,9 @@
       </nb-accordion>
     </nb-card-body>
     <nb-card-footer class="d-flex justify-content-end">
-      <button nbButton ghost status="basic" class="mr-2" (click)="ref.close()">关闭</button>
+      <button nbButton ghost status="basic" class="mr-2" (click)="ref.close()">Close</button>
       <button nbButton status="danger" outline (click)="requestRevoke(selectedPermission); ref.close()">
-        申请撤销
+        Request Revocation
       </button>
     </nb-card-footer>
   </nb-card>

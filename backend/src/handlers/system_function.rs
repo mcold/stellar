@@ -39,7 +39,7 @@ pub async fn create_system_function(
     Json(req): Json<CreateFunctionRequest>,
 ) -> ApiResult<impl IntoResponse> {
     if let Err(validation_errors) = req.validate() {
-        return Err(ApiError::validation_error(format!("请求参数验证失败：{}", validation_errors)));
+        return Err(ApiError::validation_error(format!("Request parameter validation failed: {}", validation_errors)));
     }
 
     let cluster = if org_ctx.is_super_admin {
@@ -149,7 +149,7 @@ pub async fn update_function(
     Json(req): Json<UpdateFunctionRequest>,
 ) -> ApiResult<impl IntoResponse> {
     if let Err(validation_errors) = req.validate() {
-        return Err(ApiError::validation_error(format!("请求参数验证失败：{}", validation_errors)));
+        return Err(ApiError::validation_error(format!("Request parameter validation failed: {}", validation_errors)));
     }
 
     let cluster = if org_ctx.is_super_admin {

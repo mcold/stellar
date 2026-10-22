@@ -3,7 +3,7 @@
   [(selected)]="activeCluster"
   [compareWith]="compareById"
   (selectedChange)="onClusterChange($event)"
-  placeholder="选择集群"
+  placeholder="Select cluster"
   status="primary"
 >
   <nb-option *ngFor="let cluster of clusters" [value]="cluster">{{ cluster.name }}</nb-option>
@@ -15,5 +15,5 @@
   status="primary"
   (click)="goToClusterManagement()"
 >
-  添加集群
+  Add cluster
 </button>

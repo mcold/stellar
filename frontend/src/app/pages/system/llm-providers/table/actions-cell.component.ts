@@ -20,14 +20,14 @@ import { PermissionService } from '../../../../@core/data/permission.service';
           outline
         size="tiny"
         status="success"
-          nbTooltip="设为默认提供商"
+          nbTooltip="Set as default provider"
         nbTooltipPlacement="top"
         [disabled]="!canUpdate"
         (click)="onActivateClick($event)"
           class="action-btn action-btn--activate"
       >
           <nb-icon icon="star-outline"></nb-icon>
-          激活
+          Activate
       </button>
 
       <!-- Test connection -->
@@ -36,7 +36,7 @@ import { PermissionService } from '../../../../@core/data/permission.service';
         ghost
         size="tiny"
         status="info"
-          nbTooltip="测试 API 连接"
+          nbTooltip="Test API connection"
         nbTooltipPlacement="top"
         [disabled]="testingId === rowData.id"
         (click)="onTestClick($event)"
@@ -56,7 +56,7 @@ import { PermissionService } from '../../../../@core/data/permission.service';
         ghost
         size="tiny"
         [status]="rowData.enabled ? 'warning' : 'success'"
-          [nbTooltip]="rowData.enabled ? '暂停使用' : '启用服务'"
+          [nbTooltip]="rowData.enabled ? 'Pause usage' : 'Enable service'"
         nbTooltipPlacement="top"
         [disabled]="!canUpdate"
         (click)="onToggleClick($event)"
@@ -71,7 +71,7 @@ import { PermissionService } from '../../../../@core/data/permission.service';
         ghost
         size="tiny"
         status="primary"
-          nbTooltip="编辑配置"
+          nbTooltip="Edit configuration"
         nbTooltipPlacement="top"
         [disabled]="!canUpdate"
         (click)="onEditClick($event)"
@@ -86,7 +86,7 @@ import { PermissionService } from '../../../../@core/data/permission.service';
         ghost
         size="tiny"
         status="danger"
-          [nbTooltip]="rowData.is_active ? '无法删除已激活的提供商' : '删除提供商'"
+          [nbTooltip]="rowData.is_active ? 'An active provider cannot be deleted' : 'Delete provider'"
         nbTooltipPlacement="top"
         [disabled]="!canDelete || rowData.is_active"
         (click)="onDeleteClick($event)"

@@ -38,8 +38,8 @@ import { NbDialogRef } from '@nebular/theme';
 export class ConfirmDialogComponent {
   @Input() title: string;
   @Input() message: string;
-  @Input() confirmText: string = '确定';
-  @Input() cancelText: string = '取消';
+  @Input() confirmText: string = 'Confirm';
+  @Input() cancelText: string = 'Cancel';
   @Input() confirmStatus: string = 'primary';
 
   constructor(protected ref: NbDialogRef<ConfirmDialogComponent>) {}

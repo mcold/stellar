@@ -46,9 +46,9 @@ export class PermissionDashboardStandardComponent implements OnInit, OnDestroy {
   settings = {
     mode: 'external',
     hideSubHeader: false,
-    noDataMessage: '暂无权限数据',
+    noDataMessage: 'No permission data',
     actions: {
-      columnTitle: '操作',
+      columnTitle: 'Actions',
       add: false,
       edit: true,  // 使用编辑按钮作为查看详情
       delete: false,
@@ -63,26 +63,26 @@ export class PermissionDashboardStandardComponent implements OnInit, OnDestroy {
     },
     columns: {
       privilege_type: {
-        title: '权限类型',
+        title: 'Permission Type',
         type: 'string',
       },
       resource_type: {
-        title: '资源类型',
+        title: 'Resource Type',
         type: 'string',
       },
       resource_path: {
-        title: '资源路径',
+        title: 'Resource Path',
         type: 'string',
       },
       granted_role: {
-        title: '授权角色',
+        title: 'Granted Role',
         type: 'string',
         valuePrepareFunction: (cell: string) => {
-          return cell || '直接授权';
+          return cell || 'Direct grant';
         },
       },
       risk_level_display: {
-        title: '风险等级',
+        title: 'Risk Level',
         type: 'string',
       },
     },
@@ -140,7 +140,7 @@ export class PermissionDashboardStandardComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Failed to load permissions:', err);
-        this.toastr.danger('加载权限列表失败', '错误');
+        this.toastr.danger('Failed to load permission list', 'Error');
         this.loading = false;
       },
     });
@@ -278,18 +278,18 @@ export class PermissionDashboardStandardComponent implements OnInit, OnDestroy {
     });
 
     this.toastr.info(
-      '请在权限申请页面填写撤销原因并提交',
-      '跳转到权限申请'
+      'Please fill in the revocation reason on the permission request page and submit',
+      'Go to Permission Request'
     );
   }
 
   // 辅助方法
   getRiskLabel(risk: string): string {
     switch (risk) {
-      case 'high': return '高风险';
-      case 'medium': return '中风险';
-      case 'low': return '低风险';
-      default: return '低风险';
+      case 'high': return 'High Risk';
+      case 'medium': return 'Medium Risk';
+      case 'low': return 'Low Risk';
+      default: return 'Low Risk';
     }
   }
 
@@ -307,20 +307,20 @@ export class PermissionDashboardStandardComponent implements OnInit, OnDestroy {
    */
   getPrivilegeTypeDescription(type: string): string {
     const descriptions: {[key: string]: string} = {
-      'SELECT': '查询数据',
-      'INSERT': '插入数据',
-      'UPDATE': '更新数据',
-      'DELETE': '删除数据',
-      'CREATE': '创建对象',
-      'DROP': '删除对象',
-      'ALTER': '修改对象',
-      'GRANT': '授权权限',
-      'USAGE': '使用权限',
-      'ROLE': '角色授权',
-      'BLACKLIST': '黑名单管理',
-      'NODE': '节点管理',
-      'ADMIN': '管理员权限',
-      'ALL': '所有权限',
+      'SELECT': 'Query data',
+      'INSERT': 'Insert data',
+      'UPDATE': 'Update data',
+      'DELETE': 'Delete data',
+      'CREATE': 'Create objects',
+      'DROP': 'Drop objects',
+      'ALTER': 'Alter objects',
+      'GRANT': 'Grant permissions',
+      'USAGE': 'Use resources',
+      'ROLE': 'Role grant',
+      'BLACKLIST': 'Blacklist management',
+      'NODE': 'Node management',
+      'ADMIN': 'Administrator privileges',
+      'ALL': 'All privileges',
     };
     return descriptions[type.toUpperCase()] || type;
   }
@@ -330,37 +330,37 @@ export class PermissionDashboardStandardComponent implements OnInit, OnDestroy {
    */
   getPrivilegeDescription(type: string): string {
     const descriptions: {[key: string]: string} = {
-      'SELECT': '允许对指定资源执行 SELECT 查询操作，读取表中的数据。这是最基本的数据访问权限。',
-      'INSERT': '允许向指定表中插入新数据。通常用于数据导入、ETL 作业等场景。',
-      'UPDATE': '允许修改指定表中已存在的数据记录。需要谨慎授予，可能影响数据完整性。',
-      'DELETE': '允许删除指定表中的数据记录。高风险操作，建议仅授予必要人员。',
-      'CREATE TABLE': '允许在指定数据库中创建新表。',
-      'CREATE VIEW': '允许在指定数据库中创建视图。',
-      'CREATE DATABASE': '允许创建新的数据库。',
-      'CREATE FUNCTION': '允许创建用户自定义函数（UDF）。',
-      'CREATE MATERIALIZED VIEW': '允许创建物化视图，用于加速查询。',
-      'DROP': '允许删除指定的数据库对象（表、视图等）。高风险操作，删除后数据不可恢复。',
-      'ALTER': '允许修改指定对象的结构，如添加列、修改表属性等。',
-      'GRANT': '允许将自己拥有的权限授予其他用户或角色。具有此权限的用户可以进行权限分发。',
-      'USAGE': '允许使用指定的 Catalog 或资源。这是访问外部数据源的基础权限。',
-      'ROLE': '表示用户被授予了一个角色，该角色包含一组预定义的权限。',
-      'BLACKLIST': '允许管理 SQL 黑名单，可以添加或删除被禁止执行的 SQL 模式。这是系统管理权限，用于阻止特定的危险查询。',
-      'NODE': '允许管理集群节点，包括添加、删除 BE/CN 节点等操作。这是集群管理权限。',
-      'ADMIN': '管理员权限，拥有系统的完全控制能力。',
-      'ALL': '拥有指定资源上的所有权限，等同于该资源的完全控制权。',
-      'EXPORT': '允许导出表数据到外部存储。',
-      'LOAD': '允许执行数据导入操作，如 Stream Load、Broker Load 等。',
-      'IMPERSONATE': '允许模拟其他用户执行操作。高风险权限，需谨慎授予。',
-      'OPERATE': '允许执行运维操作，如 KILL 查询、设置系统变量等。',
-      'CREATE RESOURCE': '允许创建外部资源，如 Spark 资源、Hive 资源等。',
-      'CREATE RESOURCE GROUP': '允许创建资源组，用于资源隔离和管理。',
-      'CREATE GLOBAL FUNCTION': '允许创建全局函数。',
-      'CREATE STORAGE VOLUME': '允许创建存储卷（存算分离模式）。',
-      'FILE': '允许执行文件相关操作。',
-      'PLUGIN': '允许管理插件。',
-      'REPOSITORY': '允许管理备份仓库。',
+      'SELECT': 'Allows running SELECT queries on the specified resource to read data from tables. This is the most basic data access permission.',
+      'INSERT': 'Allows inserting new data into the specified table. Commonly used for data loading and ETL jobs.',
+      'UPDATE': 'Allows modifying existing records in the specified table. Grant with care, it may affect data integrity.',
+      'DELETE': 'Allows deleting records from the specified table. High-risk operation, grant it only to those who need it.',
+      'CREATE TABLE': 'Allows creating new tables in the specified database.',
+      'CREATE VIEW': 'Allows creating views in the specified database.',
+      'CREATE DATABASE': 'Allows creating new databases.',
+      'CREATE FUNCTION': 'Allows creating user-defined functions (UDFs).',
+      'CREATE MATERIALIZED VIEW': 'Allows creating materialized views to speed up queries.',
+      'DROP': 'Allows dropping the specified database objects (tables, views, etc.). High-risk operation, dropped data cannot be recovered.',
+      'ALTER': 'Allows modifying the structure of the specified object, such as adding columns or changing table properties.',
+      'GRANT': 'Allows granting the permissions you own to other users or roles. Users with this permission can distribute permissions.',
+      'USAGE': 'Allows using the specified catalog or resource. This is the base permission for accessing external data sources.',
+      'ROLE': 'Indicates that the user has been granted a role, which contains a set of predefined permissions.',
+      'BLACKLIST': 'Allows managing the SQL blacklist, adding or removing SQL patterns that must not run. This is a system administration permission used to block specific dangerous queries.',
+      'NODE': 'Allows managing cluster nodes, including adding and removing BE/CN nodes. This is a cluster management permission.',
+      'ADMIN': 'Administrator permission, granting full control over the system.',
+      'ALL': 'Grants every permission on the specified resource, equivalent to full control over it.',
+      'EXPORT': 'Allows exporting table data to external storage.',
+      'LOAD': 'Allows data load operations such as Stream Load and Broker Load.',
+      'IMPERSONATE': 'Allows impersonating other users to perform operations. High-risk permission, grant it with care.',
+      'OPERATE': 'Allows operational actions such as killing queries and setting system variables.',
+      'CREATE RESOURCE': 'Allows creating external resources such as Spark and Hive resources.',
+      'CREATE RESOURCE GROUP': 'Allows creating resource groups for resource isolation and management.',
+      'CREATE GLOBAL FUNCTION': 'Allows creating global functions.',
+      'CREATE STORAGE VOLUME': 'Allows creating storage volumes (compute-storage separation mode).',
+      'FILE': 'Allows performing file related operations.',
+      'PLUGIN': 'Allows managing plugins.',
+      'REPOSITORY': 'Allows managing backup repositories.',
     };
-    return descriptions[type.toUpperCase()] || `${type} 权限允许执行相关操作。`;
+    return descriptions[type.toUpperCase()] || `${type} allows performing related operations.`;
   }
 
   /**
@@ -368,21 +368,21 @@ export class PermissionDashboardStandardComponent implements OnInit, OnDestroy {
    */
   getPrivilegeUsage(type: string): string {
     const usages: {[key: string]: string} = {
-      'SELECT': '数据分析、报表查询、BI 工具连接',
-      'INSERT': '数据导入、ETL 作业、实时写入',
-      'UPDATE': '数据修正、状态更新',
-      'DELETE': '数据清理、过期数据删除',
-      'DROP': '表结构重建、清理测试数据',
-      'ALTER': '表结构变更、添加索引',
-      'GRANT': '权限管理、团队权限分发',
-      'USAGE': '访问外部 Catalog（如 Hive、Iceberg）',
-      'BLACKLIST': '阻止危险 SQL、防止资源滥用',
-      'NODE': '集群扩缩容、节点维护',
-      'ADMIN': '系统管理、紧急运维',
-      'ALL': '开发测试环境、管理员账户',
-      'EXPORT': '数据备份、数据迁移',
-      'LOAD': '批量数据导入、数据同步',
-      'OPERATE': '查询管理、系统调优',
+      'SELECT': 'Data analysis, reporting queries, BI tool connections',
+      'INSERT': 'Data loading, ETL jobs, real-time writes',
+      'UPDATE': 'Data corrections, status updates',
+      'DELETE': 'Data cleanup, expired data removal',
+      'DROP': 'Table rebuilds, test data cleanup',
+      'ALTER': 'Table schema changes, adding indexes',
+      'GRANT': 'Permission management, team permission distribution',
+      'USAGE': 'Accessing external catalogs (such as Hive and Iceberg)',
+      'BLACKLIST': 'Blocking dangerous SQL, preventing resource abuse',
+      'NODE': 'Cluster scaling, node maintenance',
+      'ADMIN': 'System administration, emergency operations',
+      'ALL': 'Development and test environments, administrator accounts',
+      'EXPORT': 'Data backup, data migration',
+      'LOAD': 'Bulk data loading, data synchronization',
+      'OPERATE': 'Query management, system tuning',
     };
     return usages[type.toUpperCase()] || '';
   }
@@ -394,19 +394,19 @@ export class PermissionDashboardStandardComponent implements OnInit, OnDestroy {
     switch (resourceType?.toUpperCase()) {
       case 'GLOBAL':
       case 'SYSTEM':
-        return '整个集群范围，影响所有数据库和表';
+        return 'Entire cluster, affects all databases and tables';
       case 'CATALOG':
-        return resourcePath === '*' ? '所有 Catalog' : `Catalog: ${resourcePath}`;
+        return resourcePath === '*' ? 'All catalogs' : `Catalog: ${resourcePath}`;
       case 'DATABASE':
         return resourcePath?.endsWith('.*') 
-          ? `数据库 ${resourcePath.replace('.*', '')} 下的所有表`
-          : `数据库: ${resourcePath}`;
+          ? `All tables in database ${resourcePath.replace('.*', '')}`
+          : `Database: ${resourcePath}`;
       case 'TABLE':
-        return `表: ${resourcePath}`;
+        return `Table: ${resourcePath}`;
       case 'ROLE':
-        return `角色 ${resourcePath} 包含的所有权限`;
+        return `All permissions contained in role ${resourcePath}`;
       default:
-        return resourcePath || '未知范围';
+        return resourcePath || 'Unknown scope';
     }
   }
 
@@ -415,12 +415,12 @@ export class PermissionDashboardStandardComponent implements OnInit, OnDestroy {
    */
   getResourceTypeDescription(type: string): string {
     const descriptions: {[key: string]: string} = {
-      'GLOBAL': '全局级别 - 影响整个集群',
-      'SYSTEM': '系统级别 - 系统管理权限',
-      'CATALOG': '目录级别 - 数据目录权限',
-      'DATABASE': '数据库级别 - 特定数据库权限',
-      'TABLE': '表级别 - 特定表权限',
-      'ROLE': '角色 - 通过角色获得的权限',
+      'GLOBAL': 'Global level - affects the entire cluster',
+      'SYSTEM': 'System level - system administration permissions',
+      'CATALOG': 'Catalog level - data catalog permissions',
+      'DATABASE': 'Database level - permissions on a specific database',
+      'TABLE': 'Table level - permissions on a specific table',
+      'ROLE': 'Role - permissions obtained through a role',
     };
     return descriptions[type.toUpperCase()] || type;
   }

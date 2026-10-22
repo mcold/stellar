@@ -10,7 +10,7 @@ impl DiagnosticRule for I001ImportDataSkew {
         "I001"
     }
     fn name(&self) -> &str {
-        "导入数据倾斜"
+        "Load data skew"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -36,11 +36,15 @@ impl DiagnosticRule for I001ImportDataSkew {
                     context.node.plan_node_id.unwrap_or(-1)
                 ),
                 plan_node_id: context.node.plan_node_id,
-                message: format!("导入存在数据倾斜，PushChunkNum max/min 比率为 {:.2}", ratio),
-                reason: "请参考 StarRocks 官方文档了解更多信息。".to_string(),
+                message: format!(
+                    "The load has data skew, the PushChunkNum max/min ratio is {:.2}",
+                    ratio
+                ),
+                reason: "See the StarRocks official documentation for more information."
+                    .to_string(),
                 suggestions: vec![
-                    "检查上游算子是否存在数据倾斜".to_string(),
-                    "优化分桶键选择".to_string(),
+                    "Check whether the upstream operator has data skew".to_string(),
+                    "Optimize the bucket key choice".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -59,7 +63,7 @@ impl DiagnosticRule for I002ImportRPCLatency {
         "I002"
     }
     fn name(&self) -> &str {
-        "导入 RPC 延迟高"
+        "High load RPC latency"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -86,13 +90,14 @@ impl DiagnosticRule for I002ImportRPCLatency {
                 ),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "导入 RPC 客户端耗时是服务端的 {:.1} 倍，网络传输可能是瓶颈",
+                    "The load RPC client time is {:.1}x the server time, the network transfer may be the bottleneck",
                     ratio
                 ),
-                reason: "请参考 StarRocks 官方文档了解更多信息。".to_string(),
+                reason: "See the StarRocks official documentation for more information."
+                    .to_string(),
                 suggestions: vec![
-                    "启用数据压缩减少网络传输量".to_string(),
-                    "检查网络带宽和延迟".to_string(),
+                    "Enable data compression to reduce the network transfer volume".to_string(),
+                    "Check the network bandwidth and latency".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -111,7 +116,7 @@ impl DiagnosticRule for I003ImportFilteredRows {
         "I003"
     }
     fn name(&self) -> &str {
-        "导入过滤行数过多"
+        "Too many rows filtered during the load"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -140,15 +145,16 @@ impl DiagnosticRule for I003ImportFilteredRows {
                 ),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "导入过滤了 {:.0} 行 ({:.1}%)，可能存在数据质量问题",
+                    "The load filtered {:.0} rows ({:.1}%), there may be a data quality problem",
                     filtered,
                     ratio * 100.0
                 ),
-                reason: "请参考 StarRocks 官方文档了解更多信息。".to_string(),
+                reason: "See the StarRocks official documentation for more information."
+                    .to_string(),
                 suggestions: vec![
-                    "检查数据格式是否符合表结构".to_string(),
-                    "检查是否有空值或类型不匹配".to_string(),
-                    "查看 BE 日志获取详细过滤原因".to_string(),
+                    "Check whether the data format matches the table schema".to_string(),
+                    "Check for NULL values or type mismatches".to_string(),
+                    "Check the BE log for the detailed filter reason".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,

@@ -13,7 +13,7 @@ impl DiagnosticRule for E001NetworkTransferLarge {
         "E001"
     }
     fn name(&self) -> &str {
-        "网络传输数据量大"
+        "Large network transfer volume"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -37,14 +37,14 @@ impl DiagnosticRule for E001NetworkTransferLarge {
                     context.node.plan_node_id.unwrap_or(-1)),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "网络传输数据量 {}，可能存在网络瓶颈",
+                    "{} transferred over the network, there may be a network bottleneck",
                     format_bytes(bytes_sent as u64)
                 ),
-                reason: "网络传输数据量过大，占用大量网络带宽和时间。可能是 Shuffle 数据量大或缺少有效的数据裁剪。".to_string(),
+                reason: "The network transfer volume is too large and takes a lot of bandwidth and time. This is usually caused by a large Shuffle volume or by a lack of effective data pruning.".to_string(),
                 suggestions: vec![
-                    "检查是否可以减少 Shuffle 数据量".to_string(),
-                    "考虑使用 Colocate Join 避免 Shuffle".to_string(),
-                    "检查网络带宽是否充足".to_string(),
+                    "Check whether the Shuffle volume can be reduced".to_string(),
+                    "Consider a Colocate Join to avoid the Shuffle".to_string(),
+                    "Check whether the network bandwidth is sufficient".to_string(),
                 ],
                 parameter_suggestions: {
                     let mut suggestions = Vec::new();
@@ -75,7 +75,7 @@ impl DiagnosticRule for E002NetworkTimeHigh {
         "E002"
     }
     fn name(&self) -> &str {
-        "网络时间占比高"
+        "High network time share"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -105,13 +105,13 @@ impl DiagnosticRule for E002NetworkTimeHigh {
                     context.node.plan_node_id.unwrap_or(-1)
                 ),
                 plan_node_id: context.node.plan_node_id,
-                message: format!("网络时间占比 {:.1}%，可能存在网络瓶颈", ratio * 100.0),
-                reason: "网络传输时间占比过高，查询瓶颈在网络。可能是网络带宽不足或跨机房传输。"
+                message: format!("Network time share {:.1}%, there may be a network bottleneck", ratio * 100.0),
+                reason: "The network transfer takes too large a share of the time, so the query bottleneck is the network. This is usually caused by insufficient network bandwidth or by cross-datacenter traffic."
                     .to_string(),
                 suggestions: vec![
-                    "检查网络带宽和延迟".to_string(),
-                    "考虑使用 Colocate Join".to_string(),
-                    "减少跨节点数据传输".to_string(),
+                    "Check the network bandwidth and latency".to_string(),
+                    "Consider a Colocate Join".to_string(),
+                    "Reduce the data transferred across nodes".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
@@ -131,7 +131,7 @@ impl DiagnosticRule for E003ShuffleSkew {
         "E003"
     }
     fn name(&self) -> &str {
-        "Shuffle 数据倾斜"
+        "Shuffle data skew"
     }
 
     fn applicable_to(&self, node: &ExecutionTreeNode) -> bool {
@@ -159,14 +159,14 @@ impl DiagnosticRule for E003ShuffleSkew {
                     context.node.plan_node_id.unwrap_or(-1)),
                 plan_node_id: context.node.plan_node_id,
                 message: format!(
-                    "Shuffle 存在数据倾斜，max/avg 比率为 {:.2}",
+                    "The Shuffle has data skew, max/avg ratio is {:.2}",
                     ratio
                 ),
-                reason: "Shuffle 数据在各节点间分布不均匀，部分节点接收更多数据。通常是 Shuffle 键存在热点值。".to_string(),
+                reason: "The Shuffle data is unevenly distributed across the nodes, so some nodes receive more data. This is usually caused by hot values in the Shuffle key.".to_string(),
                 suggestions: vec![
-                    "检查分区键选择是否合理".to_string(),
-                    "考虑使用 Skew Join 优化".to_string(),
-                    "检查是否存在热点数据".to_string(),
+                    "Check whether the partition key choice is reasonable".to_string(),
+                    "Consider a Skew Join optimization".to_string(),
+                    "Check whether hot data exists".to_string(),
                 ],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,

@@ -10,7 +10,7 @@ impl DiagnosticRule for F001ExecutionTimeSkew {
         "F001"
     }
     fn name(&self) -> &str {
-        "实例执行时间倾斜"
+        "Execution time skew across instances"
     }
 
     fn applicable_to(&self, _node: &ExecutionTreeNode) -> bool {
@@ -31,9 +31,9 @@ impl DiagnosticRule for F001ExecutionTimeSkew {
                 severity: RuleSeverity::Warning,
                 node_path: format!("{} (plan_node_id={})", context.node.operator_name, context.node.plan_node_id.unwrap_or(-1)),
                 plan_node_id: context.node.plan_node_id,
-                message: format!("实例执行时间存在倾斜，max/avg 比率为 {:.2}", ratio),
-                reason: "Fragment 执行时间过长，是查询的主要瓶颈。需要分析 Fragment 内的算子找出具体问题。".to_string(),
-                suggestions: vec!["检查数据分布".to_string(), "优化分桶策略".to_string()],
+                message: format!("The instance execution times are skewed, max/avg ratio is {:.2}", ratio),
+                reason: "The Fragment execution time is too long and is the main bottleneck of the query. The operators inside the Fragment have to be analysed to find the specific problem.".to_string(),
+                suggestions: vec!["Check the data distribution".to_string(), "Optimize the bucketing strategy".to_string()],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
             })
@@ -51,7 +51,7 @@ impl DiagnosticRule for F002MemorySkew {
         "F002"
     }
     fn name(&self) -> &str {
-        "实例内存分配不均"
+        "Uneven memory allocation across instances"
     }
 
     fn applicable_to(&self, _node: &ExecutionTreeNode) -> bool {
@@ -78,9 +78,13 @@ impl DiagnosticRule for F002MemorySkew {
                     context.node.plan_node_id.unwrap_or(-1)
                 ),
                 plan_node_id: context.node.plan_node_id,
-                message: format!("实例内存分配不均，max/avg 比率为 {:.2}", ratio),
-                reason: "Fragment 内存使用过高，可能导致查询失败。".to_string(),
-                suggestions: vec!["检查数据倾斜".to_string()],
+                message: format!(
+                    "The memory allocation is uneven across instances, max/avg ratio is {:.2}",
+                    ratio
+                ),
+                reason: "The Fragment uses too much memory, which may make the query fail."
+                    .to_string(),
+                suggestions: vec!["Check for data skew".to_string()],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
             })
@@ -98,7 +102,7 @@ impl DiagnosticRule for F003PrepareTimeLong {
         "F003"
     }
     fn name(&self) -> &str {
-        "Fragment 准备时间过长"
+        "Fragment preparation time too long"
     }
 
     fn applicable_to(&self, _node: &ExecutionTreeNode) -> bool {
@@ -118,9 +122,9 @@ impl DiagnosticRule for F003PrepareTimeLong {
                     context.node.plan_node_id.unwrap_or(-1)
                 ),
                 plan_node_id: context.node.plan_node_id,
-                message: format!("Fragment 准备时间 {:.1}s", prepare_time / 1_000_000_000.0),
-                reason: "Fragment 各实例执行时间差异大，存在数据倾斜或资源不均。".to_string(),
-                suggestions: vec!["检查元数据加载".to_string()],
+                message: format!("Fragment preparation time {:.1}s", prepare_time / 1_000_000_000.0),
+                reason: "The instances of the Fragment have very different execution times, so there is data skew or uneven resources.".to_string(),
+                suggestions: vec!["Check the metadata loading".to_string()],
                 parameter_suggestions: vec![],
                 threshold_metadata: None,
             })

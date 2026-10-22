@@ -362,7 +362,7 @@ export class TabService {
     if (!hasHomeTab) {
       const homeTab: TabItem = {
         id: 'home',
-        title: '集群列表',
+        title: 'Cluster List',
         url: '/pages/starrocks/dashboard',
         active: true,
         closable: false,

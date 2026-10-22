@@ -7,19 +7,19 @@
             <h5 class="mb-0">Profiles</h5>
             <span class="text-hint">|</span>
             <span class="text-hint" style="font-size: 13px;">
-              集群: <strong>{{ activeCluster?.name || '未选择' }}</strong>
+              Cluster: <strong>{{ activeCluster?.name || 'Not selected' }}</strong>
             </span>
           </div>
           <div class="d-flex align-items-center gap-2">
             <button nbButton status="primary" size="small" (click)="loadProfiles()" [disabled]="loading || !clusterId">
               <nb-icon icon="refresh-outline"></nb-icon>
-              刷新
+              Refresh
             </button>
             
             <nb-select 
               [(selected)]="selectedRefreshInterval" 
               size="small" 
-              placeholder="自动刷新"
+              placeholder="Auto refresh"
               (selectedChange)="onRefreshIntervalChange($event)"
               [disabled]="!clusterId"
               style="min-width: 100px;"
@@ -67,18 +67,18 @@
     <nb-card-body class="p-0">
       <nb-tabset>
         <!-- Tab 1: DAG 执行分析 (默认) -->
-        <nb-tab tabTitle="执行分析" tabIcon="activity-outline">
+        <nb-tab tabTitle="Execution analysis" tabIcon="activity-outline">
           <div class="dag-container">
             <div *ngIf="analysisLoading" class="text-center py-5">
               <nb-spinner status="primary" size="large"></nb-spinner>
-              <p class="mt-3 text-hint">正在分析 Profile...</p>
+              <p class="mt-3 text-hint">Analyzing profile...</p>
             </div>
             
             <div *ngIf="!analysisLoading && analysisError" class="text-center py-5">
               <nb-icon icon="alert-triangle-outline" status="warning" class="mb-2" style="font-size: 2rem;"></nb-icon>
               <p class="text-hint">{{ analysisError }}</p>
               <p class="text-hint" style="font-size: 12px;">
-                提示: StarRocks 的 Profile 数据会定期清理，较早的查询可能已无法获取详细分析。
+                Hint: StarRocks profile data is cleaned up periodically, so detailed analysis may no longer be available for older queries.
               </p>
             </div>
             
@@ -93,25 +93,25 @@
                    (click)="onDagPanelClick($event)">
                 <!-- Toolbar -->
                 <div class="dag-toolbar">
-                  <button nbButton size="tiny" status="basic" ghost (click)="toggleFullscreen()" [nbTooltip]="isFullscreen ? '退出全屏' : '全屏'">
+                  <button nbButton size="tiny" status="basic" ghost (click)="toggleFullscreen()" [nbTooltip]="isFullscreen ? 'Exit full screen' : 'Full screen'">
                     <nb-icon [icon]="isFullscreen ? 'collapse-outline' : 'expand-outline'"></nb-icon>
                   </button>
-                  <button nbButton size="tiny" status="basic" ghost (click)="zoomIn()" nbTooltip="放大">
+                  <button nbButton size="tiny" status="basic" ghost (click)="zoomIn()" nbTooltip="Zoom in">
                     <nb-icon icon="plus-outline"></nb-icon>
                   </button>
-                  <button nbButton size="tiny" status="basic" ghost (click)="zoomOut()" nbTooltip="缩小">
+                  <button nbButton size="tiny" status="basic" ghost (click)="zoomOut()" nbTooltip="Zoom out">
                     <nb-icon icon="minus-outline"></nb-icon>
                   </button>
-                  <button nbButton size="tiny" status="basic" ghost (click)="resetZoom()" nbTooltip="重置">
+                  <button nbButton size="tiny" status="basic" ghost (click)="resetZoom()" nbTooltip="Reset">
                     <nb-icon icon="maximize-outline"></nb-icon>
                   </button>
-                  <button nbButton size="tiny" status="basic" ghost (click)="toggleGraphDirection()" [nbTooltip]="graphDirection === 'BT' ? '切换为横向' : '切换为纵向'">
+                  <button nbButton size="tiny" status="basic" ghost (click)="toggleGraphDirection()" [nbTooltip]="graphDirection === 'BT' ? 'Switch to horizontal' : 'Switch to vertical'">
                     <nb-icon [icon]="graphDirection === 'BT' ? 'swap-outline' : 'flip-2-outline'"></nb-icon>
                   </button>
-                  <button nbButton size="tiny" [status]="isFlowAnimationEnabled ? 'primary' : 'basic'" ghost (click)="toggleFlowAnimation()" [nbTooltip]="isFlowAnimationEnabled ? '关闭流动效果' : '开启流动效果'">
+                  <button nbButton size="tiny" [status]="isFlowAnimationEnabled ? 'primary' : 'basic'" ghost (click)="toggleFlowAnimation()" [nbTooltip]="isFlowAnimationEnabled ? 'Disable flow animation' : 'Enable flow animation'">
                     <nb-icon icon="activity-outline"></nb-icon>
                   </button>
-                  <button nbButton size="tiny" status="basic" ghost (click)="exportDagAsPng()" nbTooltip="导出图片">
+                  <button nbButton size="tiny" status="basic" ghost (click)="exportDagAsPng()" nbTooltip="Export image">
                     <nb-icon icon="download-outline"></nb-icon>
                   </button>
                 </div>
@@ -187,10 +187,10 @@
                       <!-- Header with dynamic color -->
                       <div class="node-header" [ngClass]="getNodeHeaderClass(node)">
                         <!-- Diagnostic warning indicator (left side) -->
-                        <div *ngIf="node.has_diagnostic" class="diagnostic-indicator" nbTooltip="该节点有诊断建议">⚠️</div>
+                        <div *ngIf="node.has_diagnostic" class="diagnostic-indicator" nbTooltip="This node has diagnostic suggestions">⚠️</div>
                         <span class="node-title">{{ node.operator_name }}</span>
                         <!-- Top N mark (right corner) -->
-                        <div *ngIf="getNodeRank(node) > 1" class="top-mark" nbTooltip="Top {{ getNodeRank(node) }} 耗时节点"></div>
+                        <div *ngIf="getNodeRank(node) > 1" class="top-mark" nbTooltip="Top {{ getNodeRank(node) }} time-consuming node"></div>
                       </div>
                       
                       <!-- Body -->
@@ -200,7 +200,7 @@
                         </div>
                         <!-- Horizontal layout: Time | Percentage (复刻图1) -->
                         <div class="node-row metric-row-horizontal">
-                          <span class="time-value">耗时: {{ formatDurationNs(node.metrics?.operator_total_time) }}</span>
+                          <span class="time-value">Duration: {{ formatDurationNs(node.metrics?.operator_total_time) }}</span>
                           <span class="pct-value">{{ node.time_percentage | number:'1.2-2' }}%</span>
                         </div>
                       </div>
@@ -224,15 +224,15 @@
                   <div class="section-header">
                     <span class="title">Top 10 By {{ showMemoryView ? 'Memory' : 'Time' }}</span>
                     <span class="link" (click)="toggleMemoryView()">⇄ {{ showMemoryView ? 'Time' : 'Memory' }}</span>
-                    <span class="collapse-toggle" (click)="toggleTop10()">{{ isTop10Collapsed ? '∨ 展开' : '∧ 收起' }}</span>
+                    <span class="collapse-toggle" (click)="toggleTop10()">{{ isTop10Collapsed ? '∨ Expand' : '∧ Collapse' }}</span>
                   </div>
                   <div class="section-body" *ngIf="!isTop10Collapsed && !isRightPanelCollapsed">
                     <!-- Time View -->
                     <table class="top10-table" *ngIf="!showMemoryView">
                       <thead>
                         <tr>
-                          <th>节点</th>
-                          <th>时间</th>
+                          <th>Node</th>
+                          <th>Time</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -243,7 +243,7 @@
                           <td class="node-time">{{ node.time_percentage | number:'1.2-2' }}%</td>
                         </tr>
                         <tr *ngIf="!top10NodesByTime?.length">
-                          <td colspan="2" class="text-center text-hint">暂无数据</td>
+                          <td colspan="2" class="text-center text-hint">No data</td>
                         </tr>
                       </tbody>
                     </table>
@@ -251,8 +251,8 @@
                     <table class="top10-table" *ngIf="showMemoryView">
                       <thead>
                         <tr>
-                          <th>节点</th>
-                          <th>内存</th>
+                          <th>Node</th>
+                          <th>Memory</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -263,7 +263,7 @@
                           <td class="node-memory">{{ formatBytes(node.metrics?.memory_usage) }}</td>
                         </tr>
                         <tr *ngIf="!top10NodesByMemory?.length">
-                          <td colspan="2" class="text-center text-hint">暂无数据</td>
+                          <td colspan="2" class="text-center text-hint">No data</td>
                         </tr>
                       </tbody>
                     </table>
@@ -274,17 +274,17 @@
                 <div class="right-section summary-section" *ngIf="!selectedNode">
                   <div class="section-header">
                     <span class="title">
-                      总览
+                      Overview
                       <nb-icon 
                         *ngIf="analysisData?.summary?.is_profile_complete === false"
                         icon="alert-triangle-outline" 
                         status="warning"
                         class="profile-incomplete-icon"
-                        [nbTooltip]="analysisData?.summary?.profile_completeness_warning || 'Profile 数据不完整，部分指标可能缺失'"
+                        [nbTooltip]="analysisData?.summary?.profile_completeness_warning || 'Profile data is incomplete, some metrics may be missing'"
                         nbTooltipPlacement="left">
                       </nb-icon>
                     </span>
-                    <span class="collapse-toggle" (click)="toggleSummary()">{{ isSummaryCollapsed ? '∨ 展开' : '∧ 收起' }}</span>
+                    <span class="collapse-toggle" (click)="toggleSummary()">{{ isSummaryCollapsed ? '∨ Expand' : '∧ Collapse' }}</span>
                   </div>
                   <div class="section-body" *ngIf="!isSummaryCollapsed && !isRightPanelCollapsed">
                     <!-- Execution Time Bar -->
@@ -359,7 +359,7 @@
                           <span class="metric-label">
                             PlannerTotalTime
                             <nb-icon icon="question-mark-circle-outline" class="metric-hint" 
-                                     [nbTooltip]="'查询计划生成总耗时'"></nb-icon>
+                                     [nbTooltip]="'Total time spent generating the query plan'"></nb-icon>
                           </span>
                           <span>{{ analysisData?.summary?.planner_total_time }}</span>
                         </div>
@@ -409,8 +409,8 @@
                     <!-- Diagnosis Summary Link -->
                     <div class="diagnosis-summary-link" *ngIf="analysisData?.aggregated_diagnostics?.length">
                       <span class="diag-icon">⚠️</span>
-                      <span class="diag-text">存在有诊断建议的算子</span>
-                      <span class="diag-link" (click)="scrollToDiagnosis()">详情</span>
+                      <span class="diag-text">Operators with diagnostic suggestions</span>
+                      <span class="diag-link" (click)="scrollToDiagnosis()">Details</span>
                     </div>
                     
                     <!-- IO Statistics Section -->
@@ -463,7 +463,7 @@
                           <span class="metric-label">
                             ResultRows
                             <nb-icon icon="question-mark-circle-outline" class="metric-hint" 
-                                     [nbTooltip]="'返回给客户端的结果行数'"></nb-icon>
+                                     [nbTooltip]="'Number of result rows returned to the client'"></nb-icon>
                           </span>
                           <span>{{ analysisData?.summary?.result_rows | number }}</span>
                         </div>
@@ -471,7 +471,7 @@
                           <span class="metric-label">
                             ResultBytes
                             <nb-icon icon="question-mark-circle-outline" class="metric-hint" 
-                                     [nbTooltip]="'返回给客户端的结果数据量'"></nb-icon>
+                                     [nbTooltip]="'Amount of result data returned to the client'"></nb-icon>
                           </span>
                           <span>{{ analysisData?.summary?.result_bytes_display }}</span>
                         </div>
@@ -499,7 +499,7 @@
                       <!-- DataCache Hit Rate (for disaggregated storage-compute clusters) -->
                       <div class="metric-row-simple" *ngIf="analysisData?.summary?.datacache_hit_rate !== null">
                         <span class="metric-label">
-                          DataCache命中率
+                          DataCache hit rate
                           <nb-icon icon="question-mark-circle-outline" class="metric-hint" 
                                    [nbTooltip]="getDataCacheTooltip()"
                                    nbTooltipPlacement="left"></nb-icon>
@@ -512,7 +512,7 @@
                       </div>
                       <!-- Fallback when no metrics available -->
                       <div *ngIf="!hasAnyMetric()" class="text-hint text-center py-2">
-                        暂无指标数据
+                        No metric data
                       </div>
                     </div>
                   </div>
@@ -531,7 +531,7 @@
                     <!-- Node Tabs using Nebular -->
                     <nb-tabset class="node-detail-tabs">
                       <!-- 节点 Tab (Core Metrics - like official UI) -->
-                      <nb-tab tabTitle="节点">
+                      <nb-tab tabTitle="Node">
                         <div class="node-tab-content">
                           <!-- Execution time section (like official UI) -->
                           <div class="metric-section" *ngIf="getExecutionTimeBreakdown() as execTime">
@@ -604,7 +604,7 @@
                           <!-- Node Diagnostics -->
                           <div class="metric-section diagnostics-section" *ngIf="getNodeDiagnostics(selectedNode)?.length">
                             <div class="section-title">
-                              诊断建议
+                              Diagnostics
                               <span class="count-badge">{{ getNodeDiagnostics(selectedNode).length }}</span>
                             </div>
                             <div class="diagnosis-list-inline">
@@ -630,7 +630,7 @@
                       </nb-tab>
                       
                       <!-- 节点详情 Tab (All Operators with CommonMetrics + UniqueMetrics) -->
-                      <nb-tab tabTitle="节点详情">
+                      <nb-tab tabTitle="Node details">
                         <div class="metrics-list-simple node-detail-content">
                           <!-- Show operators from pipeline (like official UI) -->
                           <ng-container *ngFor="let operator of getNodeOperatorsFromPipeline(); let i = index">
@@ -674,7 +674,7 @@
                           <!-- Fallback: show node's own metrics if no operators found -->
                           <ng-container *ngIf="!getNodeOperatorsFromPipeline().length">
                             <ng-container *ngIf="selectedNode.metrics">
-                              <div class="metric-category-header">基础指标</div>
+                              <div class="metric-category-header">Basic metrics</div>
                               <div class="metric-row-simple" *ngFor="let key of getMetricKeys(selectedNode.metrics)">
                                 <span class="metric-label">{{ key }}</span>
                                 <span>{{ formatMetricValue(key, selectedNode.metrics[key]) }}</span>
@@ -682,7 +682,7 @@
                             </ng-container>
                             
                             <ng-container *ngIf="selectedNode.unique_metrics && objectKeys(selectedNode.unique_metrics).length">
-                              <div class="metric-category-header">唯一指标</div>
+                              <div class="metric-category-header">Unique metrics</div>
                               <div class="metric-row-simple" *ngFor="let key of objectKeys(selectedNode.unique_metrics)">
                                 <span class="metric-label">{{ key }}</span>
                                 <span>{{ formatMetricValue(key, selectedNode.unique_metrics[key]) }}</span>
@@ -692,7 +692,7 @@
                           
                           <div *ngIf="!getNodeOperatorsFromPipeline().length && !selectedNode.metrics && !selectedNode.unique_metrics" 
                                class="text-hint text-center py-2">
-                            暂无详细指标
+                            No detailed metrics
                           </div>
                         </div>
                       </nb-tab>
@@ -758,7 +758,7 @@
                             </div>
                             
                             <div class="text-hint text-center py-2">
-                              Pipeline 信息暂不可用
+                              Pipeline information is not available
                             </div>
                           </ng-container>
                         </div>
@@ -770,26 +770,26 @@
                 <!-- Root Cause Analysis Section - Loading state for LLM -->
                 <div class="right-section root-cause-section" *ngIf="!selectedNode && (llmAnalysisLoading || llmAnalysisError || getRootCauseAnalysis()?.root_causes?.length)">
                   <div class="section-header">
-                    <span class="title">🔍 根因分析</span>
+                    <span class="title">🔍 Root cause analysis</span>
                     <span class="warning-badge" *ngIf="!llmAnalysisLoading && !llmAnalysisError">{{ getRootCauseAnalysis()?.root_causes?.length || 0 }}</span>
                     
                     <!-- Loading state -->
                     <span class="llm-loading-badge" *ngIf="llmAnalysisLoading">
                       <nb-icon icon="loader-outline" class="spin"></nb-icon>
-                      <span>LLM 分析中...</span>
+                      <span>LLM analysis in progress...</span>
                     </span>
                     
                     <!-- Success state with time -->
                     <span class="llm-badge" *ngIf="!llmAnalysisLoading && !llmAnalysisError && hasLLMAnalysis()">
                       🤖 LLM
                       <span class="llm-time" *ngIf="getLLMElapsedTime()">{{ getLLMElapsedTime() }}</span>
-                      <span class="llm-cached" *ngIf="isLLMAnalysisCached()" nbTooltip="从缓存加载，点击刷新重新分析">📦</span>
+                      <span class="llm-cached" *ngIf="isLLMAnalysisCached()" nbTooltip="Loaded from cache, click refresh to analyze again">📦</span>
                     </span>
                     
                     <!-- Error state -->
                     <span class="llm-error-badge" *ngIf="llmAnalysisError">
                       <nb-icon icon="alert-circle-outline"></nb-icon>
-                      <span>分析失败</span>
+                      <span>Analysis failed</span>
                     </span>
                     
                     <!-- Refresh button (always visible when not loading) -->
@@ -799,12 +799,12 @@
                             status="info"
                             *ngIf="!llmAnalysisLoading"
                             (click)="retryLLMAnalysis()"
-                            [nbTooltip]="llmAnalysisError ? '重试 LLM 分析' : '刷新 LLM 分析'"
+                            [nbTooltip]="llmAnalysisError ? 'Retry LLM analysis' : 'Refresh LLM analysis'"
                             class="llm-refresh-btn">
                       <nb-icon icon="sync-outline"></nb-icon>
                     </button>
                     
-                    <span class="collapse-toggle" (click)="isRootCauseCollapsed = !isRootCauseCollapsed">{{ isRootCauseCollapsed ? '∨ 展开' : '∧ 收起' }}</span>
+                    <span class="collapse-toggle" (click)="isRootCauseCollapsed = !isRootCauseCollapsed">{{ isRootCauseCollapsed ? '∨ Expand' : '∧ Collapse' }}</span>
                   </div>
                   <div class="section-body" *ngIf="!isRootCauseCollapsed && !isRightPanelCollapsed">
                     <!-- Summary (LLM provides richer summary) -->
@@ -817,7 +817,7 @@
                     <div class="hidden-issues" *ngIf="getRootCauseAnalysis().hidden_issues?.length">
                       <div class="hidden-issue-header">
                         <nb-icon icon="eye-off-outline" class="text-info"></nb-icon>
-                        <span>隐式问题 (规则引擎未检测到)</span>
+                        <span>Implicit issues (not detected by the rule engine)</span>
                       </div>
                       <div *ngFor="let issue of getRootCauseAnalysis().hidden_issues" class="hidden-issue-item">
                         <div class="issue-desc">⚠️ {{ issue.issue }}</div>
@@ -841,16 +841,16 @@
                             'high': rc.confidence >= 0.8,
                             'medium': rc.confidence >= 0.5 && rc.confidence < 0.8,
                             'low': rc.confidence < 0.5
-                          }">置信度 {{ rc.confidence * 100 | number:'1.0-0' }}%</span>
+                          }">Confidence {{ rc.confidence * 100 | number:'1.0-0' }}%</span>
                           <span class="rc-impact" *ngIf="!rc.confidence && rc.impact_percentage" [ngClass]="{
                             'high': rc.impact_percentage >= 40,
                             'medium': rc.impact_percentage >= 20 && rc.impact_percentage < 40,
                             'low': rc.impact_percentage < 20
-                          }">影响度 {{ rc.impact_percentage | number:'1.0-0' }}%</span>
+                          }">Impact {{ rc.impact_percentage | number:'1.0-0' }}%</span>
                           <span class="source-badge" *ngIf="rc.source">
                             {{ rc.source === 'llm' ? '🤖' : rc.source === 'both' ? '🔗' : '📋' }}
                           </span>
-                          <span class="implicit-badge" *ngIf="rc.is_implicit">隐式</span>
+                          <span class="implicit-badge" *ngIf="rc.is_implicit">Implicit</span>
                         </div>
                         <div class="rc-description">{{ rc.description }}</div>
                         <!-- Related rule IDs -->
@@ -878,7 +878,7 @@
                     <div class="causal-chains" *ngIf="getRootCauseAnalysis().causal_chains?.length">
                       <div class="chain-header">
                         <nb-icon icon="trending-up-outline" class="text-info"></nb-icon>
-                        <span>因果链</span>
+                        <span>Causal chain</span>
                         <span class="chain-count">({{ getRootCauseAnalysis().causal_chains.length }})</span>
                       </div>
                       <div class="chain-list">
@@ -911,10 +911,10 @@
                 <!-- When LLM analysis is available, show ONLY LLM recommendations (override rules) -->
                 <div class="right-section diagnosis-section" *ngIf="!selectedNode && (getCurrentDiagnosticsCount() > 0 || (hasLLMAnalysis() && getRootCauseAnalysis().recommendations?.length))">
                   <div class="section-header">
-                    <span class="title">诊断建议</span>
+                    <span class="title">Diagnostics</span>
                     <span class="warning-badge">{{ getEffectiveRecommendationsCount() }}</span>
                     <span class="llm-badge" *ngIf="hasLLMAnalysis() && getRootCauseAnalysis().recommendations?.length">🤖 LLM</span>
-                    <span class="collapse-toggle" (click)="toggleDiagnosis()">{{ isDiagnosisCollapsed ? '∨ 展开' : '∧ 收起' }}</span>
+                    <span class="collapse-toggle" (click)="toggleDiagnosis()">{{ isDiagnosisCollapsed ? '∨ Expand' : '∧ Collapse' }}</span>
                   </div>
                   <div class="section-body" *ngIf="!isDiagnosisCollapsed && !isRightPanelCollapsed">
                       <!-- LLM Recommendations (completely override rule-based when available) -->
@@ -931,7 +931,7 @@
                               <span>{{ rec.expected_improvement }}</span>
                             </div>
                             <div class="rec-sql" *ngIf="rec.sql_example">
-                              <pre><code (click)="copyToClipboard(rec.sql_example)" nbTooltip="点击复制">{{ rec.sql_example }}</code></pre>
+                              <pre><code (click)="copyToClipboard(rec.sql_example)" nbTooltip="Click to copy">{{ rec.sql_example }}</code></pre>
                             </div>
                           </div>
                         </div>
@@ -947,7 +947,7 @@
                               'badge-info': diag.severity === 'Info'
                             }">{{ diag.rule_id }}</span>
                             <span class="diag-name">{{ diag.rule_name }}</span>
-                            <span class="node-count-badge" *ngIf="diag.node_count > 1">×{{ diag.node_count }} 个节点</span>
+                            <span class="node-count-badge" *ngIf="diag.node_count > 1">×{{ diag.node_count }} nodes</span>
                           </div>
                           <div class="diag-message">{{ diag.message }}</div>
                           <div class="diag-reason" *ngIf="diag.reason">
@@ -956,7 +956,7 @@
                           </div>
                           <div class="diag-affected-nodes" *ngIf="diag.affected_nodes?.length">
                             <nb-icon icon="pin-outline" class="text-hint"></nb-icon>
-                            <span class="text-hint">涉及节点: {{ diag.affected_nodes.join(', ') }}</span>
+                            <span class="text-hint">Affected nodes: {{ diag.affected_nodes.join(', ') }}</span>
                           </div>
                           <div class="diag-suggestions" *ngIf="diag.suggestions?.length">
                             <div *ngFor="let suggestion of diag.suggestions" class="diag-suggestion">
@@ -979,12 +979,12 @@
                                 <span class="impact-text">{{ param.impact }}</span>
                               </div>
                               <div class="param-value-row">
-                                <span class="text-hint" *ngIf="param.current">当前值: <code>{{ param.current }}</code> →</span>
-                                <span class="text-hint">推荐值:</span>
+                                <span class="text-hint" *ngIf="param.current">Current value: <code>{{ param.current }}</code> →</span>
+                                <span class="text-hint">Recommended value:</span>
                                 <code class="recommended-value">{{ param.recommended }}</code>
                               </div>
                               <div class="param-command" *ngIf="param.command">
-                                <code class="command-text" (click)="copyToClipboard(param.command)" nbTooltip="点击复制">{{ param.command }}</code>
+                                <code class="command-text" (click)="copyToClipboard(param.command)" nbTooltip="Click to copy">{{ param.command }}</code>
                               </div>
                             </div>
                           </div>
@@ -997,7 +997,7 @@
                         </div>
                       </div>
                       <div *ngIf="!analysisData?.aggregated_diagnostics?.length && !analysisData?.suggestions?.length" class="empty-diagnosis">
-                        暂无诊断建议
+                        No diagnostic suggestions
                       </div>
                   </div>
                 </div>
@@ -1009,12 +1009,12 @@
         </nb-tab>
         
         <!-- Tab 2: Profile 原始文本 -->
-        <nb-tab tabTitle="Profile详情" tabIcon="file-text-outline">
+        <nb-tab tabTitle="Profile details" tabIcon="file-text-outline">
           <nb-card accent="basic" class="m-0">
             <nb-card-body class="profile-scroll-container position-relative">
               <div *ngIf="profileDetailLoading" class="text-center py-4">
                 <nb-spinner status="primary" size="large"></nb-spinner>
-                <p class="mt-3 text-hint">加载 Profile 详情中...</p>
+                <p class="mt-3 text-hint">Loading profile details...</p>
               </div>
 
               <div class="profile-copy-overlay" *ngIf="!profileDetailLoading" style="position: absolute; top: 0.5rem; right: 0.5rem; left: auto; z-index: 10;">
@@ -1024,7 +1024,7 @@
                   size="small"
                   (click)="copyProfileToClipboard()"
                   [disabled]="!currentProfileDetail"
-                  nbTooltip="复制到剪贴板"
+                  nbTooltip="Copy to clipboard"
                   nbTooltipPlacement="left"
                 >
                   <nb-icon icon="copy-outline"></nb-icon>
@@ -1033,7 +1033,7 @@
               <div *ngIf="!profileDetailLoading" class="profile-pre-wrapper">
                 <div *ngIf="!currentProfileDetail || currentProfileDetail.trim() === ''" class="text-center py-4 text-hint">
                   <nb-icon icon="file-text-outline" status="basic" class="mb-2"></nb-icon>
-                  <p>暂无 Profile 数据</p>
+                  <p>No profile data</p>
                 </div>
                 <pre *ngIf="currentProfileDetail && currentProfileDetail.trim() !== ''" class="profile-content-text">{{ currentProfileDetail }}</pre>
               </div>

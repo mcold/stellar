@@ -1,0 +1,26 @@
+services:
+  stellar:
+    image: mcold/stellar:latest
+    container_name: stellar
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./conf:/app/conf
+      - ./data:/app/data
+      - ./logs:/app/logs
+    # Same docker network as the StarRocks FE, so the FE is reachable by name
+    # ("starrocks-fe") on both the query port (9030) and the HTTP port (8030).
+    networks:
+      - starrocks
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  starrocks:
+    external: true
+    name: iceberg-kafka-grafana_iceberg_net

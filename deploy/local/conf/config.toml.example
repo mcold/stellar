@@ -1,0 +1,28 @@
+[server]
+host = "0.0.0.0"
+port = 8080
+
+[database]
+url = "sqlite://data/stellar.db"
+
+[auth]
+# Generate your own: openssl rand -hex 32
+jwt_secret = "change-me"
+jwt_expires_in = "24h"
+
+[logging]
+level = "info,stellar_backend=debug"
+file = "logs/stellar.log"
+
+[static_config]
+enabled = true
+web_root = "web"
+
+[metrics]
+interval_secs = "30s"
+retention_days = "7d"
+enabled = true
+
+[audit]
+database = "starrocks_audit_db__"
+table = "starrocks_audit_tbl__"

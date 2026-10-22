@@ -21,10 +21,47 @@ export class TabService {
   private readonly STORAGE_KEY = 'stellar_tabs';
   private tabsSubject = new BehaviorSubject<TabItem[]>([]);
   public tabs$ = this.tabsSubject.asObservable();
+  private titleResolver?: (url: string) => string | undefined;
 
   constructor(private router: Router, private tabReuseService: TabReuseService) {
     this.loadTabs();
     this.initializeDefaultTab();
+  }
+
+  /**
+   * Register the resolver used to derive a tab title from its URL.
+   * The app registers it at startup so restored tabs can be given the
+   * current wording instead of keeping a title saved by an older build.
+   */
+  setTitleResolver(resolver: (url: string) => string | undefined): void {
+    this.titleResolver = resolver;
+  }
+
+  /**
+   * Re-resolve the titles of the open tabs and persist them.
+   */
+  refreshTitles(): void {
+    if (!this.titleResolver) {
+      return;
+    }
+
+    const resolver = this.titleResolver;
+    const tabs = this.tabsSubject.value;
+    let changed = false;
+
+    const updated = tabs.map(tab => {
+      const title = resolver(tab.url);
+      if (title && title !== tab.title) {
+        changed = true;
+        return { ...tab, title };
+      }
+      return tab;
+    });
+
+    if (changed) {
+      this.tabsSubject.next(updated);
+      this.saveTabs();
+    }
   }
 
   /**

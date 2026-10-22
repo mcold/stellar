@@ -33,6 +33,11 @@ export class PagesComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    // Re-derive the titles of the restored tabs from the current menu, so a
+    // title saved by an older build cannot survive an upgrade.
+    this.tabService.setTitleResolver(url => this.resolveTabTitle(url));
+    this.tabService.refreshTitles();
+
     // Filter menu items based on permissions
     this.permissionService.permissions$.subscribe(() => {
       this.menu = this.menuFilterService.filterMenuItems(MENU_ITEMS);
@@ -251,6 +256,28 @@ export class PagesComponent implements OnInit {
     }
     
     return null;
+  }
+
+  /**
+   * Derive a tab title from its URL, using the same order as the route
+   * handler: URL inference for the feature-card routes, then the menu item,
+   * then a generic inference.
+   */
+  private resolveTabTitle(url: string): string | undefined {
+    if (url.includes('/starrocks/system') && url.includes('?')) {
+      const inferred = this.inferTitleFromUrl(url);
+      if (inferred) {
+        return inferred;
+      }
+    }
+
+    const menuItem = this.findMenuItemByUrl(url.split('?')[0]);
+    if (menuItem && menuItem.title) {
+      return menuItem.title;
+    }
+
+    const inferred = this.inferTitleFromUrl(url);
+    return inferred || undefined;
   }
 
   /**
